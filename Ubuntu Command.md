@@ -47,5 +47,7 @@ $ cd large-repository
 $ git fetch --unshallow
 
 diskutil unmount /Volumes/ExtremeSSD 
+
+mysql -h 114.55.251.25 -u root -p #-P 3306
 ```
 
