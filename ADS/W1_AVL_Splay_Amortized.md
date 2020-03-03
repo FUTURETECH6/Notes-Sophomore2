@@ -12,17 +12,49 @@ BF(Balance Factor)：左子树高减右
 
 <u>多个冲突调离trouble maker(只有一个，即新插入的)最近的那个trouble finder(被破坏节点，可能有多个)</u>；通过递归的方式从下往上找trouble finder即可
 
-
+高为H的最少节点：f(h)=f(h-1)+f(h-2)+1
 
 # Splay
+
+https://www.cs.usfca.edu/~galles/visualization/SplayTree.html
 
 为什么全部用单旋转(Zig)不行：不会显著改变path上其他节点的深度甚至有可能会往下推
 
 Zig：仅在parent为根节点时进行
 
-ZigZag/ZagZig：同LR/RL
+ZigZag/ZagZig：同LR/RL(先转爸爸再转爷爷(此时已经是爸爸了))
 
-ZigZig/ZagZag：reverse
+ZigZig/ZagZag：reverse(LL$\Rightarrow$RR, RR$\Rightarrow$LL，先转爷爷再转爸爸)
+
+```c++
+void splay(node *x) {
+	while (x->parent) {
+		if (!x->parent->parent) {      // Must use Single Rotation
+			if (x->parent->left == x)  // Left Child
+				right_rotate(x->parent);
+			else
+				left_rotate(x->parent);
+		} else if (x->parent->left == x &&  // Zig-Zig
+		           x->parent->parent->left == x->parent) {
+			right_rotate(x->parent->parent);
+			right_rotate(x->parent);
+		} else if (x->parent->right == x &&  // Zag-Zag
+		           x->parent->parent->right == x->parent) {
+			left_rotate(x->parent->parent);
+			left_rotate(x->parent);
+		} else if (x->parent->left == x &&  // Zag-Zig
+		           x->parent->parent->right == x->parent) {
+			right_rotate(x->parent);
+			left_rotate(x->parent);
+		} else {  // Zig-Zag
+			left_rotate(x->parent);
+			right_rotate(x->parent);
+		}
+	}
+}
+```
+
+
 
 # Amortized(均摊) Analysis
 
@@ -32,11 +64,13 @@ ZigZig/ZagZag：reverse
 
 ## Aggregate analysis聚合分析
 
-n个操作序列worst是T(n)，则摊还代价为T(n)/n
+n个操作（任意操作）序列worst是T(n)，则摊还代价为T(n)/n
 
 pop()和multiPop()都需要push()来支持，三种栈操作的代价都是O(n)/n=O(1)
 
 ## Accounting method核算法
+
+核算法是对<u>不同的操作</u>赋予<u>**不同**的摊还代价</u>，这个代价可能与其实际操作代价不同，但是通过整体的调整，会使得对一系列操作的整体摊还代价的分析变得简单。
 
 Ex. 20个人的生产队，初始估计的为amortized cost，实际需要食品量为actual cost，差值就是credit
 
@@ -45,6 +79,8 @@ $\rm \Large T_{amortized}= \frac{\sum \hat c_i(\geqslant \sum c_i)}{n}{}$
 只要有办法保证估计的肯定不小于实际的就可以了，例如push=2
 
 ## Potential method势能法
+
+势能法选择一个合适的势能函数，势能函数的值即是当前的总信用(+Φ_0)（类比核算法）。
 
 D表示状态
 
