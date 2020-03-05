@@ -14,11 +14,12 @@
 
 | name | Symbol | Ex |    |
 | --- | --- | --- | --- |
-|  选择 select  | $\sigma$ | $\sigma_{\rm{salary \geqslant 85000}}(instructor)$ |    |
-|  投影 project  | $\Pi$ | $\Pi_{ID,salary}(instructor)$ |    |
-|  自然连接 join  | $\Join$ | $instructor \Join department$ |    |
+|  选择<br />select  | $\sigma$ | $\sigma_{\rm{salary \geqslant 85000}}(instructor)$ |    |
+|  投影<br />project  | $\Pi$ | $\Pi_{ID,salary}(instructor)$ |    |
+|  自然连接<br />join  | $\Join$$\bowtie$ | $instructor \Join department$ |    |
 | 笛卡尔积 | $\times$ | $instructor \times department$ |    |
 | 并 | $\cup$ | $\Pi_{name}(instructor) \cup \Pi_{name}(student)$ |    |
+| Rename |  |  | |
 
 # SQL
 

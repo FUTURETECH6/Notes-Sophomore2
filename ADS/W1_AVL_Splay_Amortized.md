@@ -27,7 +27,7 @@ ZigZag/ZagZig：同LR/RL(先转爸爸再转爷爷(此时已经是爸爸了))
 ZigZig/ZagZag：reverse(LL$\Rightarrow$RR, RR$\Rightarrow$LL，先转爷爷再转爸爸)
 
 ```c++
-void splay(node *x) {
+void splay(node *x) {	// Find
 	while (x->parent) {
 		if (!x->parent->parent) {      // Must use Single Rotation
 			if (x->parent->left == x)  // Left Child
@@ -54,13 +54,21 @@ void splay(node *x) {
 }
 ```
 
-
+删除：访问待删除元素，得到左右子树，访问左子树最大元素(一路向右)使其到 达根，将右子树作为左子树右儿子。
 
 # Amortized(均摊) Analysis
 
 均摊时间：log
 
 例子：12 345，连续3次操作均值的上界为amortized bound，worst5，amortzied4，average3
+
+|      |                                                              |
+| ---- | ------------------------------------------------------------ |
+|      | 这种方法用来确定一个n个操作序列的总代价的上界T(n)，因此每个操作的平均代价为T(n)/n |
+|      | 核算法：用来分析每个操作的摊还代价。核算法将序列中某些较早的操作的“余额”作为“预付信用”存储起来，与数据结构中的特定对象相关联。在操作序列中随后的部分，存储的信用即可用来为拿些缴费少于实际代价的操作支付差额 |
+|      | 势能法：也是分析每个操作的摊还代价，也是通过较早的操作的余额来补偿稍后操作的差额。势能法将信用作为数据结构的势能存储起来，且**将势能作为一个整体存储**，而**不是将信用与数据结构中单个对象关联分开存储**。 |
+
+
 
 ## Aggregate analysis聚合分析
 
@@ -79,6 +87,8 @@ $\rm \Large T_{amortized}= \frac{\sum \hat c_i(\geqslant \sum c_i)}{n}{}$
 只要有办法保证估计的肯定不小于实际的就可以了，例如push=2
 
 ## Potential method势能法
+
+==势能与整个数据结构相关联，而不是特定对象==
 
 势能法选择一个合适的势能函数，势能函数的值即是当前的总信用(+Φ_0)（类比核算法）。
 

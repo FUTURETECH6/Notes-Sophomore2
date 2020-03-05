@@ -68,9 +68,9 @@
 
 定义性能：
 
-* Response time (execution time): the total time required to
+* **Response time** (execution time): the total time required to
     complete a task
-* Throughput (bandwidth): number of tasks completed per unit time
+* **Throughput** (bandwidth): number of tasks completed per unit time
 
 例如ATM机用户操作间隔长，就不需要Throughput来衡量
 
@@ -89,11 +89,9 @@ CPU(执行)时间(CPU exe time)：执行某一任务在CPU上所花费的时间
 
 
 
-program的CPU执行时间=CPU clock cycles(周期数) for a program * clock cycle time
-
-一个程序需要的CPU clock cycles(周期数) = Instructions for a program(指令数) * average clock cycles per instruction (CPI)
-
-CPU time = Instruction count(指令数) * CPI * Clock cycle time
+1. program的CPU执行时间=CPU clock cycles(周期数) for a program * clock cycle time
+2. 一个程序需要的CPU clock cycles(周期数) = Instructions for a program(指令数) * average clock cycles per instruction (CPI)
+3. CPU time = Instruction count(指令数) * CPI * Clock cycle time
 
 $\Large \rm \frac{秒数}{程序}=\frac{指令数}{程序} \times \frac{时钟周期数}{指令数} \times \frac{秒数}{时钟周期数}{}$
 
@@ -105,11 +103,13 @@ Dynamic能耗来源：energy that is consumed when transistors switch states fro
 
 SP = IU
 
-DP = CU^2^f/2
+DP = CU^2^f/2	(==到底有没有2==)
 
 
 
-Dynamic Energy(能耗，非功耗) ∝ Capacitive load(负载电容，The capacitive load per transistor is a function of both <u>the number of transistors connected to an output</u> (called the <u>fanout</u>) and the technology, which determines the capacitance of both wires and transistors.) ×􏰁 Voltage^2^
+Frequency ∝ Clock_Rate
+
+Dynamic Energy(能耗，非功耗) ∝ Capacitive load(负载电容，The capacitive load per transistor is a function of both <u>the number of transistors connected to an output</u> (called the <u>fanout</u>) and <u>the technology</u>, which determines the capacitance <u>of both wires and transistors</u>.) ×􏰁 Voltage^2^
 
 > $\rm E = qU/2 = \frac{CU^2}{2d}{}$
 

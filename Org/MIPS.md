@@ -13,3 +13,6 @@ beq $s1,$s2,25	#if ($s1 == $s2) go to PC + 4 + 100
 slt $s1,$s2,$s3	#if ($s2 < $s3) $s1 = 1; else $s1 = 0
 ```
 
+b for branch
+
+sll/srl for logical
