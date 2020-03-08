@@ -51,14 +51,14 @@ s: department(**<u>dept_name</u>**, buliding, budget)
 
 Basic Operator
 
-| Name                            |          | 作用                                                         | Ex                                                 |
-| ------------------------------- | -------- | ------------------------------------------------------------ | -------------------------------------------------- |
-| 选择 Select                     | $\sigma$ |                                                              | $\sigma_{\rm{salary \geqslant 85000}}(instructor)$ |
-| 投影 Project                    | $\Pi$    | 取出某几个属性，重复的tuple会被去掉                          | $\Pi_{ID,salary}(instructor)$                      |
-| 并 Union                        | $\cup$   | $r \cup s = \{t | t \in r {\ \rm or\ } t \in s\}$<br />1. r,s have same arity(等目)<br />2. attribute domains must be compatible | $\Pi_{name}(instructor) \cup \Pi_{name}(student)$  |
-| 集合差<br />Set difference      | $-$      | $r - s = \{t | t \in r {\ \rm and\ } t \notin s\}$           |                                                    |
-| 笛卡尔积<br />Cartesian product | $\times$ | $\sigma_{A=C}(r \times s)$                                   | $instructor \times department$                     |
-| 重命名<br />Rename              |          | $\rho_{X(A_1,...,A_n)}(E)$                                   |                                                    |
+| Name                            |          | 作用                                                         | Ex                                                           |
+| ------------------------------- | -------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| 选择 Select                     | $\sigma$ |                                                              | $\sigma_{\rm{salary \geqslant 85000}}(instructor)$           |
+| 投影 Project                    | $\Pi$    | 取出某几个属性，<u>重复的tuple会被去掉</u>                   | $\Pi_{ID,salary}(instructor)$                                |
+| 并 Union                        | $\cup$   | $r \cup s = \{t(uple) | t \in r {\ \rm or\ } t \in s\}$<br />1. r,s have same arity(等目)<br />2. attribute domains must be compatible | $\Pi_{name}(instructor) \cup \Pi_{name}(student)$<br />说明：映射之后已经等目了 |
+| 集合差<br />Set difference      | $-$      | $r - s = \{t | t \in r {\ \rm and\ } t \notin s\}$           |                                                              |
+| 笛卡尔积<br />Cartesian product | $\times$ | $\sigma_{A=C}(r \times s)$<br />似乎结果的属性得用r.Attribute和s.Attribute | $instructor \times department$<br />$\sigma_{in.dept = bu.dept}(instructor \times building)$ |
+| 重命名<br />Rename              |          | $\rho_{X(A_1,...,A_n)}(E)$<br />X是E的新名字，Ai表示可以对属性也重命名，缺省表示同名 |                                                              |
 
 例题：PPT 2.34-2.38
 
@@ -71,9 +71,11 @@ Additional Op
 | Name                     | Symbol                 |                                                              | Ex                            |
 | ------------------------ | ---------------------- | ------------------------------------------------------------ | ----------------------------- |
 | 交<br />Set Intersection |                        |                                                              |                               |
-| 自然连接<br />Join       | $\Join$<br />$\bowtie$ | 属性同名的保留一份                                           | $instructor \Join department$ |
-| 除<br />Division         | $\div$                 | 返回左边在右边元组都有组合的属性<br />$R=(A_1,...,A_m,B_1,...B_n)$<br />$S=(B_1,...,B_n)$<br />$R-S = (A_1,...Am)$<br />$r \div s = \{t|t\in \Pi_{R-S}(r) \and \forall u \in s (tu\in r)\}$<br />**属性**：$q = r \div s \Rightarrow q {\ \rm is\ the\ largest\ }\\{\rm relation\ satisfying\ }q\times s \subseteq r$ | 看书/ppt吧                    |
+| 自然连接<br />Join       | $\Join$<br />$\bowtie$ | 1. 得有共同属性<br />2. 连接同名属性的值相等的元组           | $instructor \Join department$ |
+| 除<br />Division         | $\div$                 | 返回左边在右边元组都有组合的属性<br />$R=(A_1,...,A_m,B_1,...B_n)$<br />$S=(B_1,...,B_n)$<br />$R-S = (A_1,...Am)$<br />$r \div s = \{t|t\in \Pi_{R-S}(r) \and \forall u \in s (tu\in r)\} \\ = \Pi_{R-S}(r) - \Pi_{R-S}((\Pi_{R-S}(r)\times s) - \Pi_{R-S,S}(r))$<br />(PPT2.50)<br />**属性**：$q = r \div s \Rightarrow q {\ \rm is\ the\ largest\ }\\{\rm relation\ satisfying\ }q\times s \subseteq r$ | 看书/ppt吧                    |
 | 赋值<br />Assignment     | $\leftarrow$           |                                                              |                               |
+
+
 
 ## Summary
 

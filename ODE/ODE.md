@@ -9,3 +9,13 @@
 
 解方程基本步骤
 
+
+
+常用积分式
+$$
+\large{
+\int\frac{x}{1+x^2}dx = \frac12\ln(1+x^2) +C
+\\
+\int \frac{1}{\sqrt{1-x}}dx = -2\sqrt{1-x}
+}
+$$

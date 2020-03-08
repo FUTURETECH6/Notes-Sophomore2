@@ -9,6 +9,22 @@
     * 不能两个连续红
     * 最长路不会超过最短路两倍
 
+```cpp
+class T{
+  public:
+    struct Node{color, key, left, right, p/* p for what? */};
+    
+  private:
+    struct Node *nil;
+}
+T::T(){
+    nil.color = BLACK;
+    // 其他属性无所谓
+}
+```
+
+
+
 **bh(x)**：从x节点开始往下的**黑**节点个数(所有同路一样的)
 
 **最大树高**：2ln(N+1)：
