@@ -59,6 +59,8 @@ UTF-8 是 Unicode 的实现方式之一。是**变长**字符集
 
 # Chapter 2
 
+## 浮点、格式
+
 ```python
 # 保留位数+四舍五入
 print("%.2f" % a)
@@ -128,10 +130,26 @@ round(2.675, 2) == 2.67 != 2.68	# 这个也注意
 
 
 
-format
+### format
+
+**^**, **<**, **>** 分别是居中、左对齐、右对齐，后面带宽度， **:** 号后面带填充的字符，只能是一个字符，不指定则默认是用空格填充。
+
+**+** 表示在正数前显示 **+**，负数前显示 **-**； （空格）表示在正数前加空格
+
+b、d、o、x 分别是二进制、十进制、八进制、十六进制。
 
 ```python
+>>> "{1} {0} {1}".format("hello", "world")  # 设置指定位置
+'world hello world'
 
+>>> print('value 为: {0.value}'.format(my_value))  # "0" 是可选的
+value 为: 6
+    
+>>> print("{:.2f}".format(3.1415926));
+3.14
+
+print("f({0:.1f}) = {1:.1f}".format(x, s))	# ~~0, 1不加则按顺序~~规范一点好
+print("f(%.1f) = %.1f" % (x, s))
 ```
 
 
@@ -161,7 +179,7 @@ string
 'ab12fghijklmn'
 ```
 
-
+## 关系运算、逻辑运算
 
 关系运算符
 
@@ -185,7 +203,9 @@ TypeError: '>' not supported between instances of 'str' and 'int'
 99
 ```
 
-==Python中逻辑表达式~~不再~~将数作为bool型处理了==
+==关系表达式返回值只有`True`和`False`==
+
+~~==Python中逻辑表达式不再将数作为bool型处理了==~~
 
 | 运算符 | 逻辑表达式 | 描述                                                         | 实例                    |
 | :----- | :--------- | :----------------------------------------------------------- | :---------------------- |
@@ -193,5 +213,91 @@ TypeError: '>' not supported between instances of 'str' and 'int'
 | or     | `x or y`   | 布尔"或" - 如果 x 是非 0，它返回 x 的值，否则它返回 y 的计算值。<br />如果**有一个值为真，or 立刻返回该值**<br/>如果**所有的值都为假，or 返回最后一个假值** | (a or b) 返回 10。      |
 | not    | `not x`    | 布尔"非" - 如果 x 为 True，返回 False 。如果 x 为 False，它返回 True。<br />将数视作bool | not(a and b) 返回 False |
 
+Ex.
+
+`0 and 1 or not 2 < True`：`0and1`返回0，`not 2 < True`返回True，`0 or True`返回第一个真值`True`
+
 `ord("")`查询Unicode编码，只能单字符
+
+## 基本语句
+
+序列赋值，以下这种只能给单字符字符串
+
+```python
+>>> a, b = "34"
+>>> a
+'3'
+>>> b
+'4'
+
+>>> a, b = "123"
+ValueError: too many values to unpack (expected 2)
+>>> a, b = "1234"
+ValueError: too many values to unpack (expected 2)
+```
+
+不等长赋值
+
+这里是当作**列表**操作的而不是字符串
+
+```python
+>>> i, *j = "1234"
+>>> i
+'1'
+>>> j
+['2', '3', '4']
+
+
+>>> *a, b = [1, 2, 3]
+>>> a
+[1, 2]
+>>> b
+3
+```
+
+
+
+**range**
+
+三个参数都是`int`
+
+start为0可缺省，但此时步长也必须缺省(否则`stop, step`会被当成`start, stop`)
+
+**sum**
+
+```python
+>>> sum(range(1, 101))
+5050
+>>> sum([1, 3, 7])
+11
+>>> sum(1/i for i in range(1,21))
+3.597739657143682
+>>> sum([1/i for i in range(1,21)])
+3.597739657143682
+```
+
+**列表推导式**
+
+```python
+求6+66+...
+
+tmp = 0
+for i in range(1, n+1):
+    a += tmp + 6
+    tmp *= 10
+
+for i in range(1, n+1):
+    a += int('6' * i)
+
+a = sum([int('6' * i) for i in range(1, n+1)])
+
+myList = [2 * number for number in [1,2,3,4,5]]
+
+# 加条件
+[expression for item in iterable if condition]
+[i for i in range(1,8) if i % 2 == 1]	# 求1到7奇数的列表
+[exp1 if condition else exp2 for item in iterable]
+# [if condition exp1 else exp2 for item in iterable]本质是这样但是不能这么写，否则condition和exp1会没有keyword分隔
+[1 if i%2 == 1 else 0 for i in range(0,10)]
+```
 

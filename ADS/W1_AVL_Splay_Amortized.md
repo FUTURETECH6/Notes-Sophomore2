@@ -56,6 +56,10 @@ void splay(node *x) {	// Find
 
 删除：访问待删除元素，得到左右子树，访问左子树最大元素(一路向右)使其到 达根，将右子树作为左子树右儿子。
 
+
+
+Search的瘫痪分析：logN， 
+
 # Amortized(均摊) Analysis
 
 均摊时间：log
@@ -100,3 +104,4 @@ credit = Φ(D_i)-Φ(D_{i-1})
 
 $\large\displaystyle \sum \hat c_i = \sum c_i+\Phi(D_n)-\Phi(D_0)$
 
+动态数组的势能函数$\Phi(D_i) = 2T_{num}-T_{size}$(元素个数的两倍减去动态数组占用大小)

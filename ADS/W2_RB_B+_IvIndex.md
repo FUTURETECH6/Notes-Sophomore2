@@ -61,6 +61,10 @@ $$
 
 
 
+**摊还分析**
+
+n个节点的树连续m次插入的balance需要O(m+n)：记账法：插入一个节点的时候，给红色的节点额外的1个credit，
+
 # B+
 
 (B-Tree：非叶节点不为索引，也有Unique Key；B+Tree：非叶节点都是索引，Key可以和叶一样)
@@ -96,3 +100,8 @@ Dict: Term + Times + Documents + Position
 
 Token Analyzer + Vocabulary Scanner + Vocabulary Insertor
 
+
+
+Term Frequent
+
+TF-IDF(TF-Inverse Document Frequency)
