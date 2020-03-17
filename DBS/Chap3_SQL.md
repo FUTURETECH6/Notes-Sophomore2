@@ -50,3 +50,172 @@ alter table r drop A D	-- 许多DBMS不支持(安全考虑
 alter table r modify (ID char(10), salary not full)	-- 加属性或添加限制
 ```
 
+
+
+# DML
+
+SQL不会自动去重，得加`distinct`，并且是基于整个元组判断
+
+字符串操作：
+
+%表子串，_表字符
+
+使用：`Like 'Hello, % \_' ESCAPE '!'`
+
+
+
+## 集合运算
+
+操作对象是两个表
+
+并：`union`
+
+交：`intersect`
+
+减：`except`
+
+
+
+## 聚合函数
+
+* ==`where`和`group by`混用，`where`必须写在`group by`的前面==
+* `having`是对分组再进行选择，里面的**属性要么是聚合函数，要么是`group by`里的**
+* where不能放聚合函数
+
+
+
+### NULL
+
+null算术运算为null
+
+unknown逻辑运算为unknown
+
+`unknown or true = true`, `unknown and false = false` 其他的逻辑运算结果全为unknown
+
+所有不能用`where salary = null`
+
+
+
+聚合函数涉及到null则不计入，除非所有全是null则输出也是null(count是0？一会试试看)
+
+
+
+## 嵌套
+
+Ex. 找09年秋开课，10年春没开课的学科
+
+```sql
+-- select dintinct course_id
+-- from section
+-- where (course_id)
+```
+
+
+
+```sql
+Select account_number AN, balance from account A
+where balance >= (	-- 但是很慢
+    select max(balance) from account B
+    where A.branch_name = B.branch_name
+    )
+order by balance ;
+```
+
+一个错误写法
+
+```sql
+-- 值和集合不能比较
+select account_ID, balance
+from account
+group by brach_name
+having balance >= max(balance)	-- 一个group有多个balance，不能这样比
+order by balance
+```
+
+<u>用**some** 和 **all**进行集合和值的对比</u>
+
+
+
+**except差运算**
+
+```sql
+-- 找到所有上了生物学院的每门课的学生
+select
+    distinct S.ID,
+    S.name
+from student as S
+where
+    not exists (
+        (	-- 在 Biology 系开设的所有课程集合 
+            select
+                course_id
+            from course
+            where
+                dept_name = ’ Biology ’
+        )
+        except
+            (	-- 找出 S.ID 选修的所有课程
+                select
+                    T.course_id
+                from takes as T
+                where
+                    S.ID = T.ID
+            )
+    );
+```
+
+
+
+## View
+
+输出XXX最大的
+
+```sql
+CREATE VIEW < v_name> AS
+select c1,c2,… from… ;
+CREATE VIEW <v_name> (c1,c2,…) AS
+select e1,e2,… from… ;
+
+DROP VIEW <V_NAME>;
+```
+
+
+
+## Delete
+
+`delete from`后面只能跟一个table/view`
+
+例.删掉比平均工资低的老师
+
+```sql
+-- 正解
+delete from instructor
+where salary < (select avg(salary)
+               from instructor);
+-- 注意，这里里面会先执行，所以外层的删除不会影响平均数的计算
+```
+
+
+
+## Insert
+
+
+
+## Update of view
+
+view和table的区别
+
+```sql
+insert into vName values ();
+```
+
+Complex View
+
+```sql
+create view all_customer as
+select ... from...
+union
+select ... from... ;
+-- 系统不允许对复杂视图的更新(无法反应到底层表)
+```
+

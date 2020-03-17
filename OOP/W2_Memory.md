@@ -47,7 +47,7 @@ Student *pS = new Student();	// ()
 
     * 如果r是指向类数组、结构数组的，调用`delete r`理论上只会调用一次析构函数，但是所有对象都会被清理，实际上可能会有更多错误；
 
-        ```bash
+        ```sh
         warning: 'delete' applied to a pointer that was allocated with 'new[]'; did you mean 'delete[]'? [-Wmismatched-new-delete]
                 delete s;
                 ^
@@ -98,7 +98,10 @@ int main(int argc, char const *argv[])
 
 
 
-**引用传递**
+**Tips for new and delete**
 
-https://www.runoob.com/cplusplus/cpp-function-call-by-reference.html
-
+* Don't use `delete` to free memory that `new` didn't allocate.
+* Don't use `delete` to free the same block of memory twice in succession.
+* Use `delete []` if you used `new []` to allocate anarray.
+* Use `delete` (no brackets) if you used new to allocate a single entity.
+* It's safe to apply `delete` to the `null` pointer (nothing happens).

@@ -96,6 +96,8 @@ T_{Find}(M,N) = M*O(logN)
 
 # Inverted File Index
 
+https://blog.csdn.net/Woolseyyy/article/details/51559937
+
 Dict: Term + Times + Documents + Position
 
 Token Analyzer + Vocabulary Scanner + Vocabulary Insertor
@@ -105,3 +107,27 @@ Token Analyzer + Vocabulary Scanner + Vocabulary Insertor
 Term Frequent
 
 TF-IDF(TF-Inverse Document Frequency)
+
+
+
+**Term-partitioned index**(按term分类)
+A~C D~F ............ X~Z
+**Document-partitioned index**(按文件号)
+1~ 10001~ 90001~ 10000 20000 100000
+
+
+
+
+**Precision 查准率**
+
+**Recall 查全率**
+
+
+
+**User happiness**
+
+- Data Retrieval Performance Evaluation (after establishing correctness)
+    - Response time
+    - Index space
+- Information Retrieval Performance Evaluation
+    - How relevant is the answer set?
