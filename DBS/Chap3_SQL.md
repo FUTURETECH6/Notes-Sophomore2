@@ -219,3 +219,117 @@ select ... from... ;
 -- 系统不允许对复杂视图的更新(无法反应到底层表)
 ```
 
+
+
+
+
+## Transactions
+
+事务
+
+commit work: makes all updates of the transaction permanent in the database
+
+rollback work: undoes all updates performed  rollback work: undoes all updates performed by the transaction.
+
+非显式
+
+```sql
+
+```
+
+
+
+声明事务显式头尾
+
+```sql
+begin atomic
+
+end
+```
+
+## Join
+
+**Join Type**
+
+Inner, left outer, right outer, full outer
+
+PPT 3.100
+
+**Join Condition**
+
+```sql
+natural
+on <predicate>
+using (A1, A2, ...., An)
+```
+
+
+
+使用
+
+```sql
+自然连接: R natural { inner join, left join, right join, full join } S
+非自然连接: R { inner join, left join, right join, full join } S (on < 连接条件判别式 >) (using < 同名的等值属性名 >)
+```
+
+
+
+E.g. 
+
+```sql
+-- Find all customers who have either an account or a loan (but not both) at the bank. account or a loan (but not both) at the bank.
+select customer_name
+from (depositor natural full outer join borrower)
+where account_number is null or loan_number is null
+```
+
+
+
+主流DBMS的外连接表示：
+
+```sql
+-- SQL Server
+(1) SELECT loan.loan_number, branch_name, amount,customer_name
+FROM loan left outer join borrower on loan.loan_number = borrower.loan_number;
+(2) SELECT loan.loan_number, branch_name, amount, customer_name
+FROM loan , borrower
+WHERE loan.loan_number *= borrower.loan_number;
+( 注: Left join: *=, Right join: =* )
+-- MySQL
+SELECT loan.loan_number, branch_name, amount, customer_name
+FROM loan , borrower
+WHERE loan.loan_number=borrower.loan_number(+);
+【注: Right join: loan.loan_number(+) = borrower.loan_number
+[ 相当于在（入门级（入门级 + )侧附加一特殊空行与另一表中的连接属性匹配 ]
+【Left join: loan.loan_number = borrower.loan_number (+)
+```
+
+
+
+With??
+
+```sql
+with course_avg(course_no, score_avg) as
+select
+    course_no,
+    avg(score)
+from study
+group by
+    course_no
+select
+    course_name
+from course
+where
+    course_no in (
+        select
+            course_no
+        from course_avg
+        where
+            score_avg = (
+                select
+                    max(score_avg)
+                from course_avg
+            )
+    );
+```
+
