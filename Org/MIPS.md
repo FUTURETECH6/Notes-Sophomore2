@@ -32,3 +32,6 @@ b for branch
 
 sll/srl for logical
 
+
+
+`sll $t2, $s0, 3	#sll rd,rt,i`
