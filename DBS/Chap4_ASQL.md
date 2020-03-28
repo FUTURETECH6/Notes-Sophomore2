@@ -34,7 +34,7 @@ Create table instructor
 
 **clob**: **character large object** - object is a large collection of character data
 
-vWhen a query returns a large object, **a pointer is returned** rather than the large object itself.
+When a query returns a large object, **a pointer is returned** rather than the large object itself.
 
 
 
@@ -160,8 +160,6 @@ create assertion check not exists	-- 不存在同时上多节课的老师
 ## Trigger 触发器
 
 作出某些修改之后会自动触发对数据库的修改
-
-
 
 ```sql
 -- To ensure referential integrity on the time_slot_id  attribute of the section relation.
@@ -326,4 +324,239 @@ REVOKE <privilege list> ON <relation name or view name>	 FROM <user list> [ rest
     * Checking for absence of authorization loopholes becomes very difficult since it requires reading large amounts of application code.
 
 # Audit Trails
+
+# Embedded SQL
+
+先给预编译器处理再给c的编译器
+
+Oracle: Pro*C程序→预编译pcc →compiler cc → linker →.exe
+
+```cpp
+//CPP
+EXEC SQL
+    <Embedded SQL>
+END_EXEC
+    
+:variabl	// 表示c中的变量？
+```
+
+## Query
+
+**单行**
+
+```cpp
+EXEC SQL BEGIN DECLARE SECTION;
+char V_an[20], bn[20];
+float  bal;
+EXEC SQL END DECLARE SECTION;
+…….
+scanf(“%s”, V_an); //读入账号,然后据此在下面的语句获得bn,bal的值
+EXEC SQL SELECT branch_name, balance INTO :bn, :bal FROM account
+WHERE account_number= :V_an;
+END_EXEC
+printf(“%s,%s,%s”, V_an, bn, bal);
+…….
+```
+
+
+
+游标：对返回的集合进行遍历
+
+**多行**
+
+```cpp
+//Step1:Specify the query in SQL and declare a cursor for it
+EXEC SQL
+	DECLARE c CURSOR FOR
+	SELECT customer_name, customer_city
+	FROM depositor D, customer B, account A
+	WHERE D.customer_name = B.customer_name
+        and D.account_number = A.account_number
+        and A.balance > :v_amount
+END_EXEC
+
+//Step2: The open statement causes the query to be evaluated:
+EXEC SQL OPEN c END_EXEC
+
+//Step3: The fetch statement causes the values of one tuple in the result of query to be placed on host language variables.
+EXEC SQL FETCH c INTO :cn, :ccity END_EXEC
+
+//Repeated calls to fetch of successive tuples in the query result.
+//A variable called SQLSTATE in the SQLCA (SQL communication area) gets set to ‘02000’ to indicate no more data is available
+
+//Step4: The close statement causes the database system to delete the temporary relation that holds the result of the query.
+EXEC SQL CLOSE c END_EXEC
+```
+
+
+
+**Ex**
+
+```cpp
+Exec SQL include SQLCA;
+//SQL通讯区，是存放语句的执行状态的数据结构，其中
+// 有一个变量sqlcode指示每次执行SQL语句的返回代码（success, not_success）
+Exec SQL BEGIN DECLARE SECTION;
+    char bn[20], bc[30];
+Exec SQL END DECLARE SECTION;
+Exec SQL DECLARE branch_cur CURSOR FOR 
+    select branch_name, branch_city from branch;
+ ……
+Exec SQL OPEN branch_cur;
+    while (1) {  Exec SQL FETCH branch_cur INTO :bn, :bc ;
+        if (sqlca.sqlcode<> SUCCESS) BREAK;
+        ……   // 由宿主语句对bn, bc中的数据进行相关处理
+    }
+Exec SQL CLOSE branch_cur;
+
+```
+
+## Update
+
+**单行**
+
+```cpp
+Exec SQL BEGIN DECLARE SECTION;  
+    char an[20];
+    float bal;
+Exec SQL END DECLARE SECTION;
+    ……
+    scanf(“%s,%d”, an, &bal); //读入账号及要增加的存款额
+EXEC SQL update account set balance = balance + :bal
+    where account_number = :an;
+    ……
+```
+
+**多行**
+
+```cpp
+Exec SQL BEGIN DECLARE SECTION;
+   char an[20];
+   float  bal;
+Exec SQL END DECLARE SECTION;    
+EXEC SQL DECLARE csr CURSOR FOR
+    SELECT *
+    FROM account
+    WHERE branch_name = ‘Perryridge’
+    FOR UPDATE OF balance ;
+    ……
+
+//(To update tuple at the current location of cursor)
+EXEC  SQL OPEN csr ;  
+while(1) {       
+    EXEC SQL FETCH csr INTO :an, :bn, :bal ;
+    if (sqlca.sqlcode<> SUCCESS) BREAK;
+    ……   // 由宿主语句对an, bn, bal中的数据进行相关处理(如打印)
+    EXEC SQL update account
+        set balance = balance + 100
+        where CURRENT OF csr ; 
+}
+… …
+EXEC SQL CLOSE csr;
+……
+
+// Or:
+EXEC SQL delete from account
+where current of csr 
+```
+
+## Dynamic SQL
+
+使用字符串
+
+```cpp
+char *sqlprog = "update account
+    			"set balance = balance * 1.05"
+                "where account_number = ? ";
+EXEC SQL PREPARE dynprog  FROM :sqlprog;
+char v_account [10] = "A_101";
+...
+EXEC SQL EXECUTE dynprog USING :v_account;
+
+
+```
+
+# ODBC
+
+Open DataBase Connectivity
+
+**Embedded SQL vs. ODBC**
+
+* Embedded SQL: The pre_compiler is DBMS_specific.
+* ODBC provides a standardized way for connection of database to the application programmers through API (Application programming Interface).
+    * NOT DBMS_specific.
+    * Need NOT precompiling.
+
+
+
+Steps
+
+1. ODBC program first allocates an SQL environment, then a database connection handle.
+
+2. Opens database connection using SQLConnect().
+
+    Parameters for SQLConnect:
+
+    * connection handle,
+    * the server to which to connect
+    * the user identifier,
+    * password
+
+Setps:
+
+1. 分配环境句柄`HENV henv; SQLAllocEnv (&henv );`
+2. 分配连接句柄`   HDBC hdbc;SQLAllocConnect(henv, &hdbc);`
+3. 用已分配的连接句柄连接数据源`SQLConnect (hdbc, szDSN, cbDSN, szUID, cbUID, zAuthStr, cbAuthStr);`
+4. 分配语句句柄`HSTMT hstmt;SQLAllocStmt (hdbc, &hstmt);`
+5. 直接执行SQL语句`SQLExecDirect`
+    1. 记得查看返回值看执行是否成功
+    2. 若多次执行可以使用`SQLPrepare`进行准备，参数与`SQLExecDirect`相同
+6.  查询结果的获取`SQLFetch`
+7. 扫尾
+    1. 释放语句句柄`SQLFreeStmt`
+    2. 断开数据源连接`SQLDisconnect`
+    3. 释放连接句柄`SQLFreeConnect`
+    4. 释放环境句柄`SQLFreeEnv`
+
+```cpp
+int ODBCexample()     //程序结构
+{
+	RETCODE error;
+	HENV    env;      	/* environment */
+	HDBC    conn;    	/* database connection */
+	SQLAllocEnv(&env);
+	SQLAllocConnect(env, &conn);   /*建立连接句柄 */
+	SQLConnect(conn, “MySQLServer”, SQL_NTS, “user”, SQL_NTS, “password”, SQL_NTS);
+	/* 建立用户user与数据源的连接，SQL_NTS表示前一参量以null结尾 */
+    
+    //Main body of program
+	char deptname[80];
+    float  salary;
+    int  lenOut1, lenOut2;
+    HSTMT   stmt;
+	SQLAllocStmt (conn, &stmt);
+	/*为该连接建立数据区，将来存放查询结果*/
+	char * sqlquery = "select dept_name, sum (salary) from instructor group by dept_name"; /*装配SQL语句*/
+	error = SQLExecDirect (stmt, sqlquery, SQL_NTS);
+	/*执行sql语句,查询结果存放到数据区stmt ，同时sql语句执行状态的返回值送变量error*/
+
+	if (error == SQL_SUCCESS) {
+		SQLBindCol(stmt, 1, SQL_C_CHAR, deptname, 80, &lenOut1);
+		SQLBindCol(stmt, 2, SQL_C_FLOAT, &salary, 0, &lenOut2);
+	}
+	/*对stmt中的返回结果数据加以分离，并与相应变量绑定。第1项数据转换为C的字符类型,送变量deptname(最大长度为80)，lenOut1 为实际字符串长度(若＝-1代表null)，第2项数据转换为C的浮点类型送变量salary中 */
+	while (SQLFetch (stmt) >= SQL_SUCCESS) {
+		/*逐行从数据区stmt中取数据，放到绑定变量中*/
+		printf (“ % s  % f\n”, deptname, salary);  /*对取出的数据进行处理*/
+		…
+	}
+	SQLFreeStmt (stmt, SQL_DROP);  /* 释放数据区*/
+    
+	SQLDisconnect(conn);
+	SQLFreeConnect(conn);
+	SQLFreeEnv(env);
+}
+```
+
+**Note**: <u>A negative value returned for the length field indicates null value</u>
 

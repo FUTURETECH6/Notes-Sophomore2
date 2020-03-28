@@ -1,6 +1,6 @@
-# 编译
+## 编译
 
-## Link
+### Link
 
 **FIGURE 2.13** The MIPS memory allocation for program and data
 
@@ -20,19 +20,21 @@ Static和Dynamic没有实际的分界，compiler会视具体应用来操作
 
 
 
-## Load
+### Load
 
 调用动态链接库
 
 
 
-## 宏
+### 宏
 
 $at专门给宏用的
 
 <img src = "assets/macro.png">
 
-# 符号拓展
+# 数
+
+## 符号拓展
 
 note: `addi` still sign-extends!
 
@@ -61,7 +63,7 @@ note: `sltu, sltiu` for unsigned comparisons
 
 
 
-# ALU
+## ALU
 
 | ALU Control Lines        | Function         |
 | ------------------------ | ---------------- |
@@ -76,7 +78,7 @@ note: `sltu, sltiu` for unsigned comparisons
 
 
 
-## ALU加速
+### ALU加速
 
 **Carry look-ahead adder (CLA)**
 
@@ -124,25 +126,42 @@ C3=G2+P2*C2 = G2+P2*G1 + P2*P1*G0+ P2*P1*P0*c0
 C4=G3+P3*C3 = G3+P3*G2 + P3*P2*G1+P3*P2*P1*G0 + P3*P2*P1*P0*c0
 ```
 
-# 乘法
+## 乘法
 
 第一个操作数是被乘数(multiplicand)，第二个是乘数(multiplier)
 
-## Ver2
+### Ver2
 
 不移动multiplicand，右移动product，multiplier上从低到高遍历，若为1则product+=multiplicand<<i
 
-## Ver3
+### Ver3
 
 处理方式同上，但是一开始时把product的低32位用来存multiplier，每次右移product取出一个溢出位，等32次完正好product是pure的了
 
-## signed乘
+习题3.13
+
+### signed乘
 
 存住积的符号，将符号数转成非符号数进行运算
 
-## Booth算法
+### Booth算法
 
-multiplier连续n位(如a\~b)为1，则在第a位执行sub1，a+1\~b执行sll，b+1位执行add1
+PPT65
+
+multiplier连续n位(如a\~b)为1，则在第a位执行`add Mcand*2^{a}`，a+1\~b执行sll，b+1位执行`add Mcand*2^{b+1}`(从0开始记位)
+
+相当于：
+
+* 1 0 	subtract multiplicand from left
+* 1 1 	no arithmetic operation
+* 0 1 	add multiplicand to left half
+* 0 0 	no arithmetic operation
+* ALways Shift Right(sra)
+
+Arithmetic shift right:
+
+* keeps the **leftmost bit constant**
+* no change of sign bit !
 
 优势：代数运算少
 
@@ -151,8 +170,4 @@ multiplier连续n位(如a\~b)为1，则在第a位执行sub1，a+1\~b执行sll，
 一样快：0110
 
 
-
-# 除法
-
-## Ver1
 

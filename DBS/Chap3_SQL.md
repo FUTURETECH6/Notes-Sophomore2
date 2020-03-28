@@ -308,7 +308,10 @@ WHERE loan.loan_number=borrower.loan_number(+);
 
 With??
 
+龟龟MySQL好像又没有with
+
 ```sql
+-- 找出平均分最高的班级的no
 with course_avg(course_no, score_avg) as
 select
     course_no,

@@ -9,7 +9,7 @@ add tar,b,c	#
 | --------- | --------------- | -------------------------------------------- | ------------------ |
 | \$zero    | 0               | The constant value 0                         | n.a.               |
 | \$at      | 1               | For assembler                                |                    |
-| \$v0–​\$v1 | 2–3             | Values for results and expression evaluation | no                 |
+| \$v0–\$v1 | 2–3             | Values for results and expression evaluation | no                 |
 | \$a0–\$a3 | 4–7             | Arguments                                    | no                 |
 | \$t0–\$t7 | 8–15            | Temporaries                                  | no                 |
 | \$s0–\$s7 | 16–23           | Saved                                        | yes                |
