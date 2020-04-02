@@ -300,13 +300,32 @@ Users should be trained on password selection and secrecy
 ## Grant
 
 ```sql
-with grant option -- 可以把权限再给别人
+grant [select, insert, update, delete, references/*ForeignKey*/, all privileges] on <table, view> to <user, public, role>
+[with grant option] -- 可以把权限再给别人
 ```
+
+## Role
+
+课本P145
+
+```sql
+create role instructor;
+grant select on takes to instructor;
+grant dean to Amit;			-- 授予用户角色
+create role dean;
+grant instructor to dean;	-- 授予角色角色
+grant dean to Satoshi;		-- 授予用户角色
+```
+
+所以一个用户/角色有的权限包括：
+
+* 直接被授权的
+* 授权给用户/角色拥有的角色的权限
 
 ## Revoke
 
 ```sql
-REVOKE <privilege list> ON <relation name or view name>	 FROM <user list> [ restrict | cascade ]
+REVOKE [select, insert, update, delete, references/*ForeignKey*/, all privileges] ON <table, view> FROM <user list> [ restrict | cascade ]
 -- 缺省：cascade把这个人，和给这个人赋出去的一起收回
 -- restrict这个人赋出去的不收回了
 ```

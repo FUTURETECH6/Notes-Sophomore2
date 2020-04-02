@@ -288,7 +288,7 @@ print([[i for i in range(1+j*3, 4+j*3)] for j in range(0, 3)])
 
 
 
-## 数据容器：序列
+## Chapter3 数据容器：序列
 
 ### 序列操作
 
@@ -491,20 +491,20 @@ print str.join( seq );	# a-b-c
 
 #### 常用函数
 
-| **列表的常用方法或函数**              | **描述**                                                   |                           |
-| ------------------------------------- | ---------------------------------------------------------- | ------------------------- |
-| **L.append(x)**                       | 在列表L尾部追加x                                           |                           |
-| **L.clear()**                         | 移除列表L的所有元素                                        |                           |
-| **L.count(x)**                        | 计算列表L中x出现的次数                                     |                           |
-| **L.copy()**                          | 列表L的备份                                                |                           |
-| **L.extend(x)**                       | 将列表x扩充到列表L中                                       | `a.extend()[1,2])`        |
-| ==**L.index(value[,start[,stop]])**== | 计算在指定范围内value的下标，找不到则报错，得先写个`if in` | 不是find()，这是字符串的  |
-| **L.insert(index,x)**                 | 在下标index的位置插入x                                     | 若index不存在，则加到最后 |
-| **L.pop(index)**                      | 返回并删除下标为index的元素，默认是最后一个                |                           |
-| **L.remove(value)**                   | 删除值为value的第一个元素                                  |                           |
-| **L.reverse()**                       | 倒置列表L                                                  |                           |
-| **L.sort()**                          | 对列表元素排序                                             |                           |
-| **S.join(L)**                         | 用S将L(L中元素必须是string类型)连起来                      |                           |
+| **列表的常用方法或函数**              | **描述**                                                   |                              |
+| ------------------------------------- | ---------------------------------------------------------- | ---------------------------- |
+| **L.append(x)**                       | 在列表L尾部追加x                                           |                              |
+| **L.clear()**                         | 移除列表L的所有元素                                        |                              |
+| **L.count(x)**                        | 计算列表L中x出现的次数                                     |                              |
+| **L.copy()**                          | 列表L的备份                                                |                              |
+| **L.extend(x)**                       | 将列表x扩充到列表L中                                       | `a.extend()[1,2])`           |
+| ==**L.index(value[,start[,stop]])**== | 计算在指定范围内value的下标，找不到则报错，得先写个`if in` | ==不是find()，这是字符串的== |
+| **L.insert(index,x)**                 | 在下标index的位置插入x                                     | 若index不存在，则加到最后    |
+| **L.pop(index)**                      | 返回并删除下标为index的元素，默认是最后一个                |                              |
+| **L.remove(value)**                   | 删除值为value的第一个元素                                  |                              |
+| **L.reverse()**                       | 倒置列表L                                                  |                              |
+| **L.sort()**                          | 对列表元素排序                                             |                              |
+| **S.join(L)**                         | 用S将L(L中元素必须是string类型)连起来                      |                              |
 
 ### 元组
 
@@ -547,4 +547,26 @@ pool += string.digits
 pool += string.ascii_letters
 print("".join(rd.sample(pool, pwLength)))
 ```
+
+# Chapter 4 条件、循环等语句
+
+## 条件语句
+
+条件表达式：
+
+```python
+y = 10 if x > 20 else 30
+```
+
+最小公约数
+
+```python
+m, n = map(int ,input().split())
+
+while m % n != 0:
+    m, n = n, m % n	# 骚操作
+print(str(n))
+```
+
+
 

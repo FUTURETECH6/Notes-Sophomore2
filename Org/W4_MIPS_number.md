@@ -148,11 +148,11 @@ C4=G3+P3*C3 = G3+P3*G2 + P3*P2*G1+P3*P2*P1*G0 + P3*P2*P1*P0*c0
 
 PPT65
 
-multiplier连续n位(如a\~b)为1，则在第a位执行`add Mcand*2^{a}`，a+1\~b执行sll，b+1位执行`add Mcand*2^{b+1}`(从0开始记位)
+multiplier连续n位(如a\~b)为1，则在第a位执行`sub Mcand*2^{a}`，a+1\~b执行sll，b+1位执行`add Mcand*2^{b+1}`(从0开始记位)
 
-相当于：
+与Ver3结合可以做成状态机(最后一位 | 上一次右溢出位)：
 
-* 1 0 	subtract multiplicand from left
+* 1 0 	subtract multiplicand from left half
 * 1 1 	no arithmetic operation
 * 0 1 	add multiplicand to left half
 * 0 0 	no arithmetic operation
