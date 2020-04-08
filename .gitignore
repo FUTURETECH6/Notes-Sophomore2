@@ -9,3 +9,4 @@
 !*.c
 !*.py
 WeCiv_gogs
+!*.png

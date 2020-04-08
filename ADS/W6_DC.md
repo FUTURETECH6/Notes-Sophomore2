@@ -22,6 +22,10 @@ Divide $\Longrightarrow$ Conquer $\Longrightarrow$ Combine
 
 
 
+重要公式：$\Huge a^{\log_b^N} = N^{\log_b^a}$
+
+
+
 ### 最短点对问题
 
 将点集分为两部分，求左边的最短路，右边的最短路，跨越分界线的最短路
