@@ -76,6 +76,14 @@ int main () {
 
 
 
+## Name Hiding
+
+• If you redefine a member function in the derived class, <u>all other overloaded</u> functions in the base class are inaccessible.
+
+• We'll see how the keyword virtual affects function overloading next time.
+
+
+
 ## 友元
 
 

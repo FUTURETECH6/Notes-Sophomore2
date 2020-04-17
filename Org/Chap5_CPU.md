@@ -136,6 +136,18 @@ ALU操作表，观察会发现对应指令的func后两位确实与下面的op�
 | MemWrite    | None                                                         | Data  memory contents designated by the address input are replaced by value on the  Write data input. |
 | MemtoReg    | The  value fed to register Write data input comes from the Alu | The  value fed to the register Write data input comes from the data memory. |
 
+| 信号        | 源数目  | 功能定义            | 赋值0时动作     | 赋值1时动作                  |
+| ----------- | ------- | ------------------- | --------------- | ---------------------------- |
+| ALUSrc_B    | 2       | ALU端口B输入选择    | 选择寄存器B数据 | 选择32位立即数（符号扩展后） |
+| RegDst      | 2       | 寄存器写地址选择    | 选择指令rt域    | 选择指令rs域                 |
+| MemtoReg    | 2       | 寄存器写入数据选择  | 选择存储器数据  | 选择ALU输出                  |
+| Branch      | 2       | Beq指令目标地址选择 | 选择PC+4地址    | 选择转移地址（Zero=1）       |
+| Jump        | 2       | J指令目标地址选择   | 选择J目标地址   | 由Branch决定输出             |
+| RegWrite    | -       | 寄存器写控制        | 禁止寄存器写    | 使能寄存器写                 |
+| MemWrite    | -       | 存储器写控制        | 禁止存储器写    | 使能存储器写                 |
+| MemRead     | -       | 存储器读控制        | 禁止存储器读    | 使能存储器读                 |
+| ALU_Control | 000-111 | 3位ALU操作控制      | 参考表  Lab4    | Lab4                         |
+
 ### ALUop
 
 * 00：加法(sw lw)
@@ -237,9 +249,10 @@ We will use a **finite state machine** for control
 * 存值给下一个周期使用
 * 引入额外的寄存器
 
-Five Steps：
+**Five Steps**：
 
 * IF：Instruction Fetch(Memory比较慢所以不能再加任务了不然做不完)
+    * IM和DM共用一个内存了
 * ID：Instruction Decode and Register Fetch
 * EX(BC)：Execution, Memory Address Computation, or Branch Completion
 * MEM(WB)：Memory Access or R-type instruction completion
@@ -261,7 +274,7 @@ PC 的改变方式
 | ----------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | RegDst      | Select  register destination number from the rt(20:16) when WR. | Select  register destination number from the rd(15:11) when WB. |
 | RegWrite    | None                                                         | Register  destination input is written with the value on the Write data input |
-| ALUScrA     | The  first ALU operand is the PC                             | The  first ALU operand come from the A register.             |
+| ALUScrA     | The first ALU operand is the PC                              | The  first ALU operand come from the A register.             |
 | MemRead     | None                                                         | Memory  contents at the location specified by the address input is put on the Memory  data out. |
 | MemWrite    | None                                                         | Memory  contents at the location specified by  the address input are replaced by value on the Write data input. |
 | MemtoReg    | The  value fed to register Write data input comes from the ALUOut | The  value fed to the register Write data input comes from the MDA. |
@@ -372,6 +385,16 @@ ALU控制真值表还是这个：
 
 ## 微程序&微指令
 
+一个机器指令：一个微程序：多个微指令
+
+微指令构造：
+
+| 操作控制字段     | 顺序控制字段                                                 |
+| ---------------- | ------------------------------------------------------------ |
+| 存储操作控制字段 | 判别字段：都为0时跳转到下址，否则从微程序入口取新的微指令<br />下址字段：下一条微指令的地址 |
+
+![](assets/image-20200414214334106.png)
+
 <img src="./assets/image-20200408101454903.png" style="zoom:33%;" />
 
 下图：相当于左边是主函数，右边是两个子函数
@@ -398,12 +421,48 @@ ALU控制真值表还是这个：
 
 | Exception type        | Vector address |
 | --------------------- | -------------- |
-| undefined instruction | c0 00 00 00~H~ |
-| overflow              | c0 00 00 20~H~ |
+| undefined instruction | C0 00 00 00~H~ |
+| overflow              | C0 00 00 20~H~ |
+
+EPC寄存器存放异常的位置(PC)
+
+Cause寄存器
+
+* 0：undefined instruction
+* 1：overflow
+
+
+
+* add control signal
+    * **CauseWrite** for CauseReg
+    * **EPCWrite** for EPC
+        * EPC = <u>PC - 4</u>  (completed by ALU)，其实不做也可以，自己知道然后看上一句就好了
+* process of control 
+    * CauseReg = 0 or 1
+    * EPC = PC - 4
+    * PC <--- address of process routine ( ex. c0000000 )
+
+
+
+![](assets/image-20200415101742733.png)
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 ----
+
+# 期中练习
 
 ```
 addi $r, $zero, BIG
@@ -431,7 +490,12 @@ C
 2*1.3 + 3*2 + 1.5 + 4.6 + 1.7 = 16.4
 ```
 
+**Booth算法**
 
 
-----
 
+**计算浮点数的那个**
+
+先后与s3 s4与可以得到指数位，把原数字减掉指数位然后右移
+
+**设计addm**

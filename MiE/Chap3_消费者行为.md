@@ -170,7 +170,9 @@ MU = ΔTUx/ΔQx 或 dTU/dQ
 
 
 
-### 商品的边际替代率(Marginal Rate of Substitution)
+### 商品的边际替代率
+
+**(Marginal Rate of Substitution)**
 
 保持总效用不变，增加以单位某种商品消费量必须放弃的另一商品消费量
 
@@ -196,7 +198,7 @@ $\rm 总效用不变 \Longrightarrow  ΔTU_X = -ΔTU_Y \\\Longrightarrow ΔX \ti
 
 边际替代率为常数，不递减
 
-![image-20200326133224909](W4_消费者行为.assets/image-20200326133224909.png)
+<img src="assets/image-20200326133224909.png" style="zoom:33%;" />
 
 **完全互补品**
 
@@ -204,13 +206,13 @@ $\rm 总效用不变 \Longrightarrow  ΔTU_X = -ΔTU_Y \\\Longrightarrow ΔX \ti
 
 $\rm MRS_{镜片,镜架} = 0\ or\ \infin$
 
-![image-20200326133336052](W4_消费者行为.assets/image-20200326133336052.png)
+<img src="assets/image-20200326133336052.png" style="zoom:33%;" />
 
 **一个好商品和一个坏商品**
 
 中药是坏商品(难喝)，冰糖是好商品，
 
-![image-20200326150129258](W4_消费者行为.assets/image-20200326150129258.png)
+<img src="assets/image-20200326150129258.png" style="zoom:33%;" />
 
 ## 消费预算线(预算constraint)
 
@@ -227,7 +229,7 @@ $\rm MRS_{镜片,镜架} = 0\ or\ \infin$
 
 ## 序数效用理论消费者均衡的实现
 
-![image-20200326134202695](W4_消费者行为.assets/image-20200326134202695.png)
+<img src="assets/image-20200326134202695.png" style="zoom:33%;" />
 
 为什么G、F不行？因为效用水平是I1，肯定比E的I2低
 
@@ -243,20 +245,19 @@ $\rm MRS_{镜片,镜架} = 0\ or\ \infin$
 
 ## 需求曲线的推导
 
-
-<img src="W4_消费者行为.assets/image-20200326134527052.png" alt="image-20200326134527052"  />
+<img src="assets/image-20200326134527052.png" style="zoom:33%;" />
 
 ## 恩格尔曲线
 
-![image-20200326135113018](W4_消费者行为.assets/image-20200326135113018.png)
+<img src="assets/image-20200326135113018.png" style="zoom:33%;" />
 
 不同曲线：课本P118
 
-![image-20200326135028611](W4_消费者行为.assets/image-20200326135028611.png)
+<img src="assets/image-20200326135028611.png" style="zoom: 25%;" />
 
 
 
-![image-20200326135056953](W4_消费者行为.assets/image-20200326135056953.png)
+<img src="assets/image-20200326135056953.png" style="zoom:25%;" />
 
 ◆恩格尔曲线：表明消费者的货币收入与某种商品需求量之间关系的曲线，也称收入需求曲线。
 ◆恩格尔定律：收入少的家庭，用于食品消费支出的比例大于其它消费支出(即恩格尔系数大于0.5)；收入多的家庭，用于食品消费支出的比例小于其它消费支出(即恩格尔系数小于0.5)。
@@ -283,13 +284,13 @@ $\rm MRS_{镜片,镜架} = 0\ or\ \infin$
 >
 > 由AB_1平移来的 
 
-![](W4_消费者行为.assets/image-20200326141056489.png)
+<img src="assets/image-20200326141056489.png" style="zoom:33%;" />
 
 虽然收入效应会抵消一部分替代效应的
 
 吉芬商品
 
-![image-20200326141509837](W4_消费者行为.assets/image-20200326141509837.png)
+<img src="assets/image-20200326141509837.png" style="zoom:25%;" />
 
 
 
@@ -297,7 +298,7 @@ $\rm MRS_{镜片,镜架} = 0\ or\ \infin$
 
 工资简介提供效用、闲暇直接提供效用
 
-![image-20200326141800975](W4_消费者行为.assets/image-20200326141800975.png)
+<img src="assets/image-20200326141800975.png" style="zoom:33%;" />
 
 收入水平提高
 
@@ -307,11 +308,11 @@ $\rm MRS_{镜片,镜架} = 0\ or\ \infin$
 
 T2也有可能在T0右边，因为工资上升到一定水平后收入效应大于替代效应
 
-![image-20200326142105953](W4_消费者行为.assets/image-20200326142105953.png)
+<img src="assets/image-20200326142105953.png" style="zoom:33%;" />
 
 ### 对利息征税：收入效应和替代效应
 
-![](assets/image-20200402133931755.png)
+<img src="assets/image-20200402133931755.png" style="zoom:33%;" />
 
 S就是存款能产生的钱
 

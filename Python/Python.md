@@ -286,7 +286,15 @@ myList = [2 * number for number in [1,2,3,4,5]]
 print([[i for i in range(1+j*3, 4+j*3)] for j in range(0, 3)])
 ```
 
+换硬币用列表推导式写
 
+```python
+n = int(input())
+ls = [(i, j, k) for i in range(n//5, 0, -1) for j in range(n//2, 0, -1) for k in range(n, 0, -1) if 5*i+2*j+k==n]
+for i in ls:
+    print("fen5:%d, fen2:%d, fen1:%d, total:%d" % (i[0], i[1], i[2], i[0]+i[1]+i[2]))
+print("count = %d" % len(ls))
+```
 
 # Chapter3 数据容器：序列
 
@@ -584,7 +592,7 @@ else:
     print("Not found")
 # Or
 i = 0
-while i <len[ls]:
+while i < len[ls]:
     if ls[i] == tar:
         print("Found")
         break;
@@ -596,6 +604,27 @@ else:
 
 ## 异常
 
+常见异常
+
+| **异常名称**           | **描述**                    |
+| ---------------------- | --------------------------- |
+| **SystemExit**         | 解释器请求退出              |
+| **FloatingPointError** | 浮点计算错误                |
+| **OverflowError**      | 数值运算超出最大限制        |
+| **ZeroDivisionError**  | 除(或取模)零 (所有数据类型) |
+| **KeyboardInterrupt**  | 用户中断执行(通常是输入^C)  |
+| **ImportError**        | 导入模块/对象失败           |
+| **IndexError**         | 序列中没有此索引(index)     |
+| **RuntimeError**       | 一般的运行时错误            |
+| **AttributeError**     | 对象没有这个属性            |
+| **IOError**            | 输入/输出操作失败           |
+| **OSError**            | 操作系统错误                |
+| **KeyError**           | 映射中没有这个键            |
+| **TypeError**          | 对类型无效的操作            |
+| **ValueError**         | 传入无效的参数              |
+
+### try-except
+
 捕获所有异常
 
 ```python
@@ -603,7 +632,7 @@ try:
     正常的操作
     ......................
 except:
-    发生异常，执行这块代码
+    发生(任意)异常，执行这块代码
     ......................
 else:
     如果没有异常执行这块代码
@@ -625,6 +654,44 @@ else:
     fh.close()
 ```
 
+```python
+try:
+    res = a[i] / b[i]
+except IndexError:
+    break
+except ZeroDivisionError:
+    print("b[i]为0")
+except TypeError:
+    print("Type error")
+else:
+    print(r)	# 没发生异常执行
+```
+
+```python
+try:
+    res = a[i] / b[i]
+except(TypeError, ZeroDivisionError) as e:
+    print(e)
+else:
+    print(r)	# 没发生异常执行
+```
+
+```python
+In [6]: a = [1, 2, 3] 
+   ...: b = [0, 'a', 4] 
+   ...: for i in range(3): 
+   ...:     try: 
+   ...:         res = a[i] / b[i] 
+   ...:     except (TypeError, ZeroDivisionError) as e: 
+   ...:         print(e) 
+   ...:     else: 
+   ...:         print(res)    # 没发生异常执行 
+   ...:                                                                         
+division by zero
+unsupported operand type(s) for /: 'int' and 'str'
+0.75
+```
+
 捕获多个异常：
 
 ```python
@@ -641,3 +708,15 @@ else:
 ### try-finally 语句
 
 try-finally 语句无论是否发生异常都将执行最后的代码。
+
+
+
+
+
+# Apppppppendix
+
+```python
+import math
+math.fabs(x)	# 浮点绝对值
+```
+

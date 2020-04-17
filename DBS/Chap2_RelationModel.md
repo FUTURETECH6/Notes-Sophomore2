@@ -25,6 +25,8 @@ $t[A_i]$ e.g. $t[name]$
 
 ### Key
 
+==Attributes that form a candidate key of a relation, i.e. attributes of candidate key, are called **prime** attributes.==
+
 码
 
 * superkey超码：一个或多个属性的**集合**，可以唯一地区分不同的元组

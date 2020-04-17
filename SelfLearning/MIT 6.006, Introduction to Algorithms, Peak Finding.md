@@ -18,7 +18,7 @@ f(n):
 >
 > T(N) >= 2T(N-2) $\Longrightarrow$ T(N) >= 2^N/2^ $\Longrightarrow$ T(N) = Ω(2^N/2^)
 
-### Memorized DP
+### Memorized DP(Top down)
 
 <u>DP的技巧：Memorize：put one in **dict**, and check before compute</u>
 
@@ -103,3 +103,4 @@ don't knwo how? guess and find the best one
 
 
 subprobl
+

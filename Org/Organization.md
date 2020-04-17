@@ -35,3 +35,8 @@ sll/srl for logical
 
 
 `sll $t2, $s0, 3	#sll rd,rt,i`
+
+
+
+互为补码的绝对值相加=模
+

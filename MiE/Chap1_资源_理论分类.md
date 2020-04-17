@@ -27,11 +27,11 @@
 
 
 
-**生产可能性边界PPF**(机会成本、边际转换率MRT与技术进步)
+**生产可能性边界PPF**(机会成本、边际转换率MRT与技术进步)w
 
 大炮与黄油
 
-<img src="200227.assets/image-20200227150719945.png" alt="image-20200227150719945" style="zoom:50%;" />
+<img src="assets/image-20200227150719945.png" style="zoom:50%;" />
 
 Productive Possibility Frontier是将现有资源**充分利用**、技术既定的情况下能生产出的两种物品的最大值的组合曲线					
 
@@ -164,7 +164,7 @@ cosumer --cosumer_expenditure--> firm
 
 
 
-<img src="200227.assets/image-20200227152430118.png" alt="image-20200227152430118" style="zoom:50%;" />
+<img src="assets/image-20200227152430118.png" style="zoom:50%;" />
 
 > 请问老师，为甚么经济资源跟非经济资源最后都一定会是经济资源？(如果它们的最终都会是经济商品我能理解，但有些资源产出的经济商品也是免费的呀？)
 >

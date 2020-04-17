@@ -201,7 +201,20 @@ int main() {
 }
 ```
 
+## const和指针
 
+```cpp
+int a = 1;
+const int b = 2;
+const int *p = &b;
+*p = 0;	// Wrong
+p = &a;	// Ok
+*p = 0;	// Still wrong(`a` seen as const int)
+```
 
-# Class
+```cpp
+const int *p = &a;	// 常量指针
+int const *p = &a;	// 常量指针
+int *const p = &a;	// 指针常量
+```
 
