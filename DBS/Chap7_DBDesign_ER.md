@@ -36,7 +36,7 @@ Attribute types:
 
 A relationship set is a set of relationship of the same type. example:`advisor( s_ID,  i_ID)`
 
-Formally, a relationship set is a mathematical relation among n >= 2 entities, each taken from entity sets `{(e1, e2, … en) | e1 \in E1, e2 \in E2, …, en \in En}` where (e1, e2, …, en) is a relationship，Ei  is entity set. Example: 	(98988, 76766) \in advisor, where  98988 \in student,  76766 \in instructor, where 98988 \in student, 76766 \in instructor
+Formally, a relationship set is a mathematical relation among n >= 2 entities, each taken from entity sets `{(e1, e2, … en) | e1 \in E1, e2 \in E2, …, en \in En}` where (e1, e2, …, en) is a relationship，Ei  is entity set. Example: 	(98988, 76766) \in advisor, where  98988 \in student,  76766 \in instructor, where 98988 \in student, 76766 \in instructor
 
 ## Degree
 

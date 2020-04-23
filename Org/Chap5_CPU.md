@@ -266,9 +266,9 @@ PC 的改变方式
 
 ### 额外的硬件设计
 
-![](assets/image-20200401234930595.png)
+<img src="assets/image-20200401234930595.png" style="zoom:50%;" />
 
-![](assets/image-20200401235318095.png)
+<img src="assets/image-20200418101212156.png" style="zoom:50%;" />
 
 | Signal name | Effect when deasserted(=0)                                   | Effect when asserted(=1)                                     |
 | ----------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
@@ -444,7 +444,7 @@ Cause寄存器
 
 
 
-![](assets/image-20200415101742733.png)
+<img src = "./assets/image-20200415101742733.png">
 
 
 

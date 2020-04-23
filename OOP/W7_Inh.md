@@ -76,6 +76,38 @@ int main () {
 
 
 
+## 初始化列表
+
+```cpp
+#include <iostream>
+
+using namespace std;
+
+class Base {
+public:
+    Base() {
+        cout << "Base::Base()\n";
+    }
+};
+
+class Child : public Base {
+public:
+    Child(): Base() {
+        cout << "Child::Child()\n";
+    }
+};
+
+int main(int argc, char const *argv[])
+{
+    Child c;
+    return 0;
+}
+// Output:
+// Base::Base()
+// Child::Child()
+// [Finished in 0.4s]
+```
+
 ## Name Hiding
 
 • If you redefine a member function in the derived class, <u>all other overloaded</u> functions in the base class are inaccessible.

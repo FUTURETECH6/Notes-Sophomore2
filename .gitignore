@@ -1,12 +1,2 @@
 .DS_Store
-*.*
-!.gitignore
-!*.md
-!*.txt
-!*.rtf
-!*.svg
-!*.assets
-!*.c
-!*.py
 WeCiv_gogs
-!*.png

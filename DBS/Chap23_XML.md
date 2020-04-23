@@ -1,3 +1,5 @@
+[TOC]
+
 ==<!--考试有大题，去装软件-->==
 
 # Structure
@@ -303,7 +305,11 @@ Ex.3
 </xs:schema>
 ```
 
+**说明**
 
+* Choice of “xs:” was ours - any other namespace prefix could be chosen
+* Element “university” has type “universityType”, which is defined separately
+    * <u>xs:complexType is used later to create the named complex type “UniversityType”</u>
 
 
 
@@ -347,7 +353,7 @@ Ex.
     * Element and attribute nodes (except for the root node) have a single parent, which is an element node
     * The root node has a single child, which is the root element of the document
 
-## Query
+## querying/translation lang
 
 ### XPath
 
@@ -392,11 +398,13 @@ Ex.
     * `*`：所有子节点
     * `..`：父节点
 
-## XQuery
+### XQuery
 
 Based on W3C 2005 Draft
 
-FLOWR
+格式更像shell和cmake这种上古描述性的而不是高级语言
+
+**FLOWR**
 
 * for
     * SQL from
@@ -406,13 +414,13 @@ FLOWR
 * order by
     * SQL order by
 * result
-    * select
+    * SQL select
 
 ```xquery
 for $x in /university-3/course
 let $courseId := $x/@course_id
 where $x/credits > 3
-return <course_id> { $courseId } </course_id>	<!--大括号表示里面是变量，否则返回值就是字符串的"$courseID"，但是整个返回值还是文本型的，所有tag也会被返回-->
+return <course_id> { $courseId } </course_id>	<!--大括号表示里面是变量，否则返回值就是字符串的"$courseID"，但是整个返回值还是文本型的，所以tag也会被返回-->
 
 
 for $x in /university-3/course[credits > 3]
@@ -422,9 +430,9 @@ return <course_id> { $x/@course_id } </course_id>
 return element course_id { element  $x/@course_id } 
 ```
 
-### XQuery Syntax
+#### XQuery Syntax
 
-#### Join
+##### Join
 
 ```xquery
 <!--Joins are specified in a manner very similar to SQL-->
@@ -442,7 +450,7 @@ return <course_instructor> { $c $i } </course_instructor>
 
 
 
-#### Nested Query
+##### Nested Query
 
 ```xquery
 <university-1> 
@@ -461,11 +469,14 @@ return <course_instructor> { $c $i } </course_instructor>
     </instructor>
 }
 </university-1>
+
+<!--总的返回值-->
+"<univrsity-1><department>X系 X系的课</department><instructor>X导师 X导师的课</instructor></university-1>"
 ```
 
+<u>怎么个嵌套法？是直接笛卡尔积？</u>
 
-
-#### Sort
+##### Sort
 
 The `order by` clause can be used at the <u>**end** of any expression</u>. 
 
@@ -476,12 +487,23 @@ return <instructor> { $i/* } </instructor>
 ```
 
 ```xquery
-<university-1> {        for $d in /university/department        order by $d/dept name        return             <department>                 { $d/* }                 { for $c in /university/course[dept name = $d/dept name]                   order by $c/course id                   return <course> { $c/* } </course> }             </department>      } </university-1>
+<university-1> {
+        for $d in /university/department
+        order by $d/dept name
+        return
+             <department>
+                 { $d/* }
+                 { for $c in /university/course[dept name = $d/dept name]
+                   order by $c/course id
+                   return <course> { $c/* } </course> }
+             </department>
+      } </university-1>
+<!--输出系和系的课，且先按系排序再按课排序-->
 ```
 
 
 
-### Function
+#### Function
 
 * Types are optional for function parameters and return values
 * The * (as in decimal*) indicates a sequence of values of that type
@@ -494,12 +516,18 @@ return <instructor> { $i/* } </instructor>
 找到给定ID的老师所在的系开设的所有课程
 
 ```xquery
-declare function local:dept_courses($iid as xs:string)           as element(course)* {    for $i in /university/instructor[IID = $iid],          $c in /university/courses[dept_name = $i/dept name]    return $c}
+declare function local:dept_courses($iid as xs:string) 
+          as element(course)* 
+{
+    for $i in /university/instructor[IID = $iid],
+          $c in /university/courses[dept_name = $i/dept name]
+    return $c
+}
 ```
 
 
 
-## XSLT
+### XSLT
 
 The **XML Stylesheet Language (XSL)** was originally designed for generating HTML from XML
 
@@ -511,7 +539,7 @@ The **XML Stylesheet Language (XSL)** was originally designed for generating HTM
 
 **XSLT** is a general-purpose transformation language. Can translate XML to XML, and XML to HTML using rules called **templates**
 
-### Template
+#### Template
 
 template tag
 
@@ -531,7 +559,7 @@ template tag
 
 > 所有这个match*有什么用？？？？
 
-#### Output
+##### Output
 
 Ex. to wrap results in new XML elements？
 
@@ -553,7 +581,7 @@ Ex. to wrap results in new XML elements？
     * XSLT provides a construct xsl:attribute to handle this situation
         * `xsl:attribute` adds attribute to the preceding element
 
-#### Structural Recursion
+##### Structural Recursion
 
 Template action can apply templates recursively to the contents of a matched element
 
@@ -570,14 +598,17 @@ Template action can apply templates recursively to the contents of a matched ele
 	     </xsl:template>
 	     <xsl:template match=“*”/>
 <!--Example output:-->
-<customers>        <customer> John </customer>        <customer> Mary </customer>     </customers>
+<customers>
+        <customer> John </customer>
+        <customer> Mary </customer>
+     </customers>
 ```
 
 
 
-### XSLT Syntax
+#### XSLT Syntax
 
-#### Join
+##### Join
 
 * XSLT keys allow elements to be looked up (indexed) by values of subelements or attributes
 
@@ -602,7 +633,7 @@ Template action can apply templates recursively to the contents of a matched ele
     	<xsl:template match=“*”/>
     ```
 
-#### Sort
+##### Sort
 
 
 
@@ -611,23 +642,20 @@ Template action can apply templates recursively to the contents of a matched ele
 两种
 
 * SAX (Simple API for XML)
-
     * Based on parser model, user provides event handlers for parsing events 
         * E.g. start of element, end of element
         * Not suitable for database applications
-
 * DOM (Document Object Model)
-
     * XML data is parsed into a tree representation 
-
     * Variety of functions provided for traversing the DOM tree
-
-    * E.g.:  Java DOM API provides Node class with methods
+    * E.g.:  Java DOM API provides Node class with methods
 
         ```java
-        getParentNode( ), getFirstChild( ), getNextSibling( )          getAttribute( ), getData( ) /*(for text node)*/          getElementsByTagName( ), …
+        getParentNode(), getFirstChild(), getNextSibling()
+        getAttribute(), getData() /*(for text node)*/
+        getElementsByTagName(), ...
         ```
-
+    
     * Also provides functions for updating DOM tree
 
 # Storage of XML
