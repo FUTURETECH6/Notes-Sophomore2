@@ -53,20 +53,60 @@ void Person::init( const char *s ) {
 注意这个
 
 ```cpp
-Person foo(Person p){
+class Person {
+public:
+    char* name;
+    Person( const char *s ) {
+        cout << "Person(const char*)" << endl;
+        init(s);
+    }
+    Person( const Person &other ) {
+        cout << "Person(const Person &)" << endl;
+        init(other.name);
+    }
+    void init( const char *s ) {
+        name = new char[::strlen(s) + 1];
+        ::strcpy(name, s);
+    }
+};
+
+Person foo(Person p) {
     cout << "foo()\n";
     return p;
 }
-Person bar(const char *s){
+Person bar(const char *s) {
     cout << "bar()\n";
     return Person(s);
 }
 
-main(){
-    Person p1 = foo("Hello1");	// 先拷贝构造了一个对象，再把对象返回
-    Person p2 = bar("Hello2");	// 进去之后产生了一个临时对象Person(s)，然后再把临时对象拷贝给p2
+int main() {
+    Person p1 = foo("Hello1");  // 先拷贝构造了一个对象，再把对象返回，相当于foo(Person("Hello1"))
+    Person p2 = bar("Hello2");  // 进去之后产生了一个临时对象Person(s)，然后再把临时对象拷贝给p2
+    cout << p1.name << endl;
+    cout << p2.name << endl;
 }
 // 要看到效果要在编译的时候加上 -fno-elide-constructors 关掉拷贝构造优化。若优化之后，bar会直接构造p2，相当于Person p2(s)
+
+// 没关优化的输出
+Person(const char*)
+foo()
+Person(const Person &)
+bar()
+Person(const char*)
+Hello1
+Hello2
+// 关闭优化的输出
+Person(const char*)
+Person(const Person &)	// Person("Hello1")拷贝构造给foo中的p
+foo()
+Person(const Person &)	// 本地p拷贝给返回值
+Person(const Person &)	// 返回值拷贝给p1
+bar()
+Person(const char*)		// 字符串拷贝构造
+Person(const Person &)	// 本地p拷贝给返回值
+Person(const Person &)	// 返回值拷贝给p1
+Hello1
+Hello2
 ```
 
 

@@ -10,21 +10,25 @@ BF(Balance Factor)：左子树高减右
 
 在保持平衡的同时要注意二叉树条件`L<M<R`的保持
 
-<u>多个冲突调离trouble maker(只有一个，即新插入的)最近的那个trouble finder(被破坏节点，可能有多个)</u>；通过递归的方式从下往上找trouble finder即可
+<u>多个冲突调离trouble maker(只有一个，即新插入的)**最近**的那个trouble finder(被破坏节点，可能有多个)</u>；通过递归的方式从下往上找trouble finder即可
 
 高为H的最少节点：f(h)=f(h-1)+f(h-2)+1
 
 # Splay
 
+摊还代价为logN
+
+将每次访问的节点翻转到根节点
+
 https://www.cs.usfca.edu/~galles/visualization/SplayTree.html
 
 为什么全部用单旋转(Zig)不行：不会显著改变path上其他节点的深度甚至有可能会往下推
 
-Zig：仅在parent为根节点时进行
+Zig：SingleRotation，仅在parent为根节点时进行
 
-ZigZag/ZagZig：同LR/RL(先转爸爸再转爷爷(此时已经是爸爸了))
+ZigZag/ZagZig：DoubleRotation，同LR/RL(先转爸爸再转爷爷(此时已经是爸爸了))
 
-ZigZig/ZagZag：reverse(LL$\Rightarrow$RR, RR$\Rightarrow$LL，先转爷爷再转爸爸)
+ZigZig/ZagZag：SingleRotation，reverse(LL$\Rightarrow$RR, RR$\Rightarrow$LL，先转爷爷再转爸爸)
 
 ```c++
 void splay(node *x) {	// Find
@@ -56,9 +60,9 @@ void splay(node *x) {	// Find
 
 删除：访问待删除元素，得到左右子树，访问左子树最大元素(一路向右)使其到 达根，将右子树作为左子树右儿子。
 
+**势能函数**：$\displaystyle \Phi(T) = \sum_{i=1}^n\log S(i)$(S(i)表示子树i中总节点数，日中R(i)=logS(i)又被称为rank)
 
-
-Search的瘫痪分析：logN， 
+amortized cost 在PPT25
 
 # Amortized(均摊) Analysis
 
@@ -98,7 +102,7 @@ $\rm \Large T_{amortized}= \frac{\sum \hat c_i(\geqslant \sum c_i)}{n}{}$
 
 D表示状态
 
-credit = Φ(D_i)-Φ(D_{i-1})
+==credit = Φ(D\_i)-Φ(D\_{i-1}) >= 0(经常用这个进行判定)==
 
 其中Φ()为势能函数
 

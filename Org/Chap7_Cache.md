@@ -20,11 +20,11 @@ Our initial focus:  two levels (upper, lower)
 
 * block: minimum unit of data (block) for transfers
 * hit: data requested is in the upper level(比如在Cache中hit了就不用去Memory找)
-    * **HitTime**: The time to access the upper level of the memory hierarchy, which includes the time needed to determine whether the access is a hit or a miss. 在upper找到的时间(包括决定是否hit的时间)
+    * **Hit Time**: The time to access the upper level of the memory hierarchy, which includes the time needed to determine whether the access is a hit or a miss. 在upper找到的时间(包括决定是否hit的时间)
 * miss: data requested is not in the upper level
     * DMC方法中Cache中所需的单元格被占用了也叫miss
     * **Miss Penalty**: The time to replace a block in the upper level with the corresponding block from the lower level, plus the time to deliver this block to the processor. 
-    * 没找到也需要加上hittime：如90%hit，10%miss，总时间为：HitTime\*100% + MissPenalty\*10%
+    * miss也需要加上hit time：如90%hit，10%miss，总时间为：HitTime\*100% + MissPenalty\*10%
 
 ```mermaid
 graph LR
@@ -109,7 +109,7 @@ Ex. 1-word Block
 
 **分块**：例如1024Word(4Byte/Word)的内存，分为256块，则第61个Word的主存地址为00001111(块号)01(块内地址)
 
-Tag直接存储`BlockAddr_in_Memory`，
+Tag直接存储`BlockAddr_in_Memory`，🈚️Index
 
 (这个扫描不是巨慢？？
 
@@ -189,12 +189,12 @@ Ex. 2-Way Set-Associative Cache(1 word/block; 2 blocks/set; 4 blocks/cache; henc
 
 先找对应index的，如果V是低电平或者tag中的内容不对，则是miss
 
-**Read miss**(冯诺依曼，因为混在一起miss概率会加大)
+**Read miss**(L1用哈佛，因为混在一起miss概率会加大)
 
 * instruction cache miss
 * data cache miss
 
-inst cache miss4
+instruction cache miss：4steps
 
 1. **stall(挂起) the CPU**: Send the original PC value (current PC-4) to the memory. (等你去内存找回来我可以先去完成其他一堆程序了)
 2. **fetch block from memory**: Instruct main memory to perform a read and wait for the memory to complete its access.
@@ -210,11 +210,12 @@ inst cache miss4
         * Wrote the data into only the data cache
         * Strategy ---- write back data from the cache to memory later (later一般是指程序结束之后)
         * Fast，两者相差很大用这种
-        * 需要加一个dirty位来进行判断
+        * 需要加一个[dirty](# 脏位)位来进行判断
     * write-through: Ensuring Consistent (总是写到内存，(一写到底through))
         * Write the data into both the memory the cache
         * Strategy ---- writes always update both the cache and the memory
-        * Slower----write buffer，两者差距不大用这种
+        * Slower----**write [buffer](# buffer)**，两者差距不大用这种
+        * 不需要dirty，有valid就够了
 * Write misses(写东西，tag对不上):
     * read the entire block from memory into the cache, then write the word using \-back or \-through
     * Write allocate 
@@ -222,12 +223,12 @@ inst cache miss4
         * 看脏位
             * 1：先把原来东西写到内存，再用新值冲掉
             * 0：没被写过，直接冲
-    * Write around (no write allocate) 
-        * The block is only written to main memory 
-        * It is not stored in the cache. 
-    * In general, write-back caches use write-allocate , and write-through caches use write-around. 
+    * Write around (no write allocate)
+        * The block is only written to main memory
+        * It is not stored in the cache.
+    * In general, <u>write-back caches use write-allocate</u>(之后要hit必须cache里有东西), and <u>write-through caches use write-around</u>.(无所谓，反正hit了也要写到mem，跟cache没啥关系)
 
-**脏位**
+#### 脏位
 
 * The bit indicates that its associated block of cache has been modified and has not been saved to memory yet. [What does 'dirty' mean in the context of caching? - Quora](https://www.quora.com/What-does-dirty-mean-in-the-context-of-caching)
 * CPU向Cache上的某Block写过东西之后Block的dirtyBit被置位。之后要更新Cache的时候，如果dirty是1就必须先把当前的写到Memory(此时复位？)再更新，如果是0就直接更新。
@@ -261,9 +262,9 @@ inst cache miss4
 
 ### Basic
 
-假设：一个clk发送地址；15个clk访问初始化(找到地址)；1个clk传1 word数据；4 words/block, 4 bytes/words
+假设：1个clk发送地址；15个clk访问初始化(找到地址)；1个clk传1 word数据；4 words/block, 4 bytes/words
 
-因此1word数据要17clk，传1 block要`Miss Penalty = 1 + 4 ×(1 + 15) = 65clk`(地址只用传一次)
+因此1word数据要17clk，传1 block要`Miss Penalty = 1 + 4 ×(1 + 15) = 65clk`(地址只用传一次，为什么？内存管理会自增吗？)
 
 ${\rm Bandwidth} 带宽 = \frac{16B}{65clk} \approx \frac14$
 
@@ -287,7 +288,7 @@ ${\rm Bandwidth} 带宽 = \frac{16B}{17clk} \approx 0.98$
 
 每次都把其他的准备好
 
-需要`Miss Penalty = 1 + 15 + (4 × 1) = 20clk`(发地址一次，读一次，传出四次)
+需要`Miss Penalty = 1 + 15 + (4 × 1) = 20clk`(发地址一次，读一次(一次完成四个)，传出四次)
 
 ${\rm Bandwidth} 带宽 = \frac{16B}{20clk} \approx 0.8$
 
@@ -301,17 +302,7 @@ ${\rm Bandwidth} 带宽 = \frac{16B}{20clk} \approx 0.8$
 
 ## Cache性能
 
-`CPU time = (CPU execution clock cycles 􏰃+ Memory-stall clock cycles) × Clock cycle time`
 
-`Memory-stall clock cycles 􏰀= (Read-stall cycles 􏰃+ Write-stall cycles)`
-
-读操作阻塞的周期：`Read_stall_cycles = (Reads/Program) × Read_miss_rate × Read_miss_penalty`
-
-写操作阻塞的周期：`Write_stall_cycles = ((Writes/Program) × Write_miss_rate × Write_miss_penalty) + (Write_buffer_stalls)`
-
-写缓冲区阻塞：`Write_buffer_stalls`：个人理解应该值得是连续多次写操作中，下一次得等上一次写完才可以写。取决于频率和write的时机(？)，因此没办法量化计算。
-
-存储器阻塞时钟周期数：`Memory-stall clock cycles = (Memory_accesses/Program) × Miss_rate × Miss_penalty = (Instructions/Program) × (Misses/Instruction) × Miss_penalty`
 
 ### buffer
 
@@ -336,22 +327,25 @@ Block👆，Index👇
 两种启动方式
 
 * 冷启动慢，但是开机之后都很流畅
-
 * 冷启动快，但是开机之后得不断加载所以会卡](# 映射方式)
 
-    。。。
 
-    CPU_time = I × CPI × clk_time;
 
-    CPU_time = (CPU_execution_cycles + Memory_stall_cycles) × clk_time
+`CPU time = (CPU execution clock cycles 􏰃+ Memory-stall clock cycles) × Clock cycle time`
 
-    Memory-stall clock cycles = # of instructions × miss ratio × miss penalty = Read-stall cycles + Write-stall cycles
+读操作阻塞的周期：`Read_stall_cycles = (Reads/Program) × Read_miss_rate × Read_miss_penalty`
 
-    。。。
+写操作阻塞的周期：`Write_stall_cycles = ((Writes/Program) × Write_miss_rate × Write_miss_penalty) + (Write_buffer_stalls)`
 
-    加上R/W：
+写缓冲区阻塞：`Write_buffer_stalls`：个人理解应该指的是连续多次写操作中，下一次得等上一次写完才可以写。取决于频率和write的时机(比如你要是能保证mem任意时刻写一次的时间之内不会遇到其他的写要求，那就不存在这个问题)，因此没办法量化计算。
 
-    。。。
+存储器阻塞时钟周期数：`Memory-stall clock cycles `
+
+\\            `􏰀= (Read-stall cycles 􏰃+ Write-stall cycles)`
+
+\\            `= (Memory_accesses/Program) × Miss_rate × Miss_penalty`(忽略写缓冲区阻塞，共用读写的MissRate和MissPenalty)
+
+\\            `= (Instructions/Program) × (Misses/Instruction) × Miss_penalty`(这第一个括号应该是只考虑内存中的指令)
 
 #### 映射方式对性能的影响
 
@@ -381,14 +375,14 @@ Ex. Given the following sequence of block addresses: 0,8,0,6,8, find the number 
 | 6            | Miss        | M[0]     | M[8]    | M[6]    |           |
 | 8            | Hit         | M[0]     | M[8]    | M[6]    |           |
 
-**set-associative**: 4 misses
+**2-way associative**: 4 misses
 
 | Memory block | Hit or miss | Set 0   | Set 0  | Set 1  | Set 1  |
 | ------------ | ----------- | ------- | ------- | ------- | ------- |
 |              |             | Block 0 | Block 1 | Block 2 | Block 3 |
 | 0            | Miss        | M[0]     |         |         |           |
 | 8            | Miss        | M[0]     | M[8]    |         |           |
-| 0            | Miss        | M[0]     | M[8]    |         |           |
+| 0            | Hit    | M[0]     | M[8]    |         |           |
 | 6            | Miss        | M[0]     | M[6]    |         |           |
 | 8            | Miss        | M[8]     | M[6]    |         |           |
 
@@ -407,7 +401,7 @@ Ex. Given the following sequence of block addresses: 0,8,0,6,8, find the number 
 > Answer:
 >
 > * Instruction miss cycles = I×2%×100 =2.00I
-> * Data miss cycles = I×36%×4%×100 =1.44I
+> * Data miss cycles = I×<u>36%</u>×4%×100 =1.44I
 > * Total memory-stall cycles = 2.00I+ 1.44I =3.44I
 > * CPI with stall = CPI with perfect cache + total memory-stalls
 >     \\                      = (2 + 3.44 )I = 5.44I
@@ -419,7 +413,7 @@ Ex. Given the following sequence of block addresses: 0,8,0,6,8, find the number 
 
 ### 降低Miss Penalty
 
-多级缓存
+#### 多级缓存
 
 Ex. 假设原来CPI of 1.0 on a 5GHz machine with a 2% miss rate, 100ns DRAM access；现在Adding 2nd level cache with 5ns access time decreases miss rate to 0.5%(2%中有99.5%可以在二级缓存找到)
 
@@ -444,9 +438,37 @@ Page Fault: the data is not in memory, retrieve it from disk
 
 **MMU(Memory Management Unit)管理存储器与物理存储器**
 
+* 解决“CPU访问存储系统的地址属性？”的问题
+* 往往在CPU内部
+
 采用页表来判断PCU访问的内容是否在主存当中，并与MMU配合实现逻辑地址和物理地值之间的访问
+
+* 解决了“如何判断CPU是否存在主存中”的问题
 
 VPN(Virtual Page Num)虚拟页号
 
 PPN物理页号
 
+| 虚页号       | 页偏移量         |
+| ------------ | ---------------- |
+| 与页表数相关 | 与物理页大小相关 |
+
+
+
+**虚拟地址VA**
+
+| 虚拟页号VPN | 页内偏移VPO |
+| ----------- | ----------- |
+|             |             |
+
+
+
+逻辑地址向物理地址的转化
+
+**物理地址**
+
+| PPN  | VPO --> PPO |
+| ---- | ----------- |
+|      |             |
+
+## TLB

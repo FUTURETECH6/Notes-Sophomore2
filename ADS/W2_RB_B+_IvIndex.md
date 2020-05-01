@@ -3,7 +3,7 @@
 **性质**
 
 * 根是黑的
-* 叶是黑的
+* (叶是黑的，NIL、不存数据
 * 每个通路上黑色数量一样
 * <font color = "#FF0000">红节点</font>的两个子都是黑
     * 不能两个连续红
@@ -27,7 +27,9 @@ T::T(){
 
 **bh(x)**：从x节点开始往下的**黑**节点个数(所有同路一样的)
 
-**最大树高**：2ln(N+1)：
+<u>bh(t) >= h(tree)/2</u>
+
+<u>**最大树高**：2ln(N+1)</u>：
 $$
 Proof:
 \\
@@ -52,14 +54,17 @@ $$
 
 **Insert**(加红再调)
 
+* T_amo = O(1)
 * 父亲与叔叔均为红：父辈与爷爷调颜色，但需递归向上
 * 父辈异色：先改颜色后改结构，不需再向上调整
 
 **Delete**(删黑需调)
 
+* T_amo：𝑚 consecutive insertions in a tree of 𝑛 nodes is 𝑂(𝑛+𝑚) (Tarjan 1985)."
+    * 所以均摊时间也是O(1)
 * 兄弟红：把兄弟变爷爷，换了个黑兄弟再继续
 
-
+http://web.stanford.edu/class/archive/cs/cs166/cs166.1146/lectures/05/Small05.pdf 93页
 
 **摊还分析**
 
@@ -75,10 +80,6 @@ n个节点的树连续m次插入的balance需要O(m+n)：记账法：插入一�
 
 用途：建立数据库：叶节点存数据，非叶节点存索引
 
-Depth(M,N)：O($\lceil \log_{\lceil M/2\rceil} N\rceil$)
-
-T_{Find}(M,N) = M*O(logN)
-
 **Insert**
 
 超过m就分裂，向上插入新的索引，递归，若到根还超了则向上长一层
@@ -92,9 +93,19 @@ T_{Find}(M,N) = M*O(logN)
 
 递归
 
+**效果分析**
+
+$Depth(M,N) = O(\lceil \log_{\lceil M/2\rceil} N\rceil)$
+
+$T_{Insert}(M,N) = O(M\log_MN) = O(\frac{M}{\log M}\log N)$
+
+$T_{Find}(M,N) = O(\log M \log_MN) = O(\log N)$
+
 
 
 # Inverted File Index
+
+为什么叫Inverted？<u>由Inverted File可以倒推出原文</u>
 
 https://blog.csdn.net/Woolseyyy/article/details/51559937
 
@@ -110,11 +121,12 @@ TF-IDF(TF-Inverse Document Frequency)
 
 
 
-**Term-partitioned index**(按term分类)
-A~C D~F ............ X~Z
-**Document-partitioned index**(按文件号)
-1~ 10001~ 90001~ 10000 20000 100000
+Distributed Indexing
 
+* **Term-partitioned index**(按term分类)
+    A~C D~F ............ X~Z
+* **Document-partitioned index**(按文件号)
+    1~ 10001~ 90001~ 10000 20000 100000
 
 
 
@@ -126,8 +138,8 @@ A~C D~F ............ X~Z
 
 **User happiness**
 
-- Data Retrieval Performance Evaluation (after establishing correctness)
-    - Response time
-    - Index space
+- Data Retrieval **Performance** Evaluation (after establishing correctness)
+    - Response <u>time</u>
+    - Index <u>space</u>
 - Information Retrieval Performance Evaluation
     - How relevant is the answer set?

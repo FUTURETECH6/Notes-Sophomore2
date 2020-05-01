@@ -270,7 +270,6 @@ Slotted page header contains:
 * Sequential file (顺序文件) – store records in sequential order, based on the value of a search key of each record
     * 按Key来排，删掉之后要保留顺序很蛋疼
 * Hashing file (散列文件) – a hash function computed on some attribute of each record; the result specifies in which block of the file the record should be placed
-    * 
 * clustering file organization (聚集文件组织) – records of several different relations can be stored in the same file 一个文件存不同表的记录
     * Motivation: store related records in different relations on the same block to minimize I/O 比如Join等等操作可以节省时间
 
@@ -282,7 +281,7 @@ Slotted page header contains:
 * Insertion –locate the position where the record is to be inserted
     * if there is free space insert there 
     * if no free space, insert the record in an overflow block
-    * <u>In either case, pointer chain must be updated</u> 物理上随缘
+    * <u>In either case, pointer chain must be updated</u> 物理上随缘因为完全没办法，所以需要👇
 * Need to reorganize the file from time to time to restore sequential order. (需要定期对文件重新排序) 使得物理上重新是顺序的(跳来跳去的IO很受影响)
 
 <img src="assets/image-20200423113347424.png" style="zoom:50%;" />
@@ -319,6 +318,15 @@ Catalog structure:  can use either
 
 # Data Buffer
 
+```mermaid
+graph LR
+
+0["CPU|Cache"] --- 1["RAM|Buffer"]
+1 --- 3>blocks]
+3--- 2["Magnetic Disk"]
+Buffer_Manager --> 3
+```
+
 ？？？？？？？？？
 
 * Dirty Block
@@ -334,20 +342,26 @@ Catalog structure:  can use either
     * The block that is thrown out is written back to disk only if it was modified since the most recent time that it was written to/fetched from the disk. (将被覆盖的旧块若已被修改过，则写回磁盘)
     * Once space is allocated in the buffer, the buffer manager reads the block from the disk to the buffer, and passes the address of the block in main memory to requester. (从磁盘读入新块放buffer)
 
+主要技术/术语
 
-
-* Pinned block (被钉住的块)– memory block that is not allowed to be written back to disk. (如当前块正在被使用时)
+* Pinned block (被钉住的块)– memory block that is not allowed to be written <u>back to disk</u>. (如当前块正在被使用时)
     * Page in pool may be requested many times (被多个事务使用), 
         * a pin count is used.  A page is a candidate for replacement iff pin count = 0.
+    * 便于从崩溃中恢复
 * Toss-immediate strategy – frees the space occupied by a block as soon as the final tuple of that block has been processed. (用后立即丢弃)
-* Forced output of blocks.
+    * MRU？不是，MRU是不得不移除，这是每次都移除
+    * 双层嵌套循环中的第一层
+* Forced output of blocks (块的强制写出)
+    * 即使不需要这个block来存其他东西也要把他写到磁盘
     * Requestor of block must unpin it, and indicate whether page has been modified: 
         * dirty bit is used for this.
 
-Buffer-Replacement Policies: LRU (最近最少使用), MRU (最近最常使用)
+Buffer-Replacement Policies: LeastRU (最近最少使用), MostRU (最近最常使用)
 
 * LRU
-    * 例如0->n->0->n
+    * 适用：例如0->n->0->n
 * MRU
-    * 例如0->n, 0->n, 0->n
+    * 适用：例如0->n, 0->n, 0->n
+
+课本P263
 

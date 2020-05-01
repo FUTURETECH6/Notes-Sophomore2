@@ -101,9 +101,9 @@ Static 能耗来源：occurs because of leakage current that flows even when a t
 
 Dynamic能耗来源：energy that is consumed when transistors switch states from 0 to 1 and vice versa.
 
-SP = IU
+**SP = IU**
 
-DP = CU^2^f/2	(==到底有没有2==)
+**DP = CU^2^f/2**	(==到底有没有2==)
 
 
 
