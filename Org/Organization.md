@@ -28,15 +28,25 @@ beq $s1,$s2,25	#if ($s1 == $s2) go to PC + 4 + 100
 slt $s1,$s2,$s3	#if ($s2 < $s3) $s1 = 1; else $s1 = 0
 ```
 
-b for branch
+---
 
 sll/srl for logical
 
+`sll $t2, $s0, 3	#sll rd, rt, sa`
 
-
-`sll $t2, $s0, 3	#sll rd,rt,i`
-
-
+---
 
 互为补码的绝对值相加=模
+
+---
+
+ALU的移位运算是怎么实现的？`SLL rd, rt, sa`
+
+全部都算好，用一个32位32路多路选择器来选择最后结果
+
+[Barrel shifter](http://en.wikipedia.org/wiki/Barrel_shifter) 桶式移位器
+
+[cpu - How are shifts implemented on the hardware level? - Stack Overflow](https://stackoverflow.com/questions/10932578/how-are-shifts-implemented-on-the-hardware-level)
+
+---
 

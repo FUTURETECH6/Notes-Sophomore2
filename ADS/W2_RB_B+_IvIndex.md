@@ -19,7 +19,7 @@ class T{
 }
 T::T(){
     nil.color = BLACK;
-    // 其他属性无所谓
+    // nil其他属性无所谓
 }
 ```
 
@@ -55,7 +55,7 @@ $$
 **Insert**(加红再调)
 
 * T_amo = O(1)
-* 父亲与叔叔均为红：父辈与爷爷调颜色，但需递归向上
+* 父亲与叔叔均为红：父辈与爷爷调颜色，但需递归向上 (==不要只顾着旋转而忘记这种情况了==
 * 父辈异色：先改颜色后改结构，不需再向上调整
 
 **Delete**(删黑需调)
@@ -74,11 +74,15 @@ n个节点的树连续m次插入的balance需要O(m+n)：记账法：插入一�
 
 (B-Tree：非叶节点不为索引，也有Unique Key；B+Tree：非叶节点都是索引，Key可以和叶一样)
 
-要求：每个有$\lceil$m/2$\rceil$ ~ m个儿子，根节点可以为leaf或有2-m个儿子
+儿子要求：每个有$\lceil$m/2$\rceil$ ~ m个儿子，根节点可以为leaf或有2~m个儿子
+
+Key要求：非叶有儿子数-1；叶节点有$\lceil$m/2$\rceil$ ~ m个keys(与DBS不同
 
 注意：m是分支个数不是一个节点中数据个数(最多m-1，=deg-1)
 
 用途：建立数据库：叶节点存数据，非叶节点存索引
+
+2-3树：n=3；2-3-4树：n=4；
 
 **Insert**
 
@@ -105,6 +109,8 @@ $T_{Find}(M,N) = O(\log M \log_MN) = O(\log N)$
 
 # Inverted File Index
 
+## Basic
+
 为什么叫Inverted？<u>由Inverted File可以倒推出原文</u>
 
 https://blog.csdn.net/Woolseyyy/article/details/51559937
@@ -121,7 +127,9 @@ TF-IDF(TF-Inverse Document Frequency)
 
 
 
-Distributed Indexing
+## Optimization
+
+### Distributed Indexing
 
 * **Term-partitioned index**(按term分类)
     A~C D~F ............ X~Z
@@ -130,16 +138,42 @@ Distributed Indexing
 
 
 
-**Precision 查准率**
+### Compression
 
-**Recall 查全率**
+一是将词典看为单一字符串，以消除用定长方法来存储单词所存在的空间浪费；
+二是docID的存储只记录与上一项docID的差值来减少docID存储长度。
+
+
+
+### Thresholding
+
+* Document: only retrieve the top x documents where the documents are ranked by weight
+    * (Con) Not feasible for Boolean queries
+    * (Con) Can miss some relevant documents due to
+        truncation
+* Query: Sort the query terms by their frequency in ascending order; search according to only some percentage of the original query terms
+
+
+
+## Assestment
+
+**Relevance**
+
+* **Precision 查准率**：RR/(RR+IR)
+* **Recall 查全率**：RR/(RR+RN)
+
+|                   | Relevant | Irrelevant |
+| ----------------- | ------------ | -------------- |
+| Retrieved     | R~R~ | I~R~   |
+| Not Retrieved | R~N~ | I~N~   |
 
 
 
 **User happiness**
 
-- Data Retrieval **Performance** Evaluation (after establishing correctness)
+- **Data Retrieval** Performance Evaluation (after establishing correctness)
     - Response <u>time</u>
     - Index <u>space</u>
-- Information Retrieval Performance Evaluation
+- **Information Retrieval** Performance Evaluation
     - How relevant is the answer set?
+

@@ -48,7 +48,7 @@ Reg
 * 如何知道数据在不在里面？
 * 如果知道不在里面，要怎么找？要用哪个位置来访导入的数据
 
-==Index全部是根据Set(显式或隐式)而不是Block来算的==
+==Index全部是根据Set(显式或隐式)而不是Block来算的，offset是byte不是word==
 
 ### Direct Mapped(2L)
 
@@ -174,7 +174,7 @@ Ex. 2-Way Set-Associative Cache(1 word/block; 2 blocks/set; 4 blocks/cache; henc
 
 **Ex**. CacheSize = 64KB; 4 words/block; 4 bytes/word; physical address: 32bits
 
-|                   | tag  | inedx | offset |
+|                   | tag  | index | offset |
 | ----------------- | ---- | ----- | ------ |
 | Directed-Mapped   | 16   | 12    | 4      |
 | Fully-Associative | 28   | 0     | 4      |
@@ -427,6 +427,15 @@ The **CPI** with Two level of cache is `1.0 + primary_stall_per_inst + secondary
 
 #  Virtual Memory
 
+> **Abbr**
+>
+> * MMU
+> * PTE
+> * VA/PA
+> * VPN/PPN
+> * VPO/PPO
+> * TLB
+
 Page offset：按页算的，一般很大 (Page导一次(Mem<==>Disk)要很久，因此得尽量做大)
 
 Page Fault: the data is not in memory, retrieve it from disk
@@ -436,39 +445,101 @@ Page Fault: the data is not in memory, retrieve it from disk
 * can handle the faults in software instead of hardware
 * using write-through is too expensive so we use write back (之后写)
 
-**MMU(Memory Management Unit)管理存储器与物理存储器**
 
+
+**MMU(Memory Management Unit)**
+
+* 管理存储器与物理存储器
 * 解决“CPU访问存储系统的地址属性？”的问题
+
 * 往往在CPU内部
 
-采用页表来判断PCU访问的内容是否在主存当中，并与MMU配合实现逻辑地址和物理地值之间的访问
+
+
+采用**页表**来判断PCU访问的内容是否在主存当中，并与MMU配合实现<u>逻辑地址和物理地值之间的访问</u>
 
 * 解决了“如何判断CPU是否存在主存中”的问题
+* 页表是若干个页表项PTE(Page Table Entry)的集合
 
-VPN(Virtual Page Num)虚拟页号
+![](assets/image-20200506163742554.png)
 
-PPN物理页号
+![](assets/image-20200506165719524.png)
 
-| 虚页号       | 页偏移量         |
-| ------------ | ---------------- |
-| 与页表数相关 | 与物理页大小相关 |
+## 详细内容
 
+**页表**
 
+| 虚拟页号VPN(Virtual Page Num) | 有效位         | 物理页号PPN |
+| ----------------------------- | -------------- | ----------- |
+| 与页表数相关                  | 是否在主存中？ |             |
 
 **虚拟地址VA**
 
-| 虚拟页号VPN | 页内偏移VPO |
+| 虚拟页号VPN(Virtual Page Num) | 页内偏移VPO      |
+| ----------------------------- | ---------------- |
+| 与页表数相关                  | 与物理页大小相关 |
+
+Ex. 主存页大小4KB，虚存大小4GB，则VPO为12位，VPN为32-12=20位，对应的页表有1M个PTE
+
+**物理地址PA**
+
+| 物理页号PPN | VPO --> PPO |
 | ----------- | ----------- |
 |             |             |
 
+**逻辑地址向物理地址的转化**
+
+用过PageTable+MMU实现
+
+Ex2. Page大小为1KB，最大物理空间64KB，页表如下，求0d2050和0d3080的主存地址。
+
+|      | 0      | 1      | 2      | 3      |
+| ---- | ------ | ------ | ------ | ------ |
+|      | 1      | 1      | 1      | 0      |
+|      | 000010 | 000110 | 000111 | 000100 |
+
+0d2050 = 0b10_0000000010，虚拟页号为2，查页表的物理页号为000111，因此物理地址为000111_0000000010
+
+0d3080 = 0b11_...，虚拟页号为3，对应无效，因此是缺失的
 
 
-逻辑地址向物理地址的转化
-
-**物理地址**
-
-| PPN  | VPO --> PPO |
-| ---- | ----------- |
-|      |             |
 
 ## TLB
+
+**Translation Lookaside Buffer** 地址转换后备缓冲器
+
+### 存在问题
+
+命中也得访问内存两次
+
+![](assets/image-20200506171701266.png)
+
+缺页就更惨了，还得进辅存
+
+5是腾出位置，7完成后还得正常地访问一次
+
+![](assets/image-20200506172039592.png)
+
+### 原理
+
+* 存储当前访问页表地址变换条目
+    * 不需要从主存中取了
+* 类似页表，也是PTE的集合，但是采用类似Cache中的映射方法(最好是direct或set-ass)，对来自CPU的虚拟页号进行逻辑划分，得到相应的tag和index
+
+**VA**
+
+| 虚拟页号VPN(Virtual Page Num) | 页内偏移VPO |
+| ----------------------------- | ----------- |
+| TLB Tag \| TLB Index          | VPO         |
+
+### 带TLB的转换
+
+
+
+![](assets/image-20200506172710558.png)
+
+
+
+主存只要访问一次了
+
+![](assets/image-20200506172856375.png)

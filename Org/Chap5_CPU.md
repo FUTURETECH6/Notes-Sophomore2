@@ -148,6 +148,8 @@ ALU操作表，观察会发现对应指令的func后两位确实与下面的op�
 | MemRead     | -       | 存储器读控制        | 禁止存储器读    | 使能存储器读                 |
 | ALU_Control | 000-111 | 3位ALU操作控制      | 参考表  Lab4    | Lab4                         |
 
+![](assets/单周期真值表.png)
+
 ### ALUop
 
 * 00：加法(sw lw)
@@ -194,7 +196,7 @@ ALU操作表，观察会发现对应指令的func后两位确实与下面的op�
 
 **完整版(加上jump)**
 
-![](assets/image-20200401105703382.png)
+![](assets/SignleDP.png)
 
 ![](assets/image-20200401105821189.png)
 
@@ -268,32 +270,34 @@ PC 的改变方式
 
 <img src="assets/image-20200401234930595.png" style="zoom:50%;" />
 
-<img src="assets/image-20200418101212156.png" style="zoom:50%;" />
+<img src="assets/MultiDP.png"  />
+
+### ==控制线==
 
 | Signal name | Effect when deasserted(=0)                                   | Effect when asserted(=1)                                     |
 | ----------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | RegDst      | Select  register destination number from the rt(20:16) when WR. | Select  register destination number from the rd(15:11) when WB. |
 | RegWrite    | None                                                         | Register  destination input is written with the value on the Write data input |
-| ALUScrA     | The first ALU operand is the PC                              | The  first ALU operand come from the A register.             |
+| ALUScrA     | PC                                                           | A register.                                                  |
 | MemRead     | None                                                         | Memory  contents at the location specified by the address input is put on the Memory  data out. |
 | MemWrite    | None                                                         | Memory  contents at the location specified by  the address input are replaced by value on the Write data input. |
-| MemtoReg    | The  value fed to register Write data input comes from the ALUOut | The  value fed to the register Write data input comes from the MDA. |
-| IorD        | The  PC is used to supply the address to the memory unit.    | ALUOut  is used to supply the address to the memory unit.    |
+| MemtoReg    | ALUOut                                                       | MDA                                                          |
+| IorD        | The  PC is used to supply the <u>address</u> to the memory unit. | ALUOut  is used to supply the <u>address</u> to the memory unit. |
 | IRWrite     | None                                                         | The  output of memory is written into the [IR](Instruction Register). |
 | PCWrite     | None                                                         | The  PC is written; the source is controlled by PCSource.    |
-| PCWriteCond | None                                                         | The  PC is written if the zero output from the ALU is also active. |
+| PCWriteCond | None                                                         | The  PC is written if the zero output from the ALU is also active. (For branch) |
 
 | Signal name | Value | Effect                                                       |
 | ----------- | ----- | ------------------------------------------------------------ |
 | ALUOp       | 00    | The  ALU performs an add operation.                          |
-|             | 01    | The  ALU performs an subtract operation.                     |
+|             | 01    | subtraction                                                  |
 |             | 10    | The  funct field of the instruction determines the ALUoperation |
-| ALUScrB     | 00    | The  second input to the ALU comes from the B register.      |
-|             | 01    | The  second input to the ALU is the constant 4.              |
-|             | 10    | The  second input to the ALU is the sign-extended, lower 16 bits of the IR. |
-|             | 11    | The  second input to the ALU is the sign-extended, lower 16 bits of the IR shift 2  bits. |
-| PCSource    | 00    | Output  of the ALU(PC+4) is sent to the PC for writing.      |
-|             | 01    | The  contents of ALUOut (the branch target address) are sent to the PC for  writing. |
+| ALUScrB     | 00    | B register.                                                  |
+|             | 01    | constant 4                                                   |
+|             | 10    | Immeidate' sign extend                                       |
+|             | 11    | (Immeidate' sign extend) << 2                                |
+| PCSource    | 00    | <u>Output  of the ALU(PC+4) is sent to the PC for writing.</u> |
+|             | 01    | <u>The  contents of ALUOut (the branch target address) are sent to the PC for  writing.</u><br />与上面的区别在于有没有经过寄存器(有的话是上一个周期的ALUOut |
 |             | 10    | The  jump target address (IR[25:0]shifted left 2 bits and concatenated with  PC+4[31:28]) is sent to the PC for writing. |
 
 ### 具体Steps
@@ -307,14 +311,16 @@ IR = Memory[PC];
 PC = PC + 4;
 ```
 
-#### **Step2
+#### \*\*Step2
 
 **ID：Instruction Decode and Register Fetch**
+
+`ALUSrcA = 1'b0; ALUSrcB = 2'b11; ALUOp = 2'b00`
 
 ```c
 A = Reg[IR[25-21]];
 B = Reg[IR[20-16]];
-ALUOut = PC + (sign-extend(IR[15-0]) << 2);	// 这里先做好，之后不是j再改
+ALUOut = PC + (sign-extend(IR[15-0]) << 2);	// 这里先做好，之后不是branch再改
 ```
 
 #### Step3
@@ -357,7 +363,7 @@ Reg[rt]=Reg[IR[20-16]]= MDR;
 
 **总结**
 
-<img src="assets/image-20200403090505981.png" style="zoom: 6%;" />
+<img src="assets/image-20200403090505981.png" style="zoom: 25%;" />
 
 <img src="assets/image-20200403092633998.png" style="zoom:25%;" />
 

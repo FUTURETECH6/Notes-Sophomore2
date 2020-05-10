@@ -8,6 +8,8 @@
 
 BF(Balance Factor)：左子树高减右
 
+* 判断题：能全部为+1？
+
 在保持平衡的同时要注意二叉树条件`L<M<R`的保持
 
 <u>多个冲突调离trouble maker(只有一个，即新插入的)**最近**的那个trouble finder(被破坏节点，可能有多个)</u>；通过递归的方式从下往上找trouble finder即可
@@ -95,6 +97,8 @@ $\rm \Large T_{amortized}= \frac{\sum \hat c_i(\geqslant \sum c_i)}{n}{}$
 只要有办法保证估计的肯定不小于实际的就可以了，例如push=2
 
 ## Potential method势能法
+
+<u>For potential method, a good potential function should always assume its **minimum** at the start of the sequence</u>
 
 ==势能与整个数据结构相关联，而不是特定对象==
 

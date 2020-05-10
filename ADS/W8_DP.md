@@ -80,15 +80,11 @@ $\large T(N) = O(V^3)$
 `cost[i][j]`表示第i个到第j个的最小花费和
 
 ```cpp
-for (auto k = START_POINT; k < nodeNum + START_POINT; k++) {
-    for (auto i = START_POINT; i < nodeNum + START_POINT; i++) {
-        for (auto j = START_POINT; j < nodeNum + START_POINT; j++) {
-            if (cost[i][k] + cost[k][j] < cost[i][j]) {
+for (auto k = START_POINT; k < nodeNum + START_POINT; k++)
+    for (auto i = START_POINT; i < nodeNum + START_POINT; i++)
+        for (auto j = START_POINT; j < nodeNum + START_POINT; j++)
+            if (cost[i][k] + cost[k][j] < cost[i][j])
                 cost[i][j] = cost[i][k] + cost[k][j];
-            }
-        }
-    }
-}
 ```
 
 ### 产品组装

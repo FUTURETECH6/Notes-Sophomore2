@@ -1,5 +1,7 @@
 # Computational Complexity
 
+https://blog.csdn.net/huang1024rui/article/details/49154507
+
 相似
 
 | P             | NP           |
@@ -128,6 +130,8 @@ subgraph all
 end
 ```
 
+![](assets/20151015164207766.jpeg)
+
 ---
 
 ### A Formal-language Framework
@@ -247,6 +251,12 @@ We call the function f the *reduction function*, and a polynomial-time algorithm
 A language L ⊆ {0, 1}* is *NP-complete* if
 1. L ∈ NP
 2. L’ ≤~P~ L for **every** L’ ∈ NP.
+
+##### NP-Hard
+
+A language L ⊆ {0, 1}* is *NP-hard* if
+
+1.  L’ ≤~P~ L for **every** L’ ∈ NP.
 
 #### 归约例
 

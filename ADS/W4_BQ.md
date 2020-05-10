@@ -10,7 +10,27 @@ http://courses.zju.edu.cn:8001/download/processed/e803a9a557c385812c8506c6188744
 
 
 
+## Time
+
+**FindMin**
+
+O(logN)，如果有个ptrToMin来存则为O(1)
+
+**Merge**
+
+O(logN)
+
 聚合函数：i次的link每2^i+1^发生一次
 
 势能法：分析类似于二进制计数器翻转
+
+**Insert**
+
+单个：If the smallest nonexistent binomial tree is Bi , then Tp = Const · (i + 1).
+
+均摊：Performing N Inserts on an initially empty binomial queue will take O(N) worst-case time.  Hence the average time is constant.
+
+**DeleteMin**
+
+FindMin(logN)+RemoveTree(1)+RemoveRoot(logN)+Merge(logN)=O(logN)
 

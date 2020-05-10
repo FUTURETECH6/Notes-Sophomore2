@@ -36,9 +36,9 @@
 **基本概念**
 
 * In an ordered index, index entries are stored <u>sorted on the search key value</u>. E.g., author catalog in library.
-* Sequentially ordered file (顺序排序文件): The records in the file (data file) are ordered by a search-key.   (Chapter 10)
-* Primary index: is an index whose search key equal to the search key of the sequentially ordered data file, on which the index is made. (与对应的数据文件本身的排列顺序相同的索引称为主索引。)
-    * Also called clustering index (聚集索引)
+* Sequentially ordered file (顺序排序文件): The records in the file (data file) are ordered by a search-key. (Chapter 10)
+* **Primary index**: is an index whose search key equal to the search key of the sequentially ordered data file, on which the index is made. (与对应的数据文件本身的排列顺序相同的索引称为主索引。)
+    * Also called **clustering index** (聚集索引)
     * The search key of a primary index is usually but not necessarily the primary key. 主索引的搜索键通常是但并非一定是主码。
         * Non-sequential files don’t have primary index, but the relations can have primary key.
     * Index-sequential file (索引顺序文件): sequentially ordered file with a primary index.
@@ -97,6 +97,12 @@ File中每个search-key都有一个索引项，索引项包括search-keysearch-k
 1. 找到并删除
 2. 更新索引文件 (PPT11.19有可放映的动态演示)
     * Dense
+        * 同个search-key对应单个tuples：直接删除索引
+        * 同个search-key对应多个tuples(只能是多级的，否则就是Sparse了)
+            * Secondary：删掉bucket中指向tuple的指针
+            * Index Entry
+                * Index Entry是这个key：换成同一个bucket中的下一个key(这里有点迷，如果bucket中只有一个是不是要全部删掉？应该是的，类似Sparse的情况
+                * Index Entry不是这个key：不管
     * Sparse
         * 删除项不在索引里出现：不干活
         * 出现了：替换成删除项的下一个记录(如果下一个已经有了那直接删掉就行了(因为这说明被删除的是个孤儿))
@@ -107,13 +113,15 @@ File中每个search-key都有一个索引项，索引项包括search-keysearch-k
 1. 利用索引找到并先插入
 2. 修改索引
     * Dense
-        * 没这个index：直接插入
-        * 有这个index了：弄成bucket或在里面添加
+        * 没这个search-key：直接插入
+        * 有这个search-key了：改bucket和index entry
     * Sparse
+        * 没有这个key：插入
+        * 有了：是最小的才更新
 
 ## Summary of Primary and Secondary Indices
 
-* Indices offer substantial benefits when searching for records. 
+* Indices offer substantial benefits when searching for records.
 * ordered indices: dense index; sparse index. But secondary indices must be dense.
 * <u>Sequential scan using primary index is efficient. But a sequential scan using a secondary index is expensive(是O(N)的无序访问).</u>
     * each record access may fetch a new block from disk.
@@ -138,17 +146,20 @@ File中每个search-key都有一个索引项，索引项包括search-keysearch-k
 
 MaxFanout：最大子节点数
 
-* 根节点：2\~n个孩子，1~n-1个keys
-* 非叶：$\lceil n/2 \rceil$~n个孩子($\lceil n/2 \rceil$-1~n-1个keys)
-* 叶：$\lceil (n-1)/2 \rceil$~n-1个keys？？？这和ADS的应该是不一样的规则
+* 根节点：$2$\~$n$个孩子，$1$~$n-1$个keys
+    * `keyNum = childNum - 1`
+* 非叶：$\lceil n/2 \rceil$~$n$个孩子($\lceil n/2 \rceil-1$~$n-1$个keys)
+    * `keyNum = childNum - 1`
+* 叶：$\lceil (n-1)/2 \rceil$~$n-1$个keys？？？这和ADS的应该是不一样的规则，为什么不一样？因为这里叶节点的指针也是要存指向data的ptr的
+    * `keyNum = ptrNum`
 
 ### Leaf
 
-指向bucket(search-key不为主键)或直接指向元组
+指向bucket(search-key不为主键)或直接指向tuple
 
 ### Non-Leaf
 
-本质是多层的稀疏索引
+本质是多层的稀疏索引(<u>本来多层是不能稀疏的</u>，但是由于这里是有顺序的因此可以)
 
 ## 属性
 
@@ -159,7 +170,7 @@ MaxFanout：最大子节点数
 **Find all records with a search-key value of k.**
 
 1. Start with the root node
-    1. Examine the node for the smallest search-key value > k (在节点中找比k大的最小键值, 即遇到第一个比K大的键值) (E.g. K= ‘Downtown’)
+    1. Examine the node for the smallest search-key value > k (在节点中找比k大的最小键值, 即遇到第一个比K大的键值) (E.g. K= ‘Downtown’)，==不是>\===
     2. If such a value exists, assume it is Vi.  Then follow Pi to the child node (沿左指针指向子节点)
     3. Otherwise k >= Vm–1, where there are m pointers in the node.  Then follow Pm to the child node.
 2. If the node reached by following the pointer above is not a leaf node, repeat the above procedure on the node, and follow the corresponding pointer. (继续往下找)
@@ -167,16 +178,24 @@ MaxFanout：最大子节点数
 
 ### Insertion
 
+有bucket了就在bucket里更新
+
+否则更新leaf(`findMin()`)
+
+超：拆分出右节点，更新父节点(`findMin()`)，递归
+
 ### Deletion
 
-合并，删除右节点，更新父节点中keys，递归
+Omitted
+
+不足：合并，删除右节点，更新父节点中keys(`findMin()`)，递归
 
 ## File Organization
 
 叶节点存记录
 
 * Index file degradation problem is solved by using B+-Tree indices.  Data file degradation problem is solved by using B+-Tree File Organization.
-* <u>The leaf nodes in a B+-tree file organization store data records, instead of pointers.</u>
+* <u>The leaf nodes in a B+-tree file organization store data records, instead of pointers.</u> ？
 * Since records are larger than pointers, the maximum number of records that can be stored in a leaf node is less than the number of pointers in a nonleaf node.
 * Leaf nodes are still required to be half full.
 * Insertion and deletion are handled in the same way as insertion and deletion of entries in a B+-tree index.
@@ -184,7 +203,11 @@ MaxFanout：最大子节点数
 * To improve space utilization, involve more sibling nodes in redistribution during splits and merges
     * Involving 2 siblings in redistribution (to avoid split / merge where possible) results in each node having at least $\lfloor 2n/3 \rfloor$ entries
 
-# Static/Dynamic Hashing
+## QA
+
+为什么数据库中要把节点做大>？因为如果对节点中进行遍历采用二分查找，复杂度就不是ADS顺序查找的$T_{Insert}(M,N) = O(M\log_MN) = O(\frac{M}{\log M}\log N)$了，而是$O(\log M\log_MN) = O(\log N)$
+
+为什么能保持叶节点深度一样>？层的增减是在root进行的
 
 # Index in SQL
 
