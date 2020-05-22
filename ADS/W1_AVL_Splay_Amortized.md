@@ -88,6 +88,8 @@ pop()和multiPop()都需要push()来支持，三种栈操作的代价都是O(n)/
 
 ## Accounting method核算法
 
+The difference between aggregate analysis and accounting method is that the later one assumes that the amortized costs of the operations may differ from each other.
+
 核算法是对<u>不同的操作</u>赋予<u>**不同**的摊还代价</u>，这个代价可能与其实际操作代价不同，但是通过整体的调整，会使得对一系列操作的整体摊还代价的分析变得简单。
 
 Ex. 20个人的生产队，初始估计的为amortized cost，实际需要食品量为actual cost，差值就是credit
@@ -113,3 +115,4 @@ D表示状态
 $\large\displaystyle \sum \hat c_i = \sum c_i+\Phi(D_n)-\Phi(D_0)$
 
 动态数组的势能函数$\Phi(D_i) = 2T_{num}-T_{size}$(元素个数的两倍减去动态数组占用大小)
+

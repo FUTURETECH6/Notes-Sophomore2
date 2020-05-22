@@ -37,7 +37,7 @@
 
 * In an ordered index, index entries are stored <u>sorted on the search key value</u>. E.g., author catalog in library.
 * Sequentially ordered file (顺序排序文件): The records in the file (data file) are ordered by a search-key. (Chapter 10)
-* **Primary index**: is an index whose search key equal to the search key of the sequentially ordered data file, on which the index is made. (与对应的数据文件本身的排列顺序相同的索引称为主索引。)
+* **Primary index**: is an index whose search key equal to the search key of the sequentially ordered data file, on which the index is made. (与对应的数据文件本身的排列顺序相同的索引称为主索引)
     * Also called **clustering index** (聚集索引)
     * The search key of a primary index is usually but not necessarily the primary key. 主索引的搜索键通常是但并非一定是主码。
         * Non-sequential files don’t have primary index, but the relations can have primary key.

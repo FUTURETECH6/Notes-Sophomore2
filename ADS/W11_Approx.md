@@ -25,7 +25,7 @@ We say that an approximation scheme is a polynomial-time approximation scheme (P
 - 完全多项式时间近似模式 (FPTAS, fully polynomial-time approximation scheme)
     - 给定任意有理数ε>0, 返回x的一个(1+ε)近似解在**n和1/ε的多项式(即次数为const)时间内**
     - 如$O((1/ε)^2n^3)$
-- FPTAS $\subset$ PTAS ?
+- FPTAS $\subset$ PTAS 
 
 # 实例
 

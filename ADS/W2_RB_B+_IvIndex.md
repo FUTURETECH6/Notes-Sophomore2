@@ -10,10 +10,10 @@
     * 最长路不会超过最短路两倍
 
 ```cpp
-class T{
+class T {
   public:
     struct Node{color, key, left, right, p/* p for what? */};
-    
+
   private:
     struct Node *nil;
 }
@@ -26,6 +26,8 @@ T::T(){
 
 
 **bh(x)**：从x节点开始往下的**黑**节点个数(所有同路一样的)
+
+**sizeof(x)>=2^bh(x)^-1**
 
 <u>bh(t) >= h(tree)/2</u>
 
@@ -124,6 +126,13 @@ Token Analyzer + Vocabulary Scanner + Vocabulary Insertor
 Term Frequent
 
 TF-IDF(TF-Inverse Document Frequency)
+
+
+
+* Word Stemming:还原为词根
+* Stop Words:排除词(a，it)
+
+
 
 
 

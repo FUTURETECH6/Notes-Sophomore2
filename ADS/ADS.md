@@ -14,9 +14,9 @@ To implement a binomial queue, <u>the subtrees of a binomial tree</u> are linked
 
 In an AVL tree, it is impossible to have this situation that the balance factors of **a** node and both of its children are all +1. **False**
 
-The difference between aggregate analysis and accounting method is that the later one assumes that the amortized costs of the operations may differ from each other. **True**
+The difference between <u>aggregate</u> analysis and <u>accounting</u> method is that the later one assumes that the amortized costs of the operations may differ from each other. **True**
 
-问B+数度为n的节点最多最少有？个的基本上都是完满n叉🌲
+问B+数度为n的节点最多/最少有？个的基本上都是完满n叉🌲
 
 
 
@@ -24,19 +24,19 @@ The difference between aggregate analysis and accounting method is that the late
 
 树
 
-|       | 访问                                                         | 插入(amo) | M次插入                     | 删除(amo) |
-| ----- | ------------------------------------------------------------ | --------- | --------------------------- | --------- |
-| AVL   | O(logN)                                                      |           |                             |           |
-| Splay | O(logN)                                                      |           |                             |           |
-| RB    | O(logN)                                                      | O(1)      | O(M+N)                      | O(1)      |
-| B+    | O(logN)<br />(深度为$O(\lceil \log_{\lceil M/2\rceil} N\rceil)$) |           | $O(\frac{M}{\log M}\log N)$ |           |
+|              | 访问                                                         | 插入(amo)                   | m次插入 | 删除(amo) |
+| ------------ | ------------------------------------------------------------ | --------------------------- | ------- | --------- |
+| AVL          | O(logN)                                                      |                             |         |           |
+| Splay        | O(logN)                                                      |                             |         |           |
+| RB           | O(logN)                                                      | O(1)                        | O(m+N)  | O(1)      |
+| B+(M为order) | O(logN)<br />(深度为$O(\lceil \log_{\lceil M/2\rceil} N\rceil)$) | $O(\frac{M}{\log M}\log N)$ |         |           |
 
 堆
 
-|               | 访问最小        | 插入(amo) | M次插入  | 删除最小(amo) | Merge   |
+|               | 访问最小        | 插入(amo) | m次插入  | 删除最小(amo) | Merge   |
 | ------------- | --------------- | --------- | -------- | ------------- | ------- |
-| Leftiest      | O(1)            |           |          | O(logN)       |         |
-| Skew          | O(1)            |           | O(MlogN) | O(logN)       |         |
+| Leftiest      | O(1)            | O(1)      |          | O(logN)       |         |
+| Skew          | O(1)            | O(logV)   | O(mlogN) | O(logN)       | O(logV) |
 | BinomialQueue | O(logN) or O(1) | O(1)      |          | O(logN)       | O(logN) |
 
 DP: 课件样例都是O(N^3^)，产品组装为O(N)

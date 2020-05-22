@@ -38,21 +38,17 @@ private:
 };
 
 // 初始化列表调用基类的初始化函数进行初始化
-Manager::Manager( const string& name, const string& ssn, 
-                  const string& title = "" ) : Employee(name, ssn), m_title( title )
-{ }
+Manager::Manager( const string& name, const string& ssn, const string& title = "" )
+                : Employee(name, ssn), m_title( title ) {}
 
-inline void Manager::print( std::ostream& out ) const
-{
+inline void Manager::print( std::ostream& out ) const {
     Employee::print( out ); //call the base class print，需要特别说是Employee里的
     out << m_title << endl;
 }
-inline const std::string& Manager::get_title() const
-{
+inline const std::string& Manager::get_title() const {
     return m_title;
 }
-inline const std::string Manager::title_name() const
-{
+inline const std::string Manager::title_name() const {
     return string( m_title + ": " + m_name );
     // access base m_name
 }

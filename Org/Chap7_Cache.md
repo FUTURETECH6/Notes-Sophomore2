@@ -1,3 +1,5 @@
+[TOC]
+
 * SRAM：Cache(比寄存器慢
 * DRAM：Mem
 
@@ -24,7 +26,7 @@ Our initial focus:  two levels (upper, lower)
 * miss: data requested is not in the upper level
     * DMC方法中Cache中所需的单元格被占用了也叫miss
     * **Miss Penalty**: The time to replace a block in the upper level with the corresponding block from the lower level, plus the time to deliver this block to the processor. 
-    * miss也需要加上hit time：如90%hit，10%miss，总时间为：HitTime\*100% + MissPenalty\*10%
+    * ==miss也需要加上hit time：如90%hit，10%miss，总时间为：HitTime\*100% + MissPenalty\*10%==
 
 ```mermaid
 graph LR
@@ -48,7 +50,7 @@ Reg
 * 如何知道数据在不在里面？
 * 如果知道不在里面，要怎么找？要用哪个位置来访导入的数据
 
-==Index全部是根据Set(显式或隐式)而不是Block来算的，offset是byte不是word==
+==Index位数全部是根据Set(显式或隐式)而不是Block来算的，offset是byte不是word==
 
 ### Direct Mapped(2L)
 
@@ -149,6 +151,8 @@ Ex. 2-Way Set-Associative Cache(1 word/block; 2 blocks/set; 4 blocks/cache; henc
 * SA：浙江代表给5个房间
     * 即：任意模组数为k的都可以进到index=k的set，然后再看要去替换这个set里的哪个block
 
+---
+
 <img src="assets/image-20200417090807882.png" style="zoom: 50%;" />
 
 ### 物理地址
@@ -163,7 +167,7 @@ Ex. 2-Way Set-Associative Cache(1 word/block; 2 blocks/set; 4 blocks/cache; henc
     * The set, in case of a set-associative cache
     * The block, in case of a direct-mapped cache
     * Has as many bits as `log2(#sets)` for set-associative caches, or `log2(#blocks)` for direct-mapped caches
-    * ==Index全部是根据Set(显式或隐式)而不是Block来算的==
+    * ==Index位数全部是根据Set(显式或隐式)而不是Block来算的==
 * The Byte Offset field selects
     * The byte within the block
     * Has as many bits as `log2(size of block)`
@@ -172,14 +176,16 @@ Ex. 2-Way Set-Associative Cache(1 word/block; 2 blocks/set; 4 blocks/cache; henc
 
 
 
-**Ex**. CacheSize = 64KB; 4 words/block; 4 bytes/word; physical address: 32bits
+#### ※Ex.
 
-|                   | tag  | index | offset |
-| ----------------- | ---- | ----- | ------ |
-| Directed-Mapped   | 16   | 12    | 4      |
-| Fully-Associative | 28   | 0     | 4      |
-| 2-way associative | 17   | 11    | 4      |
-| 4-way associative | 18   | 10    | 4      |
+CacheSize = 64KB; 4 words/block; 4 bytes/word; physical address: 32bits
+
+|                                       | tag  | index                 | offset |
+| ------------------------------------- | ---- | --------------------- | ------ |
+| Directed-Mapped (1-way ass)           | 16   | 12 (1 block对应1 set) | 4      |
+| Fully-Associative (block_num-way ass) | 28   | 0 (只有1个set)        | 4      |
+| 2-way associative                     | 17   | 11                    | 4      |
+| 4-way associative                     | 18   | 10                    | 4      |
 
 
 
@@ -194,7 +200,7 @@ Ex. 2-Way Set-Associative Cache(1 word/block; 2 blocks/set; 4 blocks/cache; henc
 * instruction cache miss
 * data cache miss
 
-instruction cache miss：4steps
+**instruction cache miss**：4steps
 
 1. **stall(挂起) the CPU**: Send the original PC value (current PC-4) to the memory. (等你去内存找回来我可以先去完成其他一堆程序了)
 2. **fetch block from memory**: Instruct main memory to perform a read and wait for the memory to complete its access.
@@ -206,24 +212,25 @@ instruction cache miss：4steps
 ### Handling Write
 
 * Write hits:  Difference Strategy
+    * write-through: Ensuring Consistent (总是写到内存，(一写到底through))
+        * Write the data into both the memory the cache
+        * Strategy ---- writes always update both the cache and the memory
+        * **[write buffer](# write buffer)**，可以用这个来稍微减小对速度的影响
+        * 不需要dirty，有valid就够了
     * write-back: Cause Inconsistent (之后再写到内存)
         * Wrote the data into only the data cache
         * Strategy ---- write back data from the cache to memory later (later一般是指程序结束之后)
         * Fast，两者相差很大用这种
         * 需要加一个[dirty](# 脏位)位来进行判断
-    * write-through: Ensuring Consistent (总是写到内存，(一写到底through))
-        * Write the data into both the memory the cache
-        * Strategy ---- writes always update both the cache and the memory
-        * Slower----**write [buffer](# buffer)**，两者差距不大用这种
-        * 不需要dirty，有valid就够了
+        * **避免误写的方法**：用两个周期(先检查是否命中再写)；弄个写缓冲(在正常周期内将新数据放入缓冲，如果命中了再写入)
 * Write misses(写东西，tag对不上):
     * read the entire block from memory into the cache, then write the word using \-back or \-through
-    * Write allocate 
+    * Write allocate (收集)
         * The block is loaded into the cache on a miss before anything else occurs.
         * 看脏位
             * 1：先把原来东西写到内存，再用新值冲掉
             * 0：没被写过，直接冲
-    * Write around (no write allocate)
+    * Write around (绕开？no write allocate)
         * The block is only written to main memory
         * It is not stored in the cache.
     * In general, <u>write-back caches use write-allocate</u>(之后要hit必须cache里有东西), and <u>write-through caches use write-around</u>.(无所谓，反正hit了也要写到mem，跟cache没啥关系)
@@ -234,9 +241,9 @@ instruction cache miss：4steps
 * CPU向Cache上的某Block写过东西之后Block的dirtyBit被置位。之后要更新Cache的时候，如果dirty是1就必须先把当前的写到Memory(此时复位？)再更新，如果是0就直接更新。
 * 此处的脏位(Cache->Mem)和虚拟内存中的(Mem->Disk)差不多，就是位置不一样而已
 
-## 总结
 
-### 替换方案
+
+## 替换方案
 
 * Random：简单
 
@@ -260,9 +267,11 @@ instruction cache miss：4steps
 
 <img src="assets/image-20200421214324844.png" style="zoom: 25%;" />
 
-### Basic
+---
 
-假设：1个clk发送地址；15个clk访问初始化(找到地址)；1个clk传1 word数据；4 words/block, 4 bytes/words
+假设：1个clk发送地址；15个clk访问初始化 (找到地址)；1个clk传1 word数据；4 words/block, 4 bytes/word
+
+### 1-word-wide
 
 因此1word数据要17clk，传1 block要`Miss Penalty = 1 + 4 ×(1 + 15) = 65clk`(地址只用传一次，为什么？内存管理会自增吗？)
 
@@ -293,7 +302,6 @@ ${\rm Bandwidth} 带宽 = \frac{16B}{17clk} \approx 0.98$
 ${\rm Bandwidth} 带宽 = \frac{16B}{20clk} \approx 0.8$
 
 > 为什么比Wide好？明明带宽更高？
->
 > \\	因为加总线很贵
 
 注意四个内存块的地址
@@ -302,11 +310,9 @@ ${\rm Bandwidth} 带宽 = \frac{16B}{20clk} \approx 0.8$
 
 ## Cache性能
 
+### write buffer
 
-
-### buffer
-
-
+与write through配合使用，本来要直接写到主存的东西先写到这，然后处理器继续干活。之后写缓冲会自己写到主存然后释放空间，除非写缓冲满了，处理器必须停下来知道写缓冲有空出一个位置来。另外，需要注意的是如果完成写操作的时间要比指令产生写指令的平均周期长，那再多写缓冲也没用，必然是要爆的。
 
 ### Block大小对性能影响
 
@@ -327,15 +333,13 @@ Block👆，Index👇
 两种启动方式
 
 * 冷启动慢，但是开机之后都很流畅
-* 冷启动快，但是开机之后得不断加载所以会卡](# 映射方式)
-
-
+* 冷启动快，但是开机之后得不断加载所以会卡[](# 映射方式)
 
 `CPU time = (CPU execution clock cycles 􏰃+ Memory-stall clock cycles) × Clock cycle time`
 
 读操作阻塞的周期：`Read_stall_cycles = (Reads/Program) × Read_miss_rate × Read_miss_penalty`
 
-写操作阻塞的周期：`Write_stall_cycles = ((Writes/Program) × Write_miss_rate × Write_miss_penalty) + (Write_buffer_stalls)`
+写操作阻塞的周期：`Write_stall_cycles = [(Writes/Program) × Write_miss_rate × Write_miss_penalty] + Write_buffer_stalls` (写缺失+写缓冲阻塞)
 
 写缓冲区阻塞：`Write_buffer_stalls`：个人理解应该指的是连续多次写操作中，下一次得等上一次写完才可以写。取决于频率和write的时机(比如你要是能保证mem任意时刻写一次的时间之内不会遇到其他的写要求，那就不存在这个问题)，因此没办法量化计算。
 
@@ -347,7 +351,9 @@ Block👆，Index👇
 
 \\            `= (Instructions/Program) × (Misses/Instruction) × Miss_penalty`(这第一个括号应该是只考虑内存中的指令)
 
-#### 映射方式对性能的影响
+<u>中文P271例题加深理解</u>
+
+#### ※映射方式对性能的影响
 
 先看[这里](# 映射方式)
 
@@ -424,122 +430,3 @@ Miss penalty with levels of cache without access main memory is `(5ns)/(0.2ns/cl
 The **CPI** with Two level of cache is `1.0 + primary_stall_per_inst + secondary_stall_per_inst = 1 + 2% × 25 + 0.5% × 500 = 1 + 0.5 + 2.5 = 4.0`
 
 本来是`1 + 2% × 500 = 11.0`，显然快了很多
-
-#  Virtual Memory
-
-> **Abbr**
->
-> * MMU
-> * PTE
-> * VA/PA
-> * VPN/PPN
-> * VPO/PPO
-> * TLB
-
-Page offset：按页算的，一般很大 (Page导一次(Mem<==>Disk)要很久，因此得尽量做大)
-
-Page Fault: the data is not in memory, retrieve it from disk
-
-* huge miss penalty, thus pages should be fairly large (e.g., 4KB)，太大也不行，太慢了
-* reducing page faults is important (LRU is worth the price)
-* can handle the faults in software instead of hardware
-* using write-through is too expensive so we use write back (之后写)
-
-
-
-**MMU(Memory Management Unit)**
-
-* 管理存储器与物理存储器
-* 解决“CPU访问存储系统的地址属性？”的问题
-
-* 往往在CPU内部
-
-
-
-采用**页表**来判断PCU访问的内容是否在主存当中，并与MMU配合实现<u>逻辑地址和物理地值之间的访问</u>
-
-* 解决了“如何判断CPU是否存在主存中”的问题
-* 页表是若干个页表项PTE(Page Table Entry)的集合
-
-![](assets/image-20200506163742554.png)
-
-![](assets/image-20200506165719524.png)
-
-## 详细内容
-
-**页表**
-
-| 虚拟页号VPN(Virtual Page Num) | 有效位         | 物理页号PPN |
-| ----------------------------- | -------------- | ----------- |
-| 与页表数相关                  | 是否在主存中？ |             |
-
-**虚拟地址VA**
-
-| 虚拟页号VPN(Virtual Page Num) | 页内偏移VPO      |
-| ----------------------------- | ---------------- |
-| 与页表数相关                  | 与物理页大小相关 |
-
-Ex. 主存页大小4KB，虚存大小4GB，则VPO为12位，VPN为32-12=20位，对应的页表有1M个PTE
-
-**物理地址PA**
-
-| 物理页号PPN | VPO --> PPO |
-| ----------- | ----------- |
-|             |             |
-
-**逻辑地址向物理地址的转化**
-
-用过PageTable+MMU实现
-
-Ex2. Page大小为1KB，最大物理空间64KB，页表如下，求0d2050和0d3080的主存地址。
-
-|      | 0      | 1      | 2      | 3      |
-| ---- | ------ | ------ | ------ | ------ |
-|      | 1      | 1      | 1      | 0      |
-|      | 000010 | 000110 | 000111 | 000100 |
-
-0d2050 = 0b10_0000000010，虚拟页号为2，查页表的物理页号为000111，因此物理地址为000111_0000000010
-
-0d3080 = 0b11_...，虚拟页号为3，对应无效，因此是缺失的
-
-
-
-## TLB
-
-**Translation Lookaside Buffer** 地址转换后备缓冲器
-
-### 存在问题
-
-命中也得访问内存两次
-
-![](assets/image-20200506171701266.png)
-
-缺页就更惨了，还得进辅存
-
-5是腾出位置，7完成后还得正常地访问一次
-
-![](assets/image-20200506172039592.png)
-
-### 原理
-
-* 存储当前访问页表地址变换条目
-    * 不需要从主存中取了
-* 类似页表，也是PTE的集合，但是采用类似Cache中的映射方法(最好是direct或set-ass)，对来自CPU的虚拟页号进行逻辑划分，得到相应的tag和index
-
-**VA**
-
-| 虚拟页号VPN(Virtual Page Num) | 页内偏移VPO |
-| ----------------------------- | ----------- |
-| TLB Tag \| TLB Index          | VPO         |
-
-### 带TLB的转换
-
-
-
-![](assets/image-20200506172710558.png)
-
-
-
-主存只要访问一次了
-
-![](assets/image-20200506172856375.png)

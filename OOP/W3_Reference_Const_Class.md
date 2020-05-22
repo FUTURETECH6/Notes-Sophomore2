@@ -52,7 +52,7 @@ int main(int argc, char const *argv[])
 	printf("%d %d\n", a, b);	// 3 3
 	return 0;
 }
-/**/
+/*  */
 
 void func(int &);
 func(i * 3);	// ERROR: 不能用表达式
@@ -80,8 +80,6 @@ int main() {
 	h() = 16;	// ????
     			// 返回的是引用变量所以可以赋值，对x赋值
 }
-
-
 ```
 
 Diff
@@ -152,7 +150,7 @@ const string *p = &s;
 string const *p = &s;
 string *const p = &s;
 
-/* 不能对const取地址 */
+/* 不能对const取地址赋给非const指针 */
 
 int i;
 const int ci = 3;

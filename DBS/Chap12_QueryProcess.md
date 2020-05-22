@@ -13,7 +13,7 @@
 * l~r~: number of bytes for a tuple in r
 * V(A, r): number of distinct values that appear in r for attribute A; same as the size of A(r).
 * SC(A, r): selection cardinality of attribute A of relation r ; average number of records that satisfy equality on A.
-    * Sc(A, r) == nr / V(A, r)
+    * Sc(A, r) == n~r~ / V(A, r)
 
 time_cost = **disk_accesses** ＋ CPU ＋ network_communication
 
@@ -33,7 +33,7 @@ time_cost = **disk_accesses** ＋ CPU ＋ network_communication
 
 ## Linear
 
-* **File scan** – search algorithms that locate and retrieve records that fulfill a selection condition, do not use index. + 1 seek
+* **File scan** – search algorithms that locate and retrieve records that fulfill a selection condition, <u>do not use index</u>. + 1 seek
     * Algorithm **A1** (linear search线性搜索).  Scan each file block and test all records (tuples) to see whether they satisfy the selection condition.
         * Cost estimate = 1 seek + br block transf
             * br denotes number of blocks in the file for relation r
@@ -49,15 +49,17 @@ time_cost = **disk_accesses** ＋ CPU ＋ network_communication
 
 ## Index and equality
 
-* Index scan – search algorithms that use a B+ index. Selection condition must be on search-key of index.
+* Index scan – search algorithms that <u>**use a B+ index**</u>. Selection condition must be on search-key of index.
     * **A2**：主索引，码属性的等值比较
         * Retrieve a single record that satisfies the corresponding equality condition
         * Cost = (Hi + 1)* (tS + tT),   其中Hi 为索引树高
-            * b=1的A3
+            * ~~b=1的A3~~
+            * Hi是找到tuple的指针，1是找指针指向的元组
     * **A3**：主索引，非码属性的等值比较
         * Retrieve multiple records.   --- duplicate  
         * Records will be on consecutive blocks 
-        * Cost = Hi * (tT + tS) + tS + tT * b, b containing retrieved records ($b=\lceil sc(A, r) / f_r \rceil$？？)
+        * Cost = Hi * (tT + tS) + tS + tT * b, ~~b containing retrieved records (\$b=\lceil sc(A, r) / f_r \rceil$？？)~~ b is the number of blocks containing records with the specified search key
+            * Hi是找到bucket，tT * b是在bucket中搜索，tS是找到元组
     * **A4**：利用辅助索引的等值比较
         1. Retrieve a <u>single record</u> if the search-key is a <u>candidate</u> key
             * 实际就是A2
@@ -66,6 +68,7 @@ time_cost = **disk_accesses** ＋ CPU ＋ network_communication
             * <u>each of n matching records may be on a different block</u>
                 * 有点无序访问的意思
             * Cost = hi * (tT +tS)+ n* (tT + tS)= (hi + n) * (tT + tS)
+                * **不是bucket**
                 * Can be very expensive!
                 * <u>May be more worse than linear scan (因为寻道更花时间)</u>
 
@@ -76,7 +79,7 @@ time_cost = **disk_accesses** ＋ CPU ＋ network_communication
 | A2   | Primary B+-tree Index, Equality on Key      | (hi +1) ∗ (tT +tS)            | (Where hi denotes the height of the index.) Index lookup traverses the height of the tree plus one I/O to fetch the record; each of these I/O operations requires a seek and a block transfer. |
 | A3   | Primary B+-tree Index, Equality on Nonkey   | hi ∗ (tT + tS) + b ∗ tT       | One seek for each level of the tree, one seek for the first block. Here b is the number of blocks containing records with the specified search key, all of which are read. These blocks are leaf blocks assumed to be stored sequen- tially (since it is a primary index) and don’t require additional seeks. |
 | A4   | Secondary B+-tree Index, Equality on Key    | (hi +1) ∗ (tT +tS)            | This case is similar to primary index.                       |
-| A4   | Secondary B+-tree Index, Equality on Nonkey | (hi +n) ∗ (tT +tS)            | (Where n is the number of records fetched.) Here, cost of index traversal is the same as for A3, but each record may be on a different block, requiring a seek per record. Cost is potentially very high if n is large. |
+| A4   | Secondary B+-tree Index, Equality on Nonkey | (hi +n) ∗ (tT +tS)            | (<u>Where n is the number of records fetched</u>.) Here, cost of index traversal is the same as for A3, but each record may be on a different block, requiring a seek per record. Cost is potentially very high if n is large. |
 | A5   | Primary B+-tree Index, Comparison           | hi ∗ (tT + tS) + b ∗ tT       | Identical to the case of A3, equality on nonkey.             |
 | A6   | Secondary B+-tree Index, Comparison         | (hi +n) ∗ (tT +tS)            | Identical to the case of A4, equality on nonkey.             |
 
@@ -131,13 +134,15 @@ time_cost = **disk_accesses** ＋ CPU ＋ network_communication
 
 ### Steps
 
-Let M denote memory size(内存中<u>用于排序</u>的块数), b is the total blocks of the relation.
+[https://zh.wikipedia.org/wiki/外排序](https://zh.wikipedia.org/wiki/外排序)
+
+Let M denote memory size (内存中<u>用于排序</u>的块数), b is the total blocks of the relation.
 
 1. Create sorted runs.  Let i be 0 initially. Repeatedly do the following till the end of the relation:
 
     1. Read M blocks of relation into memory
     2. Sort the in-memory blocks
-    3. Write sorted data to run Ri(磁盘上？)
+    3. Write sorted data to run Ri(磁盘上？是的)
     4. increment i.
 
     Let the final value of  i  be N~0~= $\lceil b / M \rceil$( = 4)
@@ -145,14 +150,14 @@ Let M denote memory size(内存中<u>用于排序</u>的块数), b is the total 
     Note: When sorting a file, several subfiles are generated in the intermediate steps. <u>We refer to each subfile as a run(归并段).</u>
 
 2. Merge the runs (N-way merge). Assume that N = M-1( = 2).
-    
-    1. Use N=M-1 blocks of memory to buffer input runs, and 1 block to buffer output. Read the first block of each run into its buffer page
+   
+    1. Use N=M-1 blocks of memory to buffer input runs, and 1 block to buffer output. (实践中，将输入缓冲适当调小，而适当增大输出缓冲区能获得更好的效果) Read the first block of each run into its buffer page
     
     2. repeat
     
         1. Select the first record (in sort order) among all N=M-1 buffer pages
         2. Write the record to the output buffer.  <u>If the output buffer is full write it to disk.</u>
-        3. <u>Delete the record from its input buffer page.</u> If the buffer page becomes empty then   read the next block (if any) of the run into the buffer.
+        3. <u>Delete the record from its input buffer page.</u> If the input buffer page becomes empty then read the next block (if any) of the run into the buffer. (在上面的例子中一个block对应一个record所以...)
     
         until all input buffer pages are empty
 
@@ -177,13 +182,21 @@ BlockTransNum = (MergePass+1)(In+Out) - FinalWrite = $(2\lceil \log_{M-1}(b_r/M)
 
 SeekNum = SeekNumDuring_Init + SeekNumDuring_Merge
 
-\\                 = $2 \lceil b_r/M \rceil + (2 \lceil b_r / b_b \rceil \times \lceil \log_{M-1}(b_r/M) \rceil - \lceil b_r / b_b \rceil)$ (一个block要寻一次道？？是的，因为不一定放一起所以索性按照不放在一个磁道算)
+\\                 = $2 \lceil b_r/M \rceil + (2 \lceil b_r / b_b \rceil \times \lceil \log_{M-1}(b_r/M) \rceil - \lceil b_r / b_b \rceil)$ ~~(一个block要寻一次道？？是的，因为不一定放一起所以索性按照不放在一个磁道算)~~
 
 \\                 = 2\*4 + (2\*2-1)\*12
 
-Where b~b~ denotes 每个run文件(每次寻道？)读写的块数(？)，通常为1 (如果放得紧一点就能是M了？
+Where b~b~ denotes 每个run文件(每次寻道？)读写的块数，通常为1 (1表示所有block分散在不同的磁道，如果放得紧一点就能是M了？
+
+**补充**
+
+N-way的利弊：N大的话可以少IO几次，加快时间；但是如果数据量远远远大于内存容量，就必须多归并几次了
 
 # Join
+
+<u>前三个重要</u>
+
+<u>并且以下前两个计算cost都假设一个关系的所有block在一个磁道上</u>
 
 ## Nested Loop
 
@@ -202,6 +215,7 @@ end
 **Cost**
 
 * In the worst case, if there is enough memory only to hold <u>one block</u> of each relation, the estimated cost is $(b_r + n_r \times b_s) t_t + (b_r + n_r) t_s$
+     * 寻道：内层是全部扫描一次需要一次寻道(假设s中所有block的数据都在一个磁道)，外层是扫描一块需要一次寻道
 * In the best case, If the <u>smaller(larger？) relation fits entirely in memory</u>, use that as the inner relation:
      cost is $(b_r + b_s) t_t + 2t_s$
 
@@ -226,9 +240,10 @@ end
 
 **Cost**
 
-* Worst case(一次进一个r和一个s): $(b_r \times b_s + b_r)t_t + 2b_rt_s$(这个2br是否是假设s中的数据都在一个磁道？那为什么上面外排不行？？)
+* Worst case(一次进一个r的Block和一个s的Block): $(b_r \times b_s + b_r)t_t + 2b_rt_s$
     * Let the relation with smaller number of blocks be <u>outer</u> relation
-* Best case(s能全部进内存): $(b_r + b_s)t_t + 2 t_s$
+    * 寻道：内层是全部扫描一次需要一次寻道(假设s中所有block的数据都在一个磁道)，外层是扫描一块需要一次寻道
+* Best case(s能全部进内存): $(b_r + b_s)t_t + 2 t_s$ (2是因为探针可以一直在r所在磁道并且假设r的所有block是在同一个磁道？)
     * Let the relation with smaller number of blocks be <u>inner</u> relation(如果两个都能塞下哪个放inner倒无所谓)
 * Improvements：
     * 外层不以磁盘块大小为分块依据，一次读取r中M-2块，将s中的每一块与外层中的M-2块作链接。worst cost变为$(\lceil b_r/(M-2) \rceil \times b_s + b_r)t_t + 2 \lceil b_r/(M-2) \rceil t_s$
@@ -246,7 +261,7 @@ end
 
 **Cost**
 
-* Worst Case: $b_r(t_t+t_s) + n_r\times c$, c denotes [对s进行一次选择的花费](# Select)，例如对于用B+的主索引，$c = (H_{t_i} + 1)(t_t+t_s)$ (然后这里又当作在不同磁道上处理了)
+* Worst Case: $b_r(t_t+t_s) + n_r\times c$, c denotes [对s进行一次选择的花费](# Select)，例如对于用B+主索引的、且存储在不同磁道的s，$c = (H_{t_i} + 1)(t_t+t_s)$
     * 如果两个关系都有连接属性上的索引，则用元组少的作为外层
 * Best Case: Transfer：一次传输；Seek：读两个Block+索引加载？
 
@@ -254,7 +269,7 @@ end
 
 **条件**
 
-* Only for equi-join or natural join.
+* <u>Only for equi-join or natural join.</u>
 * Sort both relations on their join attribute (if not already sorted on the join attributes).
 * Merge the sorted relations to join them
     * Every pair with same value on join attribute must be matched
@@ -277,11 +292,13 @@ end
 
 ## Hash Join
 
-对rs分别进行partition，然后对每一划分进行连接
+<u>Only for equi-join or natural join.</u>
+
+对r, s分别进行partition，然后对每一划分进行连接
 
 **Cost**
 
-
+~~\$(b_r+b_s)t_t + 2n_ht_s$~~ 有点复杂
 
 **Example**
 
@@ -307,13 +324,13 @@ ignores the cost of writing partially filled blocks
 * Materialized evaluation is <u>always applicable</u>
 * Cost of writing results to disk and reading them back can be quite expensive. (频繁IO)
     * Our cost formulas for operations ignore cost of writing results to disk, so
-        * Overall cost  =  Sum of costs of individual operations +                     cost of writing intermediate results to disk
+        * Overall cost  =  Sum of costs of individual operations + cost of writing intermediate results to disk
 * （改进）Double buffering: use two output buffers for each operation, when one is full write it to disk while the other is getting filled
     * Allows overlap of disk writes with computation and reduces execution time
 
 ## Pipelining
 
-* Much cheaper than materialization: no need to store a temporary relation to disk.
+* <u>Much cheaper than materialization: no need to store a temporary relation to disk.</u>
 * Pipelining may not always be possible. (depend on the type of next operations, and whether the output is sorted, etc.) 
 * For pipelining to be effective, use evaluation algorithms that generate output tuples even as tuples are received for inputs to the next operation. 
 * Pipelines can be executed in two ways:  demand driven(需求驱动，由上而下) and producer driven(生产者驱动，由下而上)

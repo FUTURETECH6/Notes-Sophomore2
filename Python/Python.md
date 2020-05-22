@@ -563,7 +563,7 @@ print str.join( seq );	# a-b-c
 
 ## 二维列表(矩阵)
 
-### 创建方式
+**创建方式**
 
 ```python
 m = [[0] * 3] * 4
@@ -824,9 +824,13 @@ try-finally 语句无论是否发生异常都将执行最后的代码。
 
 集合的字面量用花括号`{}`
 
-**可变容器**
+<u>可变容器</u>
 
-### 创建集合
+<u>集合元素可以是任意类型 Flase：集合元素只能是不可变类型(不可变容器？？不然int也是可变类型啊)</u>
+
+### 操作
+
+**创建集合**
 
 ```python
 fruit = {'apple', 'orange', 'pear', 'banana'}
@@ -835,7 +839,7 @@ emp = set()
 
 ==注：emp = {}会创建空字典==
 
-### 操作
+**操作**
 
 | func                      | func                                    |
 | ------------------------- | --------------------------------------- |
@@ -881,9 +885,11 @@ Out[4]: {2, 3, 5, 7, 11}
 
 通过键来访问
 
-**可变容器**
+<u>可变容器</u>
 
-### 创建
+### 操作
+
+**创建**
 
 ```python
 >>> fac = {}
@@ -902,7 +908,7 @@ Out[4]: {2, 3, 5, 7, 11}
 TypeError: unhashable type: 'list'
 ```
 
-### 操作
+**操作**
 
 |              |                                                       |                                                              |
 | ------------ | ----------------------------------------------------- | ------------------------------------------------------------ |
@@ -989,6 +995,8 @@ if __name__ == "__main__":
 [1, 0, 0]
 ```
 
+## Argv
+
 **关键词参数**
 
 ```python
@@ -1011,7 +1019,7 @@ S.C. is 19
 ```python
 >>> def foo(a, *b):
 ...     print(a, b)
-...     return
+...     returna'a'a'a'a'a'a
 ... 
 >>> foo(1, 2, 3)
 1 (2, 3)
@@ -1033,14 +1041,129 @@ TypeError: foo() takes 1 positional argument but 3 were given
 >>> foo(1, x=2, y=3)
 1 {'x': 2, 'y': 3}
 >>> foo(1, x=2, 2=3)
-SyntaxError: keyword can't be an expression
+SyntaxError: keyword can't be an expressio
 >>> foo(1, x=2, '2'=3)
 SyntaxError: keyword can't be an expression
 ```
 
-
-
 **引用传递**
+
+
+
+## Namespace and field
+
+## Recursion
+
+## 其他函数
+
+**sorted()**
+
+```python
+Signature: sorted(iterable, /, *, key=None, reverse=False)
+Docstring:
+Return a new list containing all items from the iterable in ascending order.
+
+A custom key function can be supplied to customize the sort order, and the
+reverse flag can be set to request the result in descending order.
+Type:      builtin_function_or_method
+```
+
+```python
+>>> print(sorted({'a':90, 'c':100, 'b':80}))
+['a', 'b', 'c']
+>>> print(sorted({'a':90, 'c':100, 'b':80}.items()))
+[('a', 90), ('b', 80), ('c', 100)]
+>>> print(sorted({'a':90, 'c':100, 'b':80}.items(), key=lambda x: x[1]))
+[('b', 80), ('a', 90), ('c', 100)]
+```
+
+**匿名函数**
+
+```python
+>>> f = lambda x: x**2
+>>> f(5)
+25
+
+```
+
+这些都是类ctor却被当作函数使？？
+
+**map()**
+
+```python
+class map(object)
+ |  map(func, *iterables) --> map object
+ |  
+ |  Make an iterator that computes the function using arguments from
+ |  each of the iterables.  Stops when the shortest iterable is exhausted.
+```
+
+```python
+>>> print(list(map(lambda x: x**2, [1, 2, 3, 4])))
+[1, 4, 9, 16]
+```
+
+**zip()**
+
+```python
+class zip(object)
+ |  zip(*iterables) --> zip object
+ |  
+ |  Return a zip object whose .__next__() method returns a tuple where
+ |  the i-th element comes from the i-th iterable argument.  The .__next__()
+ |  method continues until the shortest iterable in the argument sequence
+ |  is exhausted and then it raises StopIteration.
+```
+
+```python
+>>> print(list(zip([1, 2, 3], [5, 6, 7, 8])))
+[(1, 5), (2, 6), (3, 7)]
+>>> print(dict(zip([1, 2, 3], [5, 6, 7, 8])))
+{1: 5, 2: 6, 3: 7}
+```
+
+**eval()**
+
+```python
+Signature: eval(source, globals=None, locals=None, /)
+Docstring:
+Evaluate the given source in the context of globals and locals.
+
+The source may be a string representing a Python expression
+or a code object as returned by compile().
+The globals must be a dictionary and locals can be any mapping,
+defaulting to the current globals and locals.
+If only globals is given, locals defaults to it.
+Type:      builtin_function_or_method
+```
+
+**all()/any()**
+
+全为True/存在True即为True，否则为False
+
+```python
+>>> for i in [[1, 2, 3], [0, 1, 2], [0, 0, 0]]:
+...     print(all(i), any(i))
+True True
+False True
+False False
+```
+
+
+
+
+
+## sys
+
+sys.argv[0]
+
+sys.path.append();
+
+
+
+
+
+
 
 
 
@@ -1062,4 +1185,33 @@ math.fabs(x)	# 浮点绝对值
 
 * 有序：字符串、列表、元组
 * 无序(唯一性)：集合、字典
+
+## print
+
+```python
+print(...)
+    print(value, ..., sep=' ', end='\n', file=sys.stdout, flush=False)
+    
+    Prints the values to a stream, or to sys.stdout by default.
+    Optional keyword arguments:
+    file:  a file-like object (stream); defaults to the current sys.stdout.
+    sep:   string inserted between values, default a space.
+    end:   string appended after the last value, default a newline.
+    flush: whether to forcibly flush the stream.
+```
+
+
+
+加`*`可以以空格格式输出容器
+
+```python
+>>> a = *[1, 2, 3]
+SyntaxError: can't use starred expression here
+>>> print(a)
+NameError: name 'a' is not defined
+>>> print(*[1, 2, 3])
+1 2 3
+>>> print(*(1, 2, 3))
+1 2 3
+```
 
