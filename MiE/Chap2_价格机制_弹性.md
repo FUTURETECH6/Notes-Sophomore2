@@ -23,8 +23,6 @@
 * 当事人通过价格和一定数量商品发生联系。通过指令(学校发通用粮票给学生去买粮)发生联系就不是市场行为
 * 在出让商品者和取得商品者间存在竞争。商品配给就不是市场行为
 
-
-
 ```mermaid
 graph LR
 
@@ -38,7 +36,7 @@ graph LR
 
 ### **需求与需求量**
 
-**需求**：
+**需求**
 
 * 消费者在某一时间内的**每**一价格水平上对某种商品愿意并且能够购买的数量。(各个价格水平上分别愿意买多少，是总的概念)
 * 条件
@@ -173,7 +171,7 @@ graph LR
 
 #### **供给定理**
 
-* 供给定理:一般情况下，某种商品的供给量与其价格成正方向变动，即价格上升，供给量增加;价格下降， 供给量减少。
+* 供给定理：一般情况下，某种商品的供给量与其价格成正方向变动，即价格上升，供给量增加;价格下降， 供给量减少。
 * 供给函数：Qs=f(P) dQs/dP > 0
 * 供给方程：Qs =c+dP (c、d为常数，d>0)
 * 供给曲线
@@ -280,7 +278,7 @@ $\large E_d = \frac{\Delta Q / Q}{\Delta P / P} = \frac{\Delta Q}{\Delta P}\frac
 * 弧弹性：两点之间的弹性
     * $\large E_d = \frac{\Delta Q}{\Delta P} \times \frac{P_1 + P_2}{Q_1 + Q_2}$
 * 点弹性：
-    * $\large E_d = \frac{\Delta Q}{\Delta P}\frac{P}{Q} = \frac{{\rm d} Q}{{\rm d} P}\frac{P}{Q}$，其中$\large \frac{{\rm d} Q}{{\rm d} P}$为斜率的导数
+    * $\large E_d = \frac{\Delta Q}{\Delta P}\frac{P}{Q} = \frac{{\rm d} Q}{{\rm d} P}\frac{P}{Q}$，其中$\large \frac{{\rm d} Q}{{\rm d} P}$为斜率的**倒数**
 
 **分类**
 
@@ -302,7 +300,7 @@ $\large E_d = \frac{\Delta Q / Q}{\Delta P / P} = \frac{\Delta Q}{\Delta P}\frac
     * 奢侈品(汽车、珠宝、出国旅游)、固定电话
 * |Ed| = infinity
     * 完全有弹性
-    * 需求曲线与Q轴平行
+    * 需求曲线与Q(x)轴平行
     * 银行对黄金的需求是无限的、263收费后需求量几乎为0\
 
 **影响因素**

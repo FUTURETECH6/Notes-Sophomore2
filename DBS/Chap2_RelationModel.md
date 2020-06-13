@@ -1,4 +1,4 @@
-### Attribute Type
+#### Attribute Type
 
 * 1st NF
 * 多值属性：电话多个
@@ -55,12 +55,12 @@ Basic Operator
 
 | Name                            |          | 作用                                                         | Ex                                                           |
 | ------------------------------- | -------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| 选择 Select                     | $\sigma$ |                                                              | $\sigma_{\rm{salary \geqslant 85000}}(instructor)$           |
+| 选择 Select                     | $\sigma$ | 输出保留所有属性                                             | $\sigma_{\rm{salary \geqslant 85000}}(instructor)$           |
 | 投影 Project                    | $\Pi$    | 取出某几个属性，<u>重复的tuple会被去掉</u>                   | $\Pi_{ID,salary}(instructor)$                                |
 | 并 Union                        | $\cup$   | $r \cup s = \{t(uple) | t \in r {\ \rm or\ } t \in s\}$<br />1. r,s have same arity(等目)<br />2. attribute domains must be compatible | $\Pi_{name}(instructor) \cup \Pi_{name}(student)$<br />说明：映射之后已经等目了 |
 | 集合差<br />Set difference      | $-$      | $r - s = \{t | t \in r {\ \rm and\ } t \notin s\}$           |                                                              |
 | 笛卡尔积<br />Cartesian product | $\times$ | $\sigma_{A=C}(r \times s)$<br />似乎结果的属性得用r.Attribute和s.Attribute | $instructor \times department$<br />$\sigma_{in.dept = bu.dept}(instructor \times building)$ |
-| 重命名<br />Rename              |          | $\rho_{X(A_1,...,A_n)}(E)$<br />X是E的新名字，Ai表示可以对属性也重命名，缺省表示同名 |                                                              |
+| 重命名<br />Rename              | $\rho$   | $\rho_{X(A_1,...,A_n)}(E)$<br />X是E的新名字，Ai表示可以对属性也重命名，缺省表示同名 |                                                              |
 
 例题：PPT 2.34-2.38
 
@@ -87,7 +87,7 @@ Cartesian product， Natural join ， Division 双目运算
 
 Project, select 为单运算对象
 
-Priority(关系运算的优先级)：
+Priority(关系运算的优先级)：`>`
 
 Project, Select, Cartesian Product(times), Join, division, Intersection, Union, difference
 
@@ -97,7 +97,21 @@ Project, Select, Cartesian Product(times), Join, division, Intersection, Union, 
 
 **Generalized Projection**：使用算数表达式
 
-**Aggregate Functions and Operations**：avg，min，max，sum，count
+#### Aggregate Functions and Operations
+
+avg，min，max，sum，count
+
+$\Huge _{G_1, G_2, ..., G_n} \mathcal{G/g} _{F_1(A_1), F_2(A_2), ..., F_n(A_n)}(E)$
+
+* E is any relational-algebra expression
+* G1, G2 …, Gn is a list of attributes on which to group <u>(can be empty)</u>
+    * `group by G1, G2, ..., Gn`
+* Each Fi is an aggregate function
+* Each Ai is an attribute name
+* Result of aggregation does NOT have a name
+    * 可以这样rename：$\Large _{branch\_name} \mathcal{g} _{sum(balance)\ as\ sum\_balance} (account)$
+
+
 
 **Outer Join**：左右全
 

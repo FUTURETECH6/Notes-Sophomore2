@@ -178,38 +178,3 @@ inline void __advance(ForwardIterator &i, Distance n, forward_iterator_tag)
 }
 ```
 
-
-
-# Exception
-
-考虑run-time error
-
-错误处理方式
-
-1. 使用错误返回码(正确返回0，错误返回给定的错误码)
-    * 写的代码像面条，正常代码和错误处理代码混杂
-    * 返回必须是错误返回码的话本来可以返回其他正常东西的(可以通过参数传递错误码的引用解决)
-        * (tuple不香吗，怕浪费时间用静态引用也好呢
-    * 如果调用链很长的话不好处理，可能不得不层层return
-2. 用异常处理
-    * 正常逻辑(try block)和错误处理(cathc block)分开
-    * 不需要手动搞异常传递，会自动抓取
-    * 如果本层不能解决，会自动向上传递直到有人能处理了为止
-3. exit(EXITCODE)
-4. assert()
-    * `assert(idx >= 0 && idx < m_size)`
-    * 但是assert只有debug版会进行，release版不会检查
-
-
-
-## throw
-
-```cpp
-{
-    if(){
-        throw VectorIndexError(idx);
-    }
-    return m_elems[idx];
-}
-```
-

@@ -166,6 +166,8 @@ Def：*conflict equivalence*(冲突等价)：可以通过a series of swaps of  n
 
 Def：*conflict serializable*(冲突可串)：和serial schedule冲突等价的concurrent schedule S称为冲突可串的
 
+
+
 ## View Serializability
 
 Def: S and S' are view equivalent if for each data item Q:

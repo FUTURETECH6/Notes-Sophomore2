@@ -1,3 +1,5 @@
+[TOC]
+
 # Chapter 1
 
 ```python
@@ -1149,21 +1151,126 @@ False True
 False False
 ```
 
-
-
-
-
 ## sys
 
 sys.argv[0]
 
 sys.path.append();
 
+# Chapter7 文件
+
+**开关**
+
+```python
+open(file, mode='r', buffering=-1, encoding=None, errors=None, newline=None, closefd=True, opener=None)
+# file要么两个\\，要么一个/，要么一个\和一个不转义标记r
+
+<file>.close()
+# 如果用with open的话就可以不用close()
+```
+
+| 模式 | 描述                                                |
+| ---- | --------------------------------------------------- |
+| r    | 只读。文件不存在则异常FileNotFoundError，**缺省**   |
+| w    | 覆盖写模式。不存在则创建                            |
+| x    | 创建写模式。不存在则创建，存在则异常FileExistsError |
+| a    | 追加写模式。不存在则创建                            |
+|      | 以下为共用模式                                      |
+| b    | 二进制文件模式                                      |
+| t    | 文本文件模式，**缺省**                              |
+| +    | 同时读写                                            |
+
+**读**
+
+```python
+
+<file>.read()
+# 从文件中读入整个文件内容，如果给出参数，读入前size长度的字符串或字节流
+
+<file>.readline()
+# 从文件中读入一行内容，如果给出参数，读入该行前size长度的字符串或字节流
+
+<file>.readlines()
+# 从文件中读入所有行，以每行为元素形成一个列表，如果给出参数，读入hint行
+```
+
+**写**
+
+```python
+<file>.write(s)
+# 向文件写入一个字符串或字节流
+
+<file>.writelines(lines)
+# 将一个元素为字符串的列表写入文件
+
+<file>.seek(offset)
+# 改变当前文件操作指针的位置，offset的值：
+# 0：文件开头； 1: 当前位置； 2: 文件结尾
+```
+
+# Chapter8 Class
+
+```python
+class Cat:
+    界 = "动物界"
+    门 = "脊索动物门"
+    目 = "食肉目"
+    科 = "猫科"
+    def __init__(self, name, color):
+        self.color = color
+        self.name = name
+    def sit(self):
+        print(self.name + " is sitting")
+    def jump(self):
+        print(self.name + " is jumping")
+        
+myCat = Cat("喵喵", "#FFFFFF")
+```
+
+类变量可以通过类访问，也可通过对象访问(但是如果对象有同名变量则优先用对象的)，直接写在类里；对象变量写在函数定义中(即使同名也是)
+
+```python
+>>> class Class:
+...     classVar = 1
+... 
+>>> a = Class()
+>>> a.classVar
+1
+>>> a.classVar = 2
+>>> a.classVar
+2
+>>> b = Class()
+>>> b.classVar
+1
+```
+
+![](assets/image-20200602091204402.png)
+
+你看这里他给car1弄了个price于是就有了个对象变量，且独立于类变量存在
+
+两个下划线(\_\_)定义私有成员，实际上是以`_ClassName__MemberName`的形式存储
+
+```python
+class A:
+    def __init__(self):
+        self.x = 1
+        self.__y = 1
+
+    def getY(self):
+        return self.__y
 
 
-
-
-
+a = A()
+try:
+    print(a.__y) # 'A' object has no attribute '__y'
+except:
+    print("ERROR")
+print(a._A__y)   # 输出1
+a.__y = 45		 # 这里为什么可以？？？？
+print(a.getY())  # 输出是1不是45
+# 这时a有三个成员变量，x=1, _A__y=1, __y=45
+print(a.__y)     # 不报错了，输出45
+```
 
 
 

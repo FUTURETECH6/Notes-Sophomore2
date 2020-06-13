@@ -66,5 +66,22 @@ graph LR
 
 **重要定理2**：一个最优解，将其拆为两个，两个都作为子节点，最优性不会丢失
 
+算法：每轮先排序，将最小的两个合并，和作为父节点，进入下一轮
+
+```pseudocode
+void Huffman ( PriorityQueue  heap[ ],  int  C ) {
+    consider the C characters as C single node binary trees, and initialize them into a min heap;
+    for ( i = 1; i < C; i++ ) {
+        create a new node;
+        /* be greedy here */
+        delete root from min heap and attach it to left_child of node;
+        delete root from min heap and attach it to right_child of node;
+        weight of node = sum of weights of its children;
+        /* weight of a tree = sum of the frequencies of its leaves */
+        insert node into min heap;
+    }
+}
+```
+
 
 

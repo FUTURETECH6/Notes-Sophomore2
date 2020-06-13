@@ -1,3 +1,39 @@
+
+
+# Composition & Inheritance
+
+Ways of inclusion
+
+* Fully：如人的器官
+* Reference
+    * 如人的笔记本电脑(是独立不依赖与自己存在)，也可以和其他“人”共享
+    * 如employee类中的supervisor，也是个employee，所以只能reference
+
+Example
+
+```cpp
+class Person { ... };
+class Currency { ... };
+class SavingsAccount {
+  public:
+    SavingsAccount( const char* name, const char* address, int cents);
+    ~SavingsAccount();
+    void print();
+  private:
+    Person m_saver;
+    Currency m_balance;
+};
+
+void SavingsAccount::print() {
+    m_saver.print();
+    m_balance.print();
+}
+```
+
+
+
+---
+
 Protected：派生类可以访问
 
 

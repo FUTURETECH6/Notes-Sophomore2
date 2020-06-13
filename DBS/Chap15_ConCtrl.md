@@ -387,3 +387,7 @@ When deadlock is detected :
     * Total rollback: Abort the whole transaction and then restart it.
     * Partial rollback: More effective to roll back transaction only as far as necessary to break deadlock.
 * Starvation happens if same transaction is always chosen as victim. 解决办法：Include the number of rollbacks in the cost factor to avoid starvation
+
+# Appendix
+
+**Lock Point**：一个事物得到所有锁的时间

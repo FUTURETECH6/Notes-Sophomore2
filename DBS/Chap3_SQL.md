@@ -276,7 +276,7 @@ using (A1, A2, ...., An)
 
 E.g. 
 
-```sql
+```mysql
 -- Find all customers who have either an account or a loan (but not both) at the bank. account or a loan (but not both) at the bank.
 select customer_name
 from (depositor natural full outer join borrower)

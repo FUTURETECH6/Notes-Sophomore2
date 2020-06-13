@@ -809,3 +809,40 @@ plt.show()
 * **tick_params**：设轴颜色等`plt.tick_params(axis='both', which='major', colors = "R", labelsize=16)`
 * **title**, **xlabel**, **ylabel**：参数：`color`, `fontsize`
 * 
+
+# matplotlib+numpy+scipy
+
+```python
+import matplotlib.pyplot as plt
+import numpy as np
+from scipy.optimize import curve_fit
+
+def func_nlogn(x, cof_nlogn):
+	return cof_nlogn * x * np.log(x)
+
+x = np.arange(10000, 100001, 10000)
+# y = np.array([0.708964, 2.87730, 6.53083, 11.5626, 18.3661, 26.0043, 35.6226, 45.7856, 58.9745, 71.0816])
+y = [0.708964, 2.87730, 6.53083, 11.5626, 18.3661, 26.0043, 35.6226, 45.7856, 58.9745, 71.0816]
+
+
+f_linear = np.poly1d(np.polyfit(x, y, 1))
+f_poly = np.poly1d(np.polyfit(x, y, 2))
+f_exp = np.poly1d(np.polyfit(x, np.log(y), 1))
+popt = curve_fit(func_nlogn, x, y)
+cof_nlogn = popt[0]
+
+
+plt.scatter(x, y, color = "grey", label = "Sample")
+plt.plot(x, f_linear(x), label = "Linear")
+plt.plot(x, f_poly(x), label = "Quadratic")
+plt.plot(x, np.exp(f_exp(x)), label = "Exponent")
+plt.plot(x, func_nlogn(x, cof_nlogn), label = "O(NlogN)")
+
+
+plt.xlabel("Sacle of N")
+plt.ylabel("Time/sec")
+plt.legend()
+plt.grid()
+plt.show()
+```
+

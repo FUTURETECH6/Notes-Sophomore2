@@ -161,7 +161,7 @@ create assertion check not exists	-- 不存在同时上多节课的老师
 
 作出某些修改之后会自动触发对数据库的修改
 
-```sql
+```mysql
 -- To ensure referential integrity on the time_slot_id  attribute of the section relation.
 create trigger timeslot_check1 after insert on section
             referencing new row as nrow	-- 标准语句
@@ -214,7 +214,7 @@ create trigger reorder-trigger after update of level on inventory
 
 
 
-```sql
+```mssql
 -- SQL Server
 -- balance不能为负值，因此若为负的会自当创建一个借款账户
 -- Inserted，deleted 相当于前法的nrow，(称为过渡表，transition table
@@ -299,7 +299,7 @@ Users should be trained on password selection and secrecy
 
 ## Grant
 
-```sql
+```mysql
 grant [select, insert, update, delete, references/*ForeignKey*/, all privileges] on <table, view> to <user, public, role>
 [with grant option] -- 可以把权限再给别人
 ```
@@ -308,7 +308,7 @@ grant [select, insert, update, delete, references/*ForeignKey*/, all privileges]
 
 课本P145
 
-```sql
+```mysql
 create role instructor;
 grant select on takes to instructor;
 grant dean to Amit;			-- 授予用户角色

@@ -54,7 +54,7 @@ Reg
 
 ### Direct Mapped(2L)
 
-**分块**：例如1024Word(4Byte/Word)的内存，分为256块，则第61个Word的主存地址为000011(块号)11(区内块号)01(块内地址)
+**分块**：例如1024Word(4Byte/Word)的内存，分为256块，则第61个Word的主存地址为000011(块号)\[11(块内字号)01(字内地址)\](偏移地址)
 
 Memory中的整个Block的内容被全部存在Cache中
 
@@ -90,7 +90,7 @@ Index是指示Block地址的(例如下面例题中就是10位的)
 > * ~~One block=4 words = 2^2^  words~~ 
 > * Number of blocks (index bit) = 2^12^ ÷ 2^2^ = 2^10^ blocks(Cache中的BlockNum和IndexSize是相等的，因此index是10位的)
 > * Data bits of block =4×32=128 bits\
-> * <u>Tag bits  = address - index - blockSize(byte offset width) =32 - 10 - 4 =18 bits</u>  ？？(这个并不能由其他的算出来，因为没告诉你映射到的Memory多大，只能用地址线的位数来反推，由此再推出Memory = 2^18^ *16KB = 4GB) ==Valid和Dirty不算在地址位里==
+> * <u>Tag bits  = address - index - blockSize(byte offset width) =32 - 10 - 4 =18 bits</u>  ？？(这个并不能由其他的算出来，因为没告诉你映射到的Memory多大，只能用地址线的位数来反推，由此再推出Memory最大能到 2^18^ *16KB = 4GB) ==Valid和Dirty不算在地址位里==
 > * Valid bit = 1 bit
 > * Total Cache size = 2^10^ × (128+18+1)= 2^10^×147= 147 Kbits= 18.4KB
 > * It is about [1.15](147/128=18.4/16) times as many as needed just for the data
@@ -111,9 +111,7 @@ Ex. 1-word Block
 
 **分块**：例如1024Word(4Byte/Word)的内存，分为256块，则第61个Word的主存地址为00001111(块号)01(块内地址)
 
-Tag直接存储`BlockAddr_in_Memory`，🈚️Index
-
-(这个扫描不是巨慢？？
+Tag直接存储`BlockAddr_in_Memory`，🈚️Index (因此扫描巨慢
 
 **特点**
 
@@ -149,7 +147,7 @@ Ex. 2-Way Set-Associative Cache(1 word/block; 2 blocks/set; 4 blocks/cache; henc
 * DM：浙江代表只能住201
 * FA：浙江代表随便住
 * SA：浙江代表给5个房间
-    * 即：任意模组数为k的都可以进到index=k的set，然后再看要去替换这个set里的哪个block
+    * 即：任意mod组数为k的都可以进到index=k的set，然后再看要去替换这个set里的哪个block
 
 ---
 
@@ -224,16 +222,16 @@ CacheSize = 64KB; 4 words/block; 4 bytes/word; physical address: 32bits
         * 需要加一个[dirty](# 脏位)位来进行判断
         * **避免误写的方法**：用两个周期(先检查是否命中再写)；弄个写缓冲(在正常周期内将新数据放入缓冲，如果命中了再写入)
 * Write misses(写东西，tag对不上):
-    * read the entire block from memory into the cache, then write the word using \-back or \-through
     * Write allocate (收集)
-        * The block is loaded into the cache on a miss before anything else occurs.
+        * read the entire block from memory into the cache(==Write allocate得先read==), then write the word using \-back or \-through(hit策略)
+        * <u>The block is loaded into the cache on a miss before anything else occurs.</u> 
         * 看脏位
             * 1：先把原来东西写到内存，再用新值冲掉
             * 0：没被写过，直接冲
     * Write around (绕开？no write allocate)
         * The block is only written to main memory
         * It is not stored in the cache.
-    * In general, <u>write-back caches use write-allocate</u>(之后要hit必须cache里有东西), and <u>write-through caches use write-around</u>.(无所谓，反正hit了也要写到mem，跟cache没啥关系)
+    * In general, **<u>write-back caches use write-allocate</u>**(之后要hit必须cache里有东西；chache和mem差距大), and **<u>write-through caches use write-around</u>**.(无所谓，反正hit了也要写到mem，跟cache没啥关系；mem和cache差距小)
 
 #### 脏位
 

@@ -10,9 +10,9 @@ MIPS **convention** for registers
 
 ==特别注意位置！！==
 
-==Load：reg $\Longleftarrow$ memory==：`lw $to, 32($s3)`
+==Load：reg $\Longleftarrow$ memory==：`lw $t0, 32($s3)`
 
-==Store：reg $\Longrightarrow$ memory==：`sw $to, 48($s3)`
+==Store：reg $\Longrightarrow$ memory==：`sw $t0, 48($s3)`
 
 
 
@@ -43,7 +43,7 @@ add $s1, $s2, $t0	# g = h + A[i]
 不足1字补到1字
 
 ```c
-struct{
+struct {
     int a;
     char b;
     char c[2];
@@ -182,7 +182,7 @@ Six steps for execution of the procedure
 
 **Using more registers**
 
-* Stack: ideal data structure for spilling registers
+* Stack: ideal data structure for spilling registers	
 * Stack Operation :Push, pop ; Stack pointer: \$sp (\$29)
 
 # 函数调用

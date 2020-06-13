@@ -130,7 +130,7 @@ ALU操作表，观察会发现对应指令的func后两位确实与下面的op�
 | ----------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | RegDst      | Select  register destination number from the rt(20:16) when WR | Select  register destination number from the rd(15:11) when WB |
 | RegWrite    | None                                                         | Register  destination input is written with the value on the Write data input |
-| ALUScr      | The  second ALU operand comes from the second register file output (Read data 2) | The  second ALU operand is the sign-extended lower 16 bits of the instruction. |
+| ALUSrc      | The  second ALU operand comes from the second register file output (Read data 2) | The  second ALU operand is the sign-extended lower 16 bits of the instruction. |
 | PCSrc       | The  PC is replaced by the output of the addr that computes the value PC+4 | The  PC is replaced by the output of the addr that computes the branch target. |
 | MemRead     | None                                                         | Data  memory contents designated by the address input are put on the Read data output. |
 | MemWrite    | None                                                         | Data  memory contents designated by the address input are replaced by value on the  Write data input. |

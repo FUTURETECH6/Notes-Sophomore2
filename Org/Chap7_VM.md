@@ -84,9 +84,9 @@ When a page fault occurs, the OS will be given control through exception mechani
 
 **页表**
 
-| 虚拟页号VPN(Virtual Page Num) | 有效位         | 物理页号PPN |
-| ----------------------------- | -------------- | ----------- |
-| 与页表数相关                  | 是否在主存中？ |             |
+| 虚拟页号VPN(Virtual Page Num)  | 有效位 | 物理页号PPN |
+| ------------------------------ | ------ | ----------- |
+| 与页表数相关(应该不会显式存储) |        |             |
 
 **虚拟地址VA**
 
