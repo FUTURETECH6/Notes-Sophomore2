@@ -1,11 +1,13 @@
 # RB
 
+==到NIL的也算一条路==
+
 **性质**
 
 * 根是黑的
 * (叶是黑的，NIL、不存数据
 * 每个通路上黑色数量一样
-* <font color = "#FF0000">红节点</font>的两个子都是黑
+* ==<font color = "#FF0000">红节点</font>的两个子都是黑，且不能一个NIL一个黑==
     * 不能两个连续红
     * 最长路不会超过最短路两倍
 
@@ -17,7 +19,7 @@ class T {
   private:
     struct Node *nil;
 }
-T::T(){
+T::T() {
     nil.color = BLACK;
     // nil其他属性无所谓
 }
@@ -25,7 +27,7 @@ T::T(){
 
 
 
-**bh(x)**：从x节点开始往下的**黑**节点个数(所有同路一样的)
+**bh(x)**：从x节点开始往下的**黑**节点个数(x not included)
 
 **sizeof(x)>=2^bh(x)^-1**
 
@@ -33,38 +35,42 @@ T::T(){
 
 <u>**最大树高**：2ln(N+1)</u>：
 $$
-Proof:
-\\
-1
-\\
-sizeof(x) >= 2^{bh(x)}-1
-\\
-hx=0, sizeof(x) = 0
-\\
-h(x) = k+1, bh(child) = bh(x) || bh(x)-1
-\\
-h(child) <= k, sizeof(child) >= 2^{bh(child)}-1>= 2^{bh(x)-1}-1
-\\
-1+2sizeof(child)>=2^{bh(x)}-1
-\\
-2
-\\
-bh(Tree)>=h(Tree)/2
-\\
-sizeof(root) = N >= s^{bh(Tree)}-1 >=
+{
+    Proof:
+    \\
+    1
+    \\
+    sizeof(x) >= 2^{bh(x)}-1
+    \\
+    hx=0, sizeof(x) = 0
+    \\
+    h(x) = k+1, bh(child) = bh(x) || bh(x)-1
+    \\
+    h(child) <= k, sizeof(child) >= 2^{bh(child)}-1>= 2^{bh(x)-1}-1
+    \\
+    1+2sizeof(child)>=2^{bh(x)}-1
+    \\
+    2
+    \\
+    bh(Tree)>=h(Tree)/2
+    \\
+    sizeof(root) = N >= s^{bh(Tree)}-1 >=
+}
 $$
 
 **Insert**(加红再调)
 
 * T_amo = O(1)
-* 父亲与叔叔均为红：父辈与爷爷调颜色，但需递归向上 (==不要只顾着旋转而忘记这种情况了==
+* 父亲与叔叔均为红：父辈与爷爷调颜色，但需递归向上 (==不要只顾着旋转而忘记这种最简单的情况了==
 * 父辈异色：先改颜色后改结构，不需再向上调整
 
 **Delete**(删黑需调)
 
-* T_amo：𝑚 consecutive insertions in a tree of 𝑛 nodes is 𝑂(𝑛+𝑚) (Tarjan 1985)."
+* T_amo："𝑚 consecutive insertions in a tree of 𝑛 nodes is 𝑂(𝑛+𝑚) (Tarjan 1985)."
     * 所以均摊时间也是O(1)
-* 兄弟红：把兄弟变爷爷，换了个黑兄弟再继续
+* 第一步：三种情况：叶节点，单子节点，双子节点。通过不停处理可以把后两种情况变成第一种情况。
+* 第二步：那个被换上去的叶节点是红色就直接删掉；是黑色且父节点是红色就两个换色；如果它和它的父都是黑色才需要进入第三步的讨论
+* 第三步：1234
 
 http://web.stanford.edu/class/archive/cs/cs166/cs166.1146/lectures/05/Small05.pdf 93页
 
@@ -86,9 +92,13 @@ Key要求：非叶有儿子数-1；叶节点有$\lceil$m/2$\rceil$ ~ m个keys(�
 
 2-3树：n=3；2-3-4树：n=4；
 
+
+
 **Insert**
 
 超过m就分裂，向上插入新的索引，递归，若到根还超了则向上长一层
+
+
 
 **Delete**
 
@@ -98,6 +108,8 @@ Key要求：非叶有儿子数-1；叶节点有$\lceil$m/2$\rceil$ ~ m个keys(�
 * 如果超过m，则就去拿一个来放过来
 
 递归
+
+
 
 **效果分析**
 
@@ -129,7 +141,7 @@ TF-IDF(TF-Inverse Document Frequency)
 
 
 
-* Word Stemming:还原为词根
+* Word Stemming:还原为原词
 * Stop Words:排除词(a，it)
 
 

@@ -36,14 +36,14 @@ https://www.bilibili.com/video/BV1XJ411n7Ee?from=search&seid=1029385093565451678
 * β：min界定最小推算评估值
 
 ```
-Max                3
-               /       \
-              /         \ 
-Min          3          <=-4
-           /   \        /   \
-Max       3     5     -4    ?
-         / \   / \    / \
-Min 	-1  3  5  ?  -6 -4
+Max:                3
+                /       \
+               /         \ 
+Min:          3          <=-4
+            /   \        /   \
+Max:       3    >=5    -4    ?
+          / \   / \    / \
+Min:	 -1  3  5  ?  -6 -4
 ```
 
 <img src="assets/Screen Shot 2020-03-29 at 22.59.37.png" style="zoom: 25%;" />

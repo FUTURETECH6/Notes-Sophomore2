@@ -314,6 +314,8 @@ Ex. IO设备通过异步握手协议从内存读取一个字的数据
 
 ![](assets/image-20200527103233152.png)
 
+==例题中是只读的异步总线，那可读可写的异步总线如何实现？==*将ReadReq信号拓展成多个信号。可以增加一条专门的地址线，也可以数据线和地址线复用(但是需要增加额外的控制信号)*
+
 ## 总线分配
 
 > *Bus Arbitration* refers to the process by which the current bus master accesses and then leaves the control of the bus and passes it to the another bus requesting processor unit. The controller that has access to a bus at an instance is known as *Bus maste*r.

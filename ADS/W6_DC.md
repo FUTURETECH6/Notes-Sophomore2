@@ -33,14 +33,14 @@ Divide $\Longrightarrow$ Conquer $\Longrightarrow$ Combine
 其中跨越分界线的最短路的时间即为f(N)，需要降低尽量fN，
 
 ```
-TN	= 2T(N/2) + cN(若fN为线性)
+TN	= 2T(N/2) + cN (若fN为线性)
 	= ....
 	= 2^kT(N/2^k) + kcN
 	= ....
 	= N + cNlogN
 	= O(NlogN)
 	
-TN	= 2T(N/2) + cN^2(若fN为O(N^2))
+TN	= 2T(N/2) + cN^2 (若fN为O(N^2))
 	= ....
 	= 2^kT(N/2^k) + cN^2(1+1/2 + ... + 1/2^{k-1})
 	= ....
@@ -94,7 +94,7 @@ T(|N/2|) <= c[N/2] log [N/2]
 
 根据递归式用树的方式展开，TN是最低层节点和(Conquer)+每层节点和的和(Divide+Combine)
 
-==最底层节点别漏了== (不过上面应该不至于比O(N)还小)
+==最底层节点别漏了==
 
 **例题**：TN = 3T(N/4) + $\Theta$(N^2^)
 
@@ -135,11 +135,12 @@ $\displaystyle T(N) = \sum_{i=0}^{log_4N-1}(\frac 3 {16})^i cN^2 + O(N^{<1}) = \
 #### Second Form
 
 1. If af(N/b) =$\kappa$f(N) for some constant $\kappa$< 1, thenT(N) = $\Theta$(f (N))
-2. If af(N/b) = $\Kappa$f(N) for some constant $\Kappa$ > 1, thenT(N) = $\Theta (N^{\log_b a} )$
+2. If af(N/b) = $\Kappa$f(N) for some constant $\Kappa$ > 1,  [W4_BQ.md](W4_BQ.md) thenT(N) = $\Theta (N^{\log_b a} )$
 3. If af(N/b) = f(N), thenT(N) = $\Theta( f (N)log_b N)$
 
 #### Third
 
 如果$T(N) = aT(N/b) + \Theta(N^k \log ^pN)$
 
-。。。
+![](assets/image-20200616104545174.png)
+
