@@ -19,13 +19,11 @@ note: `sltu, sltiu` for unsigned comparisons
 | A-B  | +-   | <0   |
 | A-B  | -+   | \>0  |
 
-**lb、lbu**： Loads a byte into the lowest 8 bits of a register，剩下24位视正负拓展
+**lb、lbu**： Loads a byte into the lowest 8 bits of a register，剩下24位是正负拓展
 
 **sltu、sltiu**：
 
-注意单源指令用的位段不一定是rs：`sll $t2, $s0, 3	#sll rd,rt,i`
-
-
+注意单源指令用的位段不一定是rs：`sll $t2, $s0, 3	#sll rd,rt,i`；目的寄存器也不一定是rd：`slti rt, rs, immediate`
 
 
 
@@ -50,11 +48,11 @@ note: `sltu, sltiu` for unsigned comparisons
 
 C~i+1~	 =bi ci+ai ci +ai bi 
 
-​           =ai bi +(ai +bi )ci
+​           =ai bi +(ai $\oplus$ bi )ci
 
 Generate gi = ai bi
 
-Propagate pi = ai + bi
+Propagate pi = ai $\oplus$ bi
 
 c1 = g0 + (p0 * c0)
 c2 = g1 + p1*c1 = g1 + (p1 * g0) + (p1 * p0 * c0)
@@ -114,7 +112,7 @@ C4=G3+P3*C3 = G3+P3*G2 + P3*P2*G1+P3*P2*P1*G0 + P3*P2*P1*P0*c0
 
 PPT65
 
-multiplier连续n位(如a\~b)为1，则在第a位执行`sub Mcand*2^{a}`，a+1\~b执行sll，b+1位执行`add Mcand*2^{b+1}`(从0开始记位)
+multiplier连续n位(如a\~b, a<b)为1，则在第a位执行`sub Mcand*2^{a}`，a+1\~b执行sll，b+1位执行`add Mcand*2^{b+1}`(从0开始记位)
 
 与Ver3结合可以做成状态机(最后一位 | 上一次右溢出位)：
 
@@ -126,8 +124,8 @@ multiplier连续n位(如a\~b)为1，则在第a位执行`sub Mcand*2^{a}`，a+1\~
 
 Arithmetic shift right:
 
-* keeps the **leftmost bit constant**
-* no change of sign bit !
+* keeps the **leftmost bit constant**
+* no change of sign bit !
 
 优势：代数运算少
 
@@ -379,31 +377,30 @@ sticky：只要舍入位右边还有1，stk就为1，这样才能发现0.5和0.5
 ```perl
 3.13.1 (A+B)+C=
 (A)  -1.1111111010*213+1.1111111010*213+1.0*20=1
-    
+
 (B)    (A+B)+C=
     1.1100101010*2^4+1.1010|100010*2^-2 + 1.1000010010*2^3
-     
-    1.1100101010+ 
-    0.0000011010|101 (多的三位寄存器保存对齐过程的数据 Guard=1,round=0, Sticky = 1) 
- = 1.1101000100
+
+    1.1100101010
+   +0.0000011010|101 (多的三位寄存器保存对齐过程的数据 Guard=1, round=0, Sticky=1) 
+   =1.1101000100
      (No round)
  
- 3.13.2  A+(B+C)= A+1.1111111010*213+1.0*20
+3.13.2  A+(B+C)= A+1.1111111010*213+1.0*20
       (B+C)= 
-      1.111111010+ 
-      0.0000000000 (Guard=0, Round=0, Sticky=1) 
-    =1.1111111010
+      1.111111010
+     +0.0000000000 (Guard=0, Round=0, Sticky=1) 
+     =1.1111111010
         (No round)
 
 3.13.2.b  A+(B+C)= 1.0100100110 11
-      1.1000010010+
-      0.0000110101 000 (Guard=0,round=0, Sticky = 0)
-    =1.1001000111   NO ROUND
+      1.1000010010
+     +0.0000110101 000 (Guard=0, round=0, Sticky=0)
+     =1.1001000111   NO ROUND
   A:   1.1100101010 
-C+B:0.1100100011 10 (Guard=1,round=0, Sticky = 0)
-         10.1001001101 10   NORMALISE
-           1.0100100110 110 (Guard=1,round=1, Sticky = 0)
-             1.0100100111        ROUND UP
-
+C+B:   0.1100100011 10 (Guard=1, round=0, Sticky=0)
+      10.1001001101 10   NORMALISE
+       1.0100100110 110 (Guard=1,round=1, Sticky = 0)
+       1.0100100111        ROUND UP
 ```
 
