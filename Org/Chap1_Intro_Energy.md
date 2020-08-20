@@ -68,8 +68,7 @@
 
 定义性能：
 
-* **Response time** (execution time): the total time required to
-    complete a task
+* **Response time** (execution time): the total time required to complete a task
 * **Throughput** (bandwidth): number of tasks completed per unit time
 
 例如ATM机用户操作间隔长，就不需要Throughput来衡量
