@@ -25,7 +25,7 @@
     * 一个事务已经提交，但它对数据库的修改还存在disk buffer里，没有进入disk
     * 仍处于活跃状态的事务（未提交）已经修改了数据库，作为后来发生故障的结果，这个事务需要中止
 * Undo vs. redo
-    * **Undo:** The process of removing the effects of an incomplete or aborted txn. 􏰀 
+    * **Undo:** The process of removing the effects of an incomplete or aborted txn.
     * **Redo:** The process of re-instating the effects of a committed txn for durability.
 
 # Storage Structure
@@ -45,7 +45,7 @@
 * 内存和磁盘间进行的块传输结果：
     * Successful completion
 
-    * Partial failure: destination block has <u>incorrect information</u> 􏰁 
+    * Partial failure: destination block has <u>incorrect information</u>
     * Total failure: destination block was <u>never updated</u>
 * 要求如果数据传送故障（data-transfer failure）发生，系统能检测到并且**调用恢复过程将块恢复成一致的状态**
     * 假设每一个块有2个拷贝，则输出操作执行如下：
@@ -55,7 +55,7 @@
     * 故障发生可能两个拷贝不一致，要恢复：
         * First find inconsistent blocks
         * If either copy of an inconsistent block is detected to have an error (bad checksum), <u>overwrite it by the other copy</u>. If both have no error, but are different, <u>overwrite the second block by the first block</u>. 
-    * 恢复􏰑􏰒􏰓过程都要保证，**<u>对􏰕定存储器的写要􏰖么完全成功(即更新所有拷贝􏰗)，􏰖要么没有任何改变</u>**
+    * 恢复过程都要保证，**<u>对定存储器的写要么完全成功(即更新所有拷贝)，要么没有任何改变</u>**
 
 ## Data Access
 
@@ -72,12 +72,12 @@
         * **read**(X) 
             * 若X所在块$B_X$不在main memory中，执行input($B_X$)
             * assigns the value of data item X to the local variable xi.
-        * **write**(X) 
+        * **write**(X)
             * 若X所在块$B_X$不在main memory中，执行input($B_X$)
             * assigns the value of local variable xi to data item X in the buffer block.
 * Transactions：
     * Must perform **read**(X) before accessing X for the first time (该事务对于X的更新都作用于xi)
-    * 􏰁 The **write**(X) can be executed at any time before the transaction commits
+    * The **write**(X) can be executed at any time before the transaction commits
     * 在对x进行最后的写之后，必须**write**(X) 
 * Note that **output**($B_X$) need not immediately follow **write**(X). 因为Bx可能包含其他仍然在被访问的数据项
 
@@ -169,20 +169,20 @@ Ex.
         * Each time a data item X is restored to its old value V a special log record (called ==r**edo-only**==) <Ti , X, V> is written out
         * When undo of a transaction is complete, a log record <Ti **abort**> is written out (to indicate that the undo was completed)
     * redo(Ti) sets the value of all data items updated by Ti to the **<u>new values</u>**, going **<u>forward</u>** from the first log record for Ti
-        * No logging is done in this case 􏰃不􏰫􏰬写入log􏰆
+        * No logging is done in this case 不写入log
         * 是不是适用于只写了log没写data的情况？
     
 * Both operations must be idempotent (幂等)
     * That is, even if the operation is executed multiple times the effect is the same as if it is executed once，做几次都一样
         * Needed since operations may get re-executed during recovery
     
-* The **undo** and **redo** operations are used in several different circumstances(不同􏰤􏰼):
+* The **undo** and **redo** operations are used in several different circumstances(不同):
 
     * The **undo** is used for **<u>transaction rollback during normal operation</u>**(in case a transaction cannot
 
-    complete its execution due to some logical error).􏰃==rollback只做undo==􏰆
+    complete its execution due to some logical error). ==rollback只做undo==
 
-    * The **undo** and **redo** operations are used **<u>during recovery from failure</u>**.􏰃==undo和redo均用􏰤到􏰆==
+    * The **undo** and **redo** operations are used **<u>during recovery from failure</u>**.==undo和redo均用到==
 
 * When recovering after failure:
     * Transaction Ti needs to be **undone** if the log contains the record `<Ti start>`,   but does not contain either the record `<Ti commit>` or the record `<Ti abort>`.
@@ -217,14 +217,14 @@ Streamline recovery procedure by **periodically** performing checkpointing, <u>A
 
 
 
-？？？During **recovery** we need to consider only the most recent transaction Ti that started before the checkpoint, and transaction<u>**s**</u> that started after Ti  . 
+？？？During **recovery** we need to consider only the most recent transaction Ti that started before the checkpoint, and transaction<u>**s**</u> that started after Ti. 
 
 1. Scan backwards(向前？是forwards的反义词) from end of log to find the most recent `<checkpoint>` record.
 2. Continue scanning backwards till a record `<Ti start>` is found, on which the last checkpoint was happened. 
 3. Need only consider the part of log following above start record. Earlier part of log can be ignored during recovery, and <u>can be erased</u> whenever desired.
 4. For all transactions starting from Ti or later:
     * with no `<Ti commit>`, execute undo(Ti ). (Done only in case of immediate modification, backwards.)
-    * with a `<Ti commit>`,  execute redo(Ti ).
+    * with a `<Ti commit>`, execute redo(Ti ).
 
 ## Recovery with Concurrent Transactions
 
@@ -244,14 +244,14 @@ Streamline recovery procedure by **periodically** performing checkpointing, <u>A
         * write a log record `<Ti, Xj, V1>` (write在哪里？在最后吗？看例子里好像是的)
             * such log records are called *compensation log records*
             * 不需要undo信息，因为绝对不会需要撤销这样的undo操作
-    * Once the record `<Ti start>` is found stop the scan and write the log record `<Ti abort>`
+    * Once the record `<Ti start>` is found, stop the scan and write the log record `<Ti abort>`
 * **Recovery** from failure: Two phases
     * 和上面顺序不同，这里必须要先redo把还没写进磁盘的写一遍，然后再undo那些没完成的
     * **Redo** phase: replay updates of all transactions, whether they committed, aborted, or are incomplete==（这一阶段没有Log records 需要写到Log 中去）==
         1. Find last `<checkpoint L>` record, and set undo-list to L (L可能包含多个事务)
         2. Scan **<u>forward from above</u>** `<checkpoint L>` record (不用再从checkpoint前最后一个start开始，直接从下一条开始就行了)
-            1. Whenever a normal record `<Ti, Xj, V1, V2>` or a redo-only log record of the form `<Ti, Xj, V2>` is found, redo it by writing V2  to Xj 
-            2. Whenever a log record `<Ti start>` is found, add Ti  to undo-list
+            1. Whenever a normal record `<Ti, Xj, V1, V2>` or a redo-only log record of the form `<Ti, Xj, V2>` is found, redo it by writing V2 to Xj 
+            2. Whenever a log record `<Ti start>` is found, add Ti to undo-list
             3. Whenever a log record `<Ti commit>` or `<Ti abort>`(说明已经被undo过了) is found, remove Ti  from undo-list
     * **Undo** phase: undo all incomplete transactions (使用redo阶段创建的undo-list)
         1. Scan log **<u>backwards from end</u>**
@@ -273,7 +273,7 @@ Streamline recovery procedure by **periodically** performing checkpointing, <u>A
 
 **Example2**
 
-> Suppose the system crashes just the last log record. Please go over the steps of the recovery algorithm.(这好像不是concurrent的)
+> Suppose the system crashes just the last log record. Please go over the steps of the recovery algorithm. ~~(这好像不是concurrent的)~~
 >
 > ```xml
 > <T0 start>
@@ -319,7 +319,7 @@ Streamline recovery procedure by **periodically** performing checkpointing, <u>A
 四个规则
 
 1. Log records 输出到稳定介质时要按log生成的顺序
-2. Transaction Ti enters the commit state(不算正式提交，只能算half commited) <u>only when</u> the log record `<Ti commit>` has been output to stable storage.(log 在先)
+2. Transaction Ti enters the commit state(不算正式提交，只能算half commited) <u>only when</u> the log record `<Ti commit>` has been output to stable storage.(log在先)
 3. Before the `<Ti commit>` can be output to stable storage, all <u>log records</u> pertaining to Ti must have been output to stable storage.
 4. Before a block of data in main memory is output to the database, all log records pertaining to the data in that block must have been output to stable storage.  （先写Log)
     * This rule is called the write-ahead logging rule (先写日志规则) or ==WAL== 
@@ -336,6 +336,7 @@ Streamline recovery procedure by **periodically** performing checkpointing, <u>A
     * Read in new block into buffer.
     
 * **Requirement**: <u>No updates should be in progress on a block Bi when it is output to disk.</u>
+    
     * This can be ensured as follows:
         * Before writing a data item, transaction requests X-lock on block Bi containing the data items.
         * The lock can be released once the write is completed. 
@@ -344,7 +345,7 @@ Streamline recovery procedure by **periodically** performing checkpointing, <u>A
     
 * To output a block to disk
 
-    * First acquire an **<u>exclusive latc</u>**h on the block
+    * First acquire an **<u>exclusive latch</u>** on the block
 
         ​	Ensures no update can be in progress on the block
 
@@ -436,8 +437,8 @@ To avoid NVS's loss
 
 存在问题：如B+树同个节点(恰好是已满节点)连续执行两次插入导致两次split出错，因此需要一个针对这种情况的删除操作
 
-* 􏰹Logical logging: 记录**<u>操作</u>**相关信息􏰆􏲃 􏰹
-* Physical logging􏰆: 记录关于旧值和新值信息
+* Logical logging: 记录**<u>操作</u>**相关信息
+* Physical logging: 记录关于旧值和新值信息
 
 ![Screen Shot 2020-06-01 at 8.40.52 PM](assets/Screen Shot 2020-06-01 at 8.40.52 PM.png)
 
@@ -449,7 +450,7 @@ Idempoent：逻辑撤销不是幂等的，不能做多次
 
 * Operations like B+-tree insertions and deletions release locks early.
     * They cannot be undone by restoring old values (physical undo), since once a lock is released, other transactions may have updated  the B+-tree.
-    * Instead, insertions (resp. deletions) are undone  by executing a deletion (resp. insertion) operation (known as logical undo).(==不是简􏱷单地改变一个值!􏱸是“插入”和“删除􏱹”的“操作”对应==)
+    * Instead, insertions (resp. deletions) are undone  by executing a deletion (resp. insertion) operation (known as logical undo).(==不是简单地改变一个值!是“插入”和“删除”的“操作”对应==)
 * For such operations, undo log records should contain the undo operation to be executed
     * Such logging is called <u>logical undo logging</u>, in contrast to physical undo logging
         * Operations are called logical operations

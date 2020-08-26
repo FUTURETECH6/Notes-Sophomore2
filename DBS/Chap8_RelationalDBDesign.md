@@ -4,7 +4,7 @@
 >
 > **Partial Dependency**: A FD that holds in a relation is partial when removing one of the determining attributes gives a FD that holds in the relation(被依赖属性集中有些属性去掉FD也成立). A FD that isn't partial is full. (Eg: If {A,B} → {C} but also {A} → {C} then {C} is partially functionally dependent on {A,B})，感觉实际上就是
 >
-> **Transitive dependency**: `(A → B) && !(B → A) && (B → C)`, A → C (which follows from 1 and 3 by the [axiom of transitivity](https://en.wikipedia.org/wiki/Armstrong's_axioms#Axioms)) is a transitive dependency / Video里的说法：A->B(B不是prime atr)，且A-/->主码
+> **Transitive dependency**: `(A → B) && !(B → A) && (B → C), A → C` (which follows from 1 and 3 by the [axiom of transitivity](https://en.wikipedia.org/wiki/Armstrong's_axioms#Axioms)) is a transitive dependency / Video里的说法：A->B(B不是prime atr)，且A-/->主码
 >
 > **MultiValued Dependency**：[此处](# MVD)
 >
@@ -36,7 +36,7 @@
 * 原子性实际上是由域元素在数据库中**如何被使用**决定的
     * 例，字符串通常会被认为是不可分割的
     * **但是**假设学生被分配这样的标识号:CS0012或EE1127，如果前两个字母表示系，后四位数字表示学生在该系内的唯一号码，则这样的标识号不是原 子的
-    * 当采用这种标识号时，是不可取的。因为这需要额外的编程，而且信息 是在应用程序中而不是在数据库中编码
+    * 当采用这种标识号时，是不可取的。因为这需要额外的编程，而且信息是在应用程序中而不是在数据库中编码
 
 妈的课件上的条件是不完整的，实际上有四个条件
 
@@ -67,7 +67,7 @@
 
 # Pitfalls
 
-关系数据库设计要求我们找到一个“好的”关系模式集合。一个坏的 设计可能导致
+关系数据库设计要求我们找到一个“好的”关系模式集合。一个坏的设计可能导致
 
 * redundant storage
 * insert / delete / update anomalies
@@ -100,8 +100,7 @@
 
 1) Decide whether a particular relation R is in “good” form. 	-No redundant 
 2) In the case that a relation R is not in “good” form, decompose it into a set of relations {R1, R2, ..., Rn } such that 
-each relation is in good form 
-the decomposition is a lossless-join decomposition
+each relation is in good form the decomposition is a lossless-join decomposition
 Our theory is based on:
 
 * functional dependencies (函数依赖)
@@ -167,7 +166,7 @@ $$
 **检查关系在给定函数依赖之下是否合法**
 
 * 若关系r在函数依赖集F下是合法的，则称：<u>*r* satisfies *F*</u>
-* 对上表有：`F = {A->C, AB->D, ABC->D}`
+* 对上表有：`F = {A->C, AB->D, ABC->D}`(？？漏了一堆？)
 * 但是A -\\-> B, A -\\-> D, B -\\-> A, C -\\-> A, C -\\-> D, B -\\-> C, C -\\-> B, B -\\-> D, ...
 
 **对合法关系集合指定约束**
@@ -211,7 +210,7 @@ $$
 * decomposition 分解律
     * ${\rm if}\ \alpha \rightarrow \beta\gamma, {\rm then}\ \alpha \rightarrow \beta\ {\rm and}\ \alpha \rightarrow \gamma$
     * (自反+传递)
-    * ==可以分解不能合并==
+    * <!--==可以分解不能合并==-->？
 * pseudotransitivity 伪传递律
     * ${\rm if}\ \alpha \rightarrow \beta\ {\rm and}\ \gamma\beta \rightarrow \delta, {\rm then}\ \alpha\gamma \rightarrow \delta$
     * (增补+传递)
@@ -234,8 +233,7 @@ $$
 
 被F逻辑蕴含的全体**函数依赖的集合**称为F的闭包，可以有A公理求得
 
-例：`F = { A -> B, B -> C }`，则`F^+ = { A -> B, B -> C, A -> C, A -> A, AB
-*> A, AB -> B, AC -> C, A -> BC, ... }`
+例：`F = { A -> B, B -> C }`，则`F^+ = { A -> B, B -> C, A -> C, A -> A, AB -> A, AB -> B, AC -> C, A -> BC, ... }`
 
 找闭包
 
@@ -283,7 +281,7 @@ a+ := result
     * 原理：$\alpha \rightarrow \beta \in F^+ \Longleftrightarrow \beta \sube \alpha^+$
 * 求依函数赖集闭包
     * 原理同上
-    * 对于R中所有属性X，计算X^+^，对X中每一个Y，{X->Y | ...}即为所求
+    * 对于R中所有属性X，计算X^+^，对X^+^中每一个Y，$\displaystyle \bigcup_{\forall X}\{X \rightarrow Y | Y \in X^+\}$即为所求
 
 **Ex1**
 
@@ -295,7 +293,7 @@ a+ := result
 
 > `R =(A, B, C)，F ={A->B, BC->A}`求超码
 
-BC、AC
+BC、AC<font color='red'>、ABC（前两个是候选码）</font>
 
 ## Canonical Cover
 
@@ -351,20 +349,15 @@ until Fc不再变化
 ## 目标和特性
 
 * 原模式(R)的所有属性都必须出现在分解后的(R1, R2)中：R = R1 ∪ R2
-
-    Tthe decomposition is a **lossless-join decomposition**. (无损连接分解)
-
-    * 拆开再自然连接后不会有多余元组
+* The decomposition is a **lossless-join decomposition**. (无损连接分解)
+* 拆开再自然连接后不会有多余元组
     * 条件：分解后的二个子模式的共同属性必须是R1 或R2的(超？)码，即`R1∩R2->R1`和`R1∩R2->R2`至少有一个要属于F^+^
-
 * The decomposition is **dependency preservation**. (依赖保持)
 
-    * F 在Ri上的限定是：Fi ⊆ F^+^， 即F^+^中<u>所有只包含Ri中属性的函数依赖Fi的集合</u>
+    * F在Ri上的限定是：Fi ⊆ F^+^， 即F^+^中<u>所有**只包含**Ri中属性的函数依赖Fi的集合</u>
     * 在上面的限定下，满足：$\displaystyle F'^+ = (\bigcup_{i=1}^n F_i)^+  = F^+$
-
 * **No redundancy**: each relation Ri is in good form
-  
-    * BCNF or 3NF
+  * BCNF or 3NF
 
 例：
 
@@ -414,7 +407,7 @@ Ex.`R = (A, B, C); F = {A->B, B->C}`
 
 * 为检查具有函数依赖集合F的关系模式R是否属于BCNF，只需检查F中的函数依赖是否违反BCNF即可，而不需检查F^+^中的所有函数依赖 (证明：F^+^是由Armstrong的3个公理从F推出的，而任何公理都不会使FD左边变小(拆分)，故如果F中没有违反BCNF的FD(即左边是superkey)，则F^+^中也不会)
 * **但是**，检查拆分后的关系不能仅用原来F中的FD了 (例如`R (A, B, C, D); F = {A->B, B->C}`拆分成`R1(A，B) + R2(A，C，D)`如果直接按原F判断，则会发现没有“只包含R2中属性的函数依赖”，但实际上F^+^是有`A->C`的)
-* 总结：==可在F下判别R 是否违反BCNF，但须在F^+^下判别R 的分解式是否违反BCNF==
+* 总结：==可在F下判别R是否违反BCNF，但须在F^+^下判别R 的分解式是否违反BCNF==
 
 
 
@@ -432,7 +425,7 @@ compute Fp;
 while not done:
     if result 中有Ri不为BCNF:
         找到Ri上的一个非平凡函数依赖α->β/*α->Ri2*/，使得α->R不属于Fp/*α不为超码*/，且α∩β=∅/*不平凡*/;	// 一定能找到吗？？ 可以，不然就是BCNF了； **另外，β可以尽量取大**
-        result = (result - Ri) ∪ (Ri - β)/*Ri1*/ ∪ (α, β)/*Ri2*/;	// α为Ri1与Ri2的共同属性
+        result = (result - Ri)/*第一次循环时此处为R-R=空集*/ ∪ (Ri - β)/*Ri1*/ ∪ (α, β)/*Ri2*/;	// α为Ri1与Ri2的共同属性
     else
         done = true
 ```
@@ -441,7 +434,7 @@ while not done:
 
 ## 3NF
 
-> 不含Key->NonPrime(非主属性对码)的Transtive Dependency <==> 不存在NonKey->NonPrime的Dependency(若存在，Key->NonKey, NonKey->NonPrime ==> Key->NonPrime)
+> 不含Key->NonPrime(非主属性对码)的Transitive Dependency <==> 不存在NonKey->NonPrime的Dependency(若存在，Key->NonKey, NonKey->NonPrime ==> Key->NonPrime)
 
 BCNF不一定依赖保持，但是在去冗余上比3NF好(更严格)
 
@@ -449,7 +442,7 @@ BCNF不一定依赖保持，但是在去冗余上比3NF好(更严格)
 
 * α->β是平凡的(β⊆α)[若α不是超码，不平凡的α->β就是Partial Dependency]
 * α是R的超码(α->R, R⊆α^+^)
-* β-α(若不相交则为β)的每个属性都是Prime Attribute
+* β-α(若不相交则为β)的每个属性都是Prime Attribute（即Candidate Key中的属性）
 * 若二三均不成立，即`!(α->R) && !(β is prime)`等价于原始定义
 
 另一种定义：<u>β不是PrimeAttr时α必须是码，但是β是主属性时α无限制</u>
@@ -488,9 +481,11 @@ Ex. `R = (J, K, L); F = {JK->L, L->K}`
 
 
 
-**无损且保持依赖的分解算法**
+**无损且保持依赖的3NF分解算法**
 
 > Video中将Transtive Dependency的属性放到新的表里面
+
+将Fc中每队αβ加入结果集，如果没有loseless则再把任意一组候选码加进去
 
 见作业8.20
 
@@ -522,7 +517,7 @@ return (R0, R1, R2, ..., Ri)
 
 
 
-# MVD
+# MVD与4NF
 
 **Multivalued Dependencies**
 
@@ -534,13 +529,13 @@ return (R0, R1, R2, ..., Ri)
 >
 > 也可以FD和MVD共存：(student_ID, course, hobby, address) 后三者之间没有任何依赖，其中s->->c, s->->h, s->a，最好拆成三个表
 
-考虑`classes(course, teacher, book)`，定义(c,t,b) ∈ classes，意思是教师t 可以教课程c，而b 是需用于 课程c 的教材，course: teacher =1:n，course: book = 1:n，teacher和book是多值属性(一门课多个老师、多本课本) ，并且teacher和book相互独立。由于没有非平凡依赖，(course, teacher, book)是唯一的键，因此该关系模式属于BCNF
+考虑`classes(course, teacher, book)`，定义(c,t,b) ∈ classes，意思是教师t可以教课程c，而b是需用于课程c的教材，course: teacher =1:n，course: book = 1:n，teacher和book是多值属性(一门课多个老师、多本课本) ，并且teacher和book相互独立。由于没有非平凡依赖，(course, teacher, book)是唯一的键，因此该关系模式属于BCNF
 
-冗余：新来一个教数据库的教师，得插入两个元祖：`(database, Sara, DB Concepts)`和`(database, Sara, Ullman)`
+冗余：数据库这门课有两本参考书目，新来一个教数据库的教师，得插入两个元祖：`(database, Sara, DB Concepts)`和`(database, Sara, Ullman)`
 
 因此最好分解成`teaches(course, teacher)`和`text(course, book)`
 
-# 4NF
+**4NF**
 
 > 条件
 >
@@ -569,6 +564,6 @@ while (not done):
         result := (result - Ri)/*原结果去掉Ri*/ ∪ (Ri - β)/*去掉多值依赖于别人的*/ ∪ (α, β)
     else:
         done = true
-# 注:每个Ri 属于4NF，且分解是无损连接的
+// 注:每个Ri 属于4NF，且分解是无损连接的
 ```
 

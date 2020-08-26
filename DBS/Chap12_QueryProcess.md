@@ -11,9 +11,18 @@
     * i.e., the number of tuples of r that fit into one block.
 * I~f~: tuples of r are stored together physically in a file, then:
 * l~r~: number of bytes for a tuple in r
-* V(A, r): number of distinct values that appear in r for attribute A; same as the size of A(r).
+* V(A, r): number of distinct values that appear in r for attribute A; same as the size of A(r).
 * SC(A, r): selection cardinality of attribute A of relation r ; average number of records that satisfy equality on A.
     * Sc(A, r) == n~r~ / V(A, r)
+
+
+
+* F~i~: average **fan-out** of internal nodes of index i, for tree-structured indices such as B+-trees.
+* Ht~i~ : number of levels in index i — i.e., the height of index i.
+    * For a balanced tree index (such as B+-tree) on attribute A of relation r: $HT_i = \lceil \log_{F_i} (V(A,r)) \rceil$.
+    * For a hash index, HT~i~ is 1.
+
+
 
 time_cost = **disk_accesses** ＋ CPU ＋ network_communication
 
@@ -60,7 +69,7 @@ time_cost = **disk_accesses** ＋ CPU ＋ network_communication
         * Records will be on consecutive blocks 
         * Cost = Hi * (tT + tS) + tS + tT * b, ~~b containing retrieved records (\$b=\lceil sc(A, r) / f_r \rceil$？？)~~ b is the number of blocks containing records with the specified search key
             * Hi是找到bucket，tT * b是在bucket中搜索，tS是找到元组
-    * **A4**：利用辅助索引的等值比较
+    * **A4**：利用辅助索引的等值比较（==B+的辅助索引是什么？：利用叶节点作为index entries，存储指向bucket的指针？==）
         1. Retrieve a <u>single record</u> if the search-key is a <u>candidate</u> key
             * 实际就是A2
             * Cost = (hi + 1) * (tT + tS)
@@ -68,32 +77,32 @@ time_cost = **disk_accesses** ＋ CPU ＋ network_communication
             * <u>each of n matching records may be on a different block</u>
                 * 有点无序访问的意思
             * Cost = hi * (tT +tS)+ n* (tT + tS)= (hi + n) * (tT + tS)
-                * **不是bucket**
+                * bucket里指针每个都要访问一遍所以是n（同b）
                 * Can be very expensive!
                 * <u>May be more worse than linear scan (因为寻道更花时间)</u>
 
-|      | Algorithm                                   | Cost                          | Reason                                                       |
-| ---- | ------------------------------------------- | ----------------------------- | ------------------------------------------------------------ |
-| A1   | Linear Search                               | tS + br ∗ tT                  | One initial seek plus br block transfers, where br denotes the number of blocks in the file. |
-| A1   | Linear Search, Equality on Key              | Average case tS + (br/2) ∗ tT | Since at most one record satisfies condition, scan can be terminated as soon as the required record is found. In the worst case, br blocks transfers are still required. |
-| A2   | Primary B+-tree Index, Equality on Key      | (hi +1) ∗ (tT +tS)            | (Where hi denotes the height of the index.) Index lookup traverses the height of the tree plus one I/O to fetch the record; each of these I/O operations requires a seek and a block transfer. |
-| A3   | Primary B+-tree Index, Equality on Nonkey   | hi ∗ (tT + tS) + b ∗ tT       | One seek for each level of the tree, one seek for the first block. Here b is the number of blocks containing records with the specified search key, all of which are read. These blocks are leaf blocks assumed to be stored sequen- tially (since it is a primary index) and don’t require additional seeks. |
-| A4   | Secondary B+-tree Index, Equality on Key    | (hi +1) ∗ (tT +tS)            | This case is similar to primary index.                       |
-| A4   | Secondary B+-tree Index, Equality on Nonkey | (hi +n) ∗ (tT +tS)            | (<u>Where n is the number of records fetched</u>.) Here, cost of index traversal is the same as for A3, but each record may be on a different block, requiring a seek per record. Cost is potentially very high if n is large. |
-| A5   | Primary B+-tree Index, Comparison           | hi ∗ (tT + tS) + b ∗ tT       | Identical to the case of A3, equality on nonkey.             |
-| A6   | Secondary B+-tree Index, Comparison         | (hi +n) ∗ (tT +tS)            | Identical to the case of A4, equality on nonkey.             |
+|      | Algorithm                                   | Cost                           | Reason                                                       |
+| ---- | ------------------------------------------- | ------------------------------ | ------------------------------------------------------------ |
+| A1   | Linear Search                               | tS + br ∗ tT                   | One initial seek plus br block transfers, where br denotes the number of blocks in the file. |
+| A1   | Linear Search, Equality on Key              | Average cost: tS + (br/2) ∗ tT | Since at most one record satisfies condition, scan can be terminated as soon as the required record is found. In the worst case, br blocks transfers are still required. |
+| A2   | Primary B+-tree Index, Equality on Key      | (hi +1) ∗ (tT +tS)             | (Where hi denotes the height of the index.) Index lookup traverses the height of the tree plus one I/O to fetch the record; each of these I/O operations requires a seek and a block transfer. |
+| A3   | Primary B+-tree Index, Equality on Nonkey   | hi ∗ (tT + tS) + b ∗ tT        | One seek for each level of the tree, one seek for the first block. Here b is the number of blocks containing records with the specified search key, all of which are read. These blocks are leaf blocks assumed to be stored sequen- tially (since it is a primary index) and don’t require additional seeks. |
+| A4   | Secondary B+-tree Index, Equality on Key    | (hi +1) ∗ (tT +tS)             | This case is similar to primary index.                       |
+| A4   | Secondary B+-tree Index, Equality on Nonkey | (hi +n) ∗ (tT +tS)             | (<u>Where n is the number of records fetched</u>.) Here, cost of index traversal is the same as for A3, but each record may be on a different block, requiring a seek per record. Cost is potentially very high if n is large. |
+| A5   | Primary B+-tree Index, Comparison           | hi ∗ (tT + tS) + b ∗ tT        | Identical to the case of A3, equality on nonkey.             |
+| A6   | Secondary B+-tree Index, Comparison         | (hi +n) ∗ (tT +tS)             | Identical to the case of A4, equality on nonkey.             |
 
 ## Comparisons
 
 `< <= <> > >=`
 
 * Linear
-    * A1
+    * **A1**
 * Using Indices
-    * A5：基于主索引的比较
+    * **A5**：基于主索引的比较
         * `>=`：找到第一个`>=`的元组，然后从那开始
         * `<=`：直接从头开始，直到第一个`>`的停止
-    * A6：基于辅助索引
+    * **A6**：基于辅助索引
         * `>=`：找到第一个`>=`的**index entry**，然后从那开始
             * <u>一个entry符合意味着它指向的bucket里的所有元组都符合</u>
         * `<=`：直接从头开始，直到第一个`>`的停止
@@ -103,12 +112,14 @@ time_cost = **disk_accesses** ＋ CPU ＋ network_communication
 
 ## Complex Select
 
-**多值查询**
+**同一关系的多条件查询**
 
 ### Conjunction
 
+$\large \displaystyle \sigma_{\theta_1 \wedge ... \wedge \theta_n}(r)$
+
 * **A7**：找一个代价最小的索引先选择，然后再去掉多余的使之符合其他condition(对于每个tuple进行测试)
-* **A8**：组合索引，然后视作等值比较用A2~A4算法即可
+* **A8**：组合索引(composite index)，然后视作等值比较用A2~A4算法即可
 * **A9**：先根据个条件取出<u>识别符(元组的指针的集合)</u>，然后对集合进行合取运算获得<u>结果指针集</u>，再去取数据
     1. Use corresponding index for each condition, and take intersection of all the obtained sets of record pointers. 
     2. Sort the list of pointers obtained by step(1)
@@ -116,6 +127,8 @@ time_cost = **disk_accesses** ＋ CPU ＋ network_communication
     4. If some conditions do not have appropriate indices, apply test in memory.
 
 ### Disjunction
+
+$\large \displaystyle \sigma_{\theta_1 \vee ... \vee \theta_n}(r)$
 
 * **A10**：识别符并集进行析取选择
     * Applicable if all conditions have available indices.
@@ -138,7 +151,7 @@ time_cost = **disk_accesses** ＋ CPU ＋ network_communication
 
 Let M denote memory size (内存中<u>用于排序</u>的块数), b is the total blocks of the relation.
 
-1. Create sorted runs.  Let i be 0 initially. Repeatedly do the following till the end of the relation:
+1. Create sorted runs. Let i be 0 initially. Repeatedly do the following till the end of the relation:
 
     1. Read M blocks of relation into memory
     2. Sort the in-memory blocks
@@ -152,13 +165,11 @@ Let M denote memory size (内存中<u>用于排序</u>的块数), b is the total
 2. Merge the runs (N-way merge). Assume that N = M-1( = 2).
    
     1. Use N=M-1 blocks of memory to buffer input runs, and 1 block to buffer output. (实践中，将输入缓冲适当调小，而适当增大输出缓冲区能获得更好的效果) Read the first block of each run into its buffer page
-    
     2. repeat
-    
         1. Select the first record (in sort order) among all N=M-1 buffer pages
         2. Write the record to the output buffer.  <u>If the output buffer is full write it to disk.</u>
         3. <u>Delete the record from its input buffer page.</u> If the input buffer page becomes empty then read the next block (if any) of the run into the buffer. (在上面的例子中一个block对应一个record所以...)
-    
+
         until all input buffer pages are empty
 
 如果block比M还大
@@ -182,9 +193,11 @@ BlockTransNum = (MergePass+1)(In+Out) - FinalWrite = $(2\lceil \log_{M-1}(b_r/M)
 
 SeekNum = SeekNumDuring_Init + SeekNumDuring_Merge
 
-\\                 = $2 \lceil b_r/M \rceil + (2 \lceil b_r / b_b \rceil \times \lceil \log_{M-1}(b_r/M) \rceil - \lceil b_r / b_b \rceil)$ ~~(一个block要寻一次道？？是的，因为不一定放一起所以索性按照不放在一个磁道算)~~
+\\                = SeekNumDuring_Init + MergePass(In+Out) - FinalWrite
 
-\\                 = 2\*4 + (2\*2-1)\*12
+\\                = $2 \lceil b_r/M \rceil + (2 \lceil b_r / b_b \rceil \times \lceil \log_{M-1}(b_r/M) \rceil - \lceil b_r / b_b \rceil)$ ~~(一个block要寻一次道？？是的，因为不一定放一起所以索性按照不放在一个磁道算)~~
+
+\\                = 2\*4 + (2\*2-1)\*12
 
 Where b~b~ denotes 每个run文件(每次寻道？)读写的块数，通常为1 (1表示所有block分散在不同的磁道，如果放得紧一点就能是M了？
 
@@ -201,9 +214,9 @@ N-way的利弊：N大的话可以少IO几次，加快时间；但是如果数据
 ## Nested Loop
 
 ```pseudocode
-for each tuple tr in r do begin		// Outer
-    for each tuple ts in s do begin	// Inner
-        test pair (tr,ts) to see if they satisfy the join condition  
+for each tuple tr in r do begin     // Outer
+    for each tuple ts in s do begin // Inner
+        test pair (tr,ts) to see if they satisfy the join condition 
         if they do, add tr • ts to the result.
     end
 end
@@ -214,7 +227,7 @@ end
 
 **Cost**
 
-* In the worst case, if there is enough memory only to hold <u>one block</u> of each relation, the estimated cost is $(b_r + n_r \times b_s) t_t + (b_r + n_r) t_s$
+* In the worst case, if there is enough memory only to hold <u>one block</u> of each relation, the estimated cost is $(b_r + n_r \times b_s) t_t + (b_r + n_r \times 1) t_s$
      * 寻道：内层是全部扫描一次需要一次寻道(假设s中所有block的数据都在一个磁道)，外层是扫描一块需要一次寻道
 * In the best case, If the <u>smaller(larger？) relation fits entirely in memory</u>, use that as the inner relation:
      cost is $(b_r + b_s) t_t + 2t_s$
@@ -240,11 +253,12 @@ end
 
 **Cost**
 
-* Worst case(一次进一个r的Block和一个s的Block): $(b_r \times b_s + b_r)t_t + 2b_rt_s$
-    * Let the relation with smaller number of blocks be <u>outer</u> relation
+* Worst case(一次进一个r的Block和一个s的Block): $(b_r + b_r \times b_s)t_t + 2b_rt_s$
+    * Let the relation with <u>smaller</u> number of blocks be <u>outer</u> relation
     * 寻道：内层是全部扫描一次需要一次寻道(假设s中所有block的数据都在一个磁道)，外层是扫描一块需要一次寻道
 * Best case(s能全部进内存): $(b_r + b_s)t_t + 2 t_s$ (2是因为探针可以一直在r所在磁道并且假设r的所有block是在同一个磁道？)
-    * Let the relation with smaller number of blocks be <u>inner</u> relation(如果两个都能塞下哪个放inner倒无所谓)
+    * Let the relation with <u>smaller</u> number of blocks be <u>inner</u> relation (如果两个都能塞下哪个放inner倒无所谓)
+    * 空间：$\min(b_r, b_s) + 1 + 1$
 * Improvements：
     * 外层不以磁盘块大小为分块依据，一次读取r中M-2块，将s中的每一块与外层中的M-2块作链接。worst cost变为$(\lceil b_r/(M-2) \rceil \times b_s + b_r)t_t + 2 \lceil b_r/(M-2) \rceil t_s$
     * 自然连接/等值连接的属性是内层的码，则内层循环找到了即可break
@@ -257,7 +271,7 @@ end
 **条件**
 
 * Only for equi-join or natural join.
-* 内层关系得有连接属性上的索引
+* **内层**关系得有连接属性上的索引
 
 **Cost**
 

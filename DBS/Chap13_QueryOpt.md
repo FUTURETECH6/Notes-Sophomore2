@@ -86,7 +86,7 @@ $\Pi_{name, title} ((\sigma_{dept\_name= “Music”} (instructor) \Join teaches
 
 * **Equi Sel**
     * 选择结果占用的块数：$\lceil SC(A, r) / f_r \rceil$
-    * Ex. BinarySearch cost: $\lceil \log(b_r) \rceil + \lceil SC(A, r) / f_r \rceil - 1$ ？？？？？
+    * Ex. BinarySearch cost: $\lceil \log(b_r) \rceil + \lceil SC(A, r) / f_r \rceil - 1$ ？？？？？为什么要-1
 * **Sel with cmp**
     * Take $\sigma_{A \leqslant V}(r)$ for example
         * v < min(A,r)：结果元组数 = 0
@@ -107,16 +107,15 @@ $\Pi_{name, title} ((\sigma_{dept\_name= “Music”} (instructor) \Join teaches
 
 * **Cartesian prod**
     * nr\*ns tuples, each for Ir+Is bytes
-* If R∩S is a <u>key for r</u>, then s中一个元组最多和r中一个元组Join (symmetric for s)
-    * 若连接属性是r的候选码，则连接结果得到的行数≤s的行数
+* If R∩S is a <u>key for r</u>, then s中一个元组最多和r中一个元组Join (symmetric for s)，连接结果得到的行数≤s的行数
 * If R∩S forms a <u>foreign key in r, referencing s</u>，则结果行数＝r的行数, 即结果行数通常等于参照关系的行数 (symmetric for s referencing r)
     * $teaches \Join instructor$(`foreign key (ID) referencing instructor(ID)`), n~result~ = n~teaches~
-* 4) If R∩S = {A} is <u>not a key for R nor S</u>. If we assume that each value of A appears with equal probability, then every tuple *t* in *R* produces tuples in $R\Join S$, the number of tuples in $R\Join S$ is estimated to be: $\large \min(n_r \times r中元组中选率, n_s \times s中元组中选率) = \min(\frac{n_r \times n_s}{V(A, s)}, \frac{n_r \times n_s}{V(A, r)})$
+* 4) If R∩S = {A} is <u>not a key for R nor S</u>. If we assume that each value of A appears with equal probability, then every tuple *t* in *R* produces tuples in $R\Join S$, the number of tuples in $R\Join S$ is estimated to be: $\large \min(n_r \times r中元组中选率, n_s \times s中元组中选率) = \min(\frac{n_r \times n_s}{V(A, s)}, \frac{n_r \times n_s}{V(A, r)}) = \frac{n_r \times n_s}{\max(V(A,r), V(A,s))}$
 
 **Ex.**
 
 > Compute the size estimates for takes student <u>without</u> using information about foreign keys:
-> V(ID, takes) = 2500, andV(ID, student) = 5000
+> V(ID, takes) = 2500, and V(ID, student) = 5000
 
 The two estimates are 5000\*10000/2500 = 20000 and 5000\*10000/5000 = 10000
 We choose the lower estimate, which in this case, is the same as our earlier computation using foreign keys. (=n~takes~)
@@ -124,7 +123,7 @@ We choose the lower estimate, which in this case, is the same as our earlier com
 > Example2:   Given: 
 > `lib_card(cno, name, depart, type),`
 > `borrow(cno, bno, borrow_date, return_date).`
-> n~lib~=20,000,   f~lib~ = 25 ;  n~borrow~=45,000,   f~borrow~= 30
+> n~lib~=20,000,   f~lib~ = 2lhy5 ;  n~borrow~=45,000,   f~borrow~= 30
 > The relation lib_card has B+-tree index on primary key cno, (assume its fan-out Fi=60 ); the cno of borrow references the cno of lib_cad.
 > Assume the allowed memory is in the worst case. Please estimate the cost of the join operation lib_card $\Join$ borrow using:
 > (1) Block nested-loop join strategy
@@ -139,7 +138,7 @@ We choose the lower estimate, which in this case, is the same as our earlier com
 ### Other's size
 
 * **Projection**: $\Pi_A(r)$: V(A, r)
-* **Aggregation**: $_A\mathcal{G}_F(r)$: V(A, r) ？？？？(是group by不是聚合函数)
+* **Aggregation**: $_A\mathcal{G}_F(r)$: V(A, r)
     * 因为在A中的任意一个不同取值，$_A\mathcal{G}_F(r)$有一个元组与其对应
 * **Set ops**
     * unions/intersections of sel on same relation: $\sigma_{\theta_1}(r) \cap/\cup \sigma_{\theta_2}(r) \Rightarrow \sigma_{\theta_1 \wedge/\vee \theta_2}(r)$ then count
@@ -166,21 +165,22 @@ We choose the lower estimate, which in this case, is the same as our earlier com
     * $r \Join s$ (可能有交集也可能没有(没有就是r和s的笛卡尔积))
 
     * A全是r中的：$V(A, r \Join s) = \min(V(A, r), n_{r \Join s})$ (后面那个用size的方法算)
-    * A有A1来自r，A2来自s：$V(A, r \Join s) = \min(V(A1, r)\times V(A2-A1, s),\\ V(A2-A1, r) \times V(A2, s), n_{r \Join s})$
+    * A有A1来自r，A2来自s：$V(A, r \Join s) = \min(V(A1, r)\times V(A2-A1, s), V(A1-A2, r) \times V(A2, s), n_{r \Join s})$
         * 前两个就是通过笛卡尔积算的
 * **Projection**
     * $\Pi_A(r)$
     * $V(A, \Pi_A(r)) = V(A, r)$
 * **Aggregated values**
+    * $\Large _G\mathcal{G}_{F(A)}(r)$
     * G denotes grouping attributes，A是要进行计算的目标属性
-    * sum, count, avg: All aggregated values are dinstinct, and are V(G,r) values
+    * sum, count, avg: All aggregated values are dinstinct(假设), and are V(G,r) values
     * min, max: distinct values num: min(V(A, r), V(G, r)) [前者表示有重复，后者表示全是distinct]
 
 # Choice of evaluation
 
 An evaluation plan defines exactly
 
-① what algorithm is used for each operation (e.g.scan, index, merge-join)
+① what algorithm is used for each operation (e.g. scan, index, merge-join)
 ② how the execution of the operations is coordinated (e.g. pipeline).
 
 <img src="assets/image-20200516113229458.png" style="zoom:33%;" />
@@ -189,7 +189,7 @@ An evaluation plan defines exactly
     * merge-join may be costlier than hash-join, but may provide a sorted output which reduces the cost for an outer level aggregation.
     * nested-loop join may provide opportunity for pipelining(流水线)
 * Practical query optimizers incorporate elements of the following two broad approaches:
-    * Search all the plans and choose the best plan in a cost-based fashion.(计算开销)
+    * Search all the plans and choose the best plan in a cost-based fashion.(计算开销)
     * Uses heuristics（启发式）to choose a plan.
 
 ## CBO

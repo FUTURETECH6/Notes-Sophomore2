@@ -49,13 +49,13 @@
 
 ### Dense Index File
 
-File中每个search-key都有一个索引项，索引项包括search-keysearch-key以及指向具有该search-key的<u>第一条数据记录</u>的指针
+File中每个search-key都有一个索引项，索引项包括search-key以及指向具有该search-key的<u>第一条数据记录</u>的指针
 
 <img src="assets/image-20200424120753738.png" style="zoom: 50%;" />
 
 ### Sparse Index File
 
-只有search-key的某些值有索引项，索引项包括search-keysearch-key以及指向具有该search-key的<u>第一条数据记录</u>的指针 (Usually, one block of data gives an index entry, a block contains a number of ordered data records)
+只有search-key的某些值有索引项，索引项包括search-key以及指向具有该search-key的<u>第一条数据记录</u>的指针 (Usually, one block of data gives an index entry, a block contains a number of ordered data records)
 
 <img src="assets/image-20200424120815503.png" style="zoom:50%;" />
 
@@ -71,7 +71,7 @@ File中每个search-key都有一个索引项，索引项包括search-keysearch-k
 
 主索引不能用来查询(不能排序)，因此要用二级索引。比如老师表按ID排序，但是查找时想查某个系的老师，或者想找工资在某个range的老师，但是这个又没有排序
 
-<u>二级索引不能是稀疏的</u>(因为数据文件不是按照耳机索引所在的属性进行排序的；且不一定是个key(比如dept\_name))
+<u>二级索引不能是稀疏的</u>(因为数据文件不是按照二级索引所在的属性进行排序的；且不一定是个key(比如dept\_name))
 
 **bucket**：比如多个老师收入一样，就是同一个桶，桶里再有指针分别指向这几个老师
 
@@ -81,8 +81,8 @@ File中每个search-key都有一个索引项，索引项包括search-keysearch-k
 
 在数据很大的时候用。数据过大可能会导致1. 内存装不下2. 查找开销很大
 
-* outer index – a sparse index of primary index
-* inner index – the primary index-sequential file
+* outer index – a sparse index of **primary index**
+* inner index – the **primary index**-sequential file
 * If even outer index is too large to fit in main memory, yet another level of index can be created, and so on. (可以推广到任意多层索引)
 * Indices at all levels must be updated on insertion or deletion from the file. 所以维护开销会变大
 
@@ -115,9 +115,10 @@ File中每个search-key都有一个索引项，索引项包括search-keysearch-k
     * Dense
         * 没这个search-key：直接插入
         * 有这个search-key了：改bucket和index entry
-    * Sparse
-        * 没有这个key：插入
-        * 有了：是最小的才更新
+    * Sparse（假设一个block对应一个index entry）
+        * 创建了一个新的block：用本block最小的索引值更新索引
+        * 是本block最小的：更新对应entry指向的位置
+        * 其他：不动
 
 ## Summary of Primary and Secondary Indices
 

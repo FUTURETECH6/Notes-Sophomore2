@@ -63,10 +63,10 @@ committed-->1>next_transaction]
 
 ## Shadow-DB
 
-**影子数据库**：一个指针(db_pointer)指向当前数据库的拷贝current_copy(这里的copy指的是在内存中的硬盘的拷贝)，所有更新都先在拷贝上进行
+**影子数据库**：一个指针(db_pointer)指向当前数据库的拷贝(这里的copy指的是在内存中的硬盘的拷贝)，所有更新都先在新建 的拷贝上进行
 
-* 失败了，new_copy删掉
-* 成功了，将new_copy写进磁盘，将指针指向new_copy作为current_copy，将old_copy删掉
+* 失败了，将新拷贝删掉
+* 成功了，将新拷贝写进磁盘，将指针指向新拷贝作为“当前拷贝”，将旧的“当前拷贝”删掉
 
 扇区的电容的作用：断电了也要有电来写
 
@@ -147,10 +147,9 @@ Different forms of schedule equivalence give rise to the notions of:
 
 Simplified view of transactions：
 * we ignore operations other than **read and write** instructions on below
-
 * 读写之间可以是local buffer中数据的任意计算
 
-  
+
 
 ## Conflict Serializability
 
@@ -160,9 +159,15 @@ Def：*conflict*：二个事务对<u>同一数据项</u>进行读写操作，当
 
 * Classic anomalies with interleaved execution
 
-  <img src="./assets/截屏2020-05-18 下午4.44.20.png" style="zoom: 33%;" /><img src="./assets/截屏2020-05-18 下午4.44.26.png" style="zoom:33%;" /><img src="./assets/截屏2020-05-18 下午4.44.33.png" style="zoom:33%;" /><img src="./assets/截屏2020-05-18 下午4.44.38.png" style="zoom:33%;" />
+  <img src="./assets/截屏2020-05-18 下午4.44.20.png" style="zoom: 33%;" />
+  
+  <img src="./assets/截屏2020-05-18 下午4.44.26.png" style="zoom:33%;" />
+  
+  <img src="./assets/截屏2020-05-18 下午4.44.33.png" style="zoom:33%;" />
+  
+  <img src="./assets/截屏2020-05-18 下午4.44.38.png" style="zoom:33%;" />
 
-Def：*conflict equivalence*(冲突等价)：可以通过a series of swaps of  non-conflict instructions转化的schedule S和S'称为冲突等价的
+Def：*conflict equivalence*(冲突等价)：可以通过a series of swaps of non-conflict instructions转化的schedule S和S'称为冲突等价的
 
 Def：*conflict serializable*(冲突可串)：和serial schedule冲突等价的concurrent schedule S称为冲突可串的
 

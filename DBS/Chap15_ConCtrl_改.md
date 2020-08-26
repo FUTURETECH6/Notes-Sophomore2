@@ -58,11 +58,11 @@ l for lock, u for unlock, w for write
 <u>The protocol assures serializability.</u> It can be proved that if a schedule is following the 2PL, then the transactions can **<u>be serialized in the order of their lock points</u>** (锁点，i.e. the point where a transaction acquired its final lock最后一次获得锁的那个点，即增长阶段结束点).
 
 > Prove: <u>The 2PL protocol ensures conflict serializability</u>，反证法+前驱图
-> Suppose two-phase locking does not ensure serializability. Then there exists a set of transactions T0 , T1 ... Tn-1 which obey 2PL and which produce a non-serializable schedule. **<u>A non-serializable schedule implies a cycle in the precedence graph</u>**, and we shall show that 2PL cannot produce such cycles.   
+> Suppose two-phase locking does not ensure serializability. Then there exists a set of transactions T0 , T1 ... Tn-1 which obey 2PL and which produce a non-serializable schedule. **<u>A non-serializable schedule implies a cycle in the precedence graph</u>**, and we shall show that 2PL cannot produce such cycles.
 >
-> Without loss of generality, assume the following cycle exists in the precedence graph: T0 →T1 →T2→... →Tn-1→T0.  Let αi be the time at which Ti obtains its last lock (i.e. Ti’s lock point). Then for all transactions such that Ti→ Tj, αi < αj . Then for the cycle we have α0 < α1 < α2 < ... < αn-1 < α0
+> Without loss of generality, assume the following cycle exists in the precedence graph: T0 →T1 →T2→... →Tn-1→T0.  Let αi be the time at which Ti obtains its last lock (i.e. Ti’s lock point). Then for all transactions such that Ti→ Tj, αi < αj . Then for the cycle we have α0 < α1 < α2 < ... < αn-1 < α0
 >
-> Since**<u>α0 <α0 is a contradiction</u>**, no such cycle can exist. Hence 2PL cannot produce non-serializable schedules. Because of the property that for all transactions such that Ti→ Tj , αi < αj , the lock point ordering of the transactions is also a topological sort ordering of the precedence graph. Thus transactions can be serialized according to their lock points.
+> Since **<u>α0 <α0 is a contradiction</u>**, no such cycle can exist. Hence 2PL cannot produce non-serializable schedules. Because of the property that for all transactions such that Ti→ Tj , αi < αj , the lock point ordering of the transactions is also a topological sort ordering of the precedence graph. Thus transactions can be serialized according to their lock points.
 >
 > Prove2: For T0, T1 ... Tn-1 following 2PL in schedule, suppose Ti with the first lock point, we claim it is possible to move all read and write actions of Ti forward to the beginning of the schedule without passing any conflicting actions.If it is not true(Only two possibilities: Tj is not 2PL, or Ti ’s lock point is behind the Tj ’s . All these are in contradiction with  premise.  In other word, the locking (2PL) would fail.), suppose wj(y) precedes wi(y),  then:
 >      If Uj(y) precedes Li(y),  it’s not 2PL  or  Ti is not with the first lock point.<img src="assets/截屏2020-05-25 下午3.53.59.png" alt="截屏2020-05-25 下午3.53.59" style="zoom:33%;" />
@@ -173,7 +173,7 @@ Rules
 
 1. <u>Only **X-locks** are allowed</u>.
 2. The first lock by Ti may be on any data item.
-3. Subsequently, <u>a data Q can be locked by Ti only if the parent of Q is currently locked by Ti</u>. 只能锁子节点
+3. Subsequently, <u>a data Q can be locked by Ti only if the parent of Q is currently locked by Ti</u>. 只能锁子节点，孙子不行；且需由同一个事物锁着
 4. Data items may be <u>unlocked at any time.</u>
 5. <u>A data item Q can not be relocked by the same Ti  after locked and unlocked</u>
 
@@ -208,7 +208,7 @@ h-->j
 e-->i
 ```
 
-
+
 
 | T10                                                          | T11                                                          | T12                                                          | T13                                                          |
 | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
@@ -227,7 +227,7 @@ graph LR
 0--"B(E??)"-->2
 1--D-->0
 0--D-->3
-1--H-->3
+1--"(D??)H"-->3
 ```
 
 Serializable Schedules
@@ -329,7 +329,7 @@ there are three intention lock modes with multiple granularity:
 
 * intention-shared (IS，共享型意向锁): indicates explicit locking at a lower level of the tree with shared locks.  (表明其后代存在S锁)
 * intention-exclusive (IX ，排它型意向锁): indicates explicit locking at a lower level with exclusive locks。 (表明其后代存在X锁)
-* shared and intention-exclusive (SIX，共享排它型意向锁): the subtree rooted by that node is locked explicitly in shared mode and explicit locking is being done at a lower level with exclusive-mode locks.    SIX=S+IX (？？子树中有S explicit，更深的节点中有X explicit？那有没有ISX呢)
+* shared and intention-exclusive (SIX，共享排它型意向锁): the subtree rooted by that node is locked explicitly in shared mode and explicit locking is being done at a lower level with exclusive-mode locks.    SIX=S+IX (？？子树中有S explicit，子树更深的节点中有X explicit)
 
 兼容性矩阵
 
@@ -371,19 +371,24 @@ Def: **Cycle** of txns  waiting for locks to be released by each other.
     * Require that each transaction locks all its data items before it begins execution (predeclaration) – **conservative 2PL**. (Either all or none are locked ) 在执行前将所有需要用到的数据全部lock起来，避免节外生枝
         * Disadvantages: bad concurrency, hard to predict
     * Impose partial ordering of all data items and require that a transaction can lock data items only in the order (**graph-based protocol**). --- therefore never form a cycle.
-* transaction timestamps for the sake of deadlock prevention alone, and use rollback mecmechanism. (to decide which one to be rollback) 抢占式和非抢占式![截屏2020-05-25 下午3.07.33](assets/截屏2020-05-25 下午3.07.33.png)
-    * Non-preemptive（非抢占式）: **Wait-die** scheme  
-        * older transaction（older 指的是txn发生得较早，时间戳的值更小） may wait for younger one to release data item. Younger transactions never wait for older ones, they are rolled back instead. E.g fig 15.7—T4 lock-x(B), T4 rollback (PPT15.58)
+* transaction timestamps for the sake of deadlock prevention alone, and use rollback mecmechanism. (to decide which one to be rollback) 抢占式和非抢占式![](assets/截屏2020-05-25 下午3.07.33.png)
+    * **早晚指的都是事务开始的时间**，（然后是相对后面要上锁的那个而言。
+        
+    * Non-preemptive（非抢占式）: **Wait-die** scheme，早等后滚
+        
+        * older transaction（older指的是txn发生得较早，时间戳的值更小） may wait for younger one to release data item. Younger transactions never wait for older ones, they are rolled back instead. E.g fig 15.7—T4 lock-x(B), T4 rollback (PPT15.58)
         
         * a transaction may die several times before acquiring needed data item
         
           即：old wait for young
-    * Preemptive（抢占式）: **Wound-wait** scheme 
+        
+    * Preemptive（抢占式）: **Wound-wait** scheme ，早抢后等
         * older transaction wounds (forces rollback) of younger transaction instead of waiting for it. Younger transactions may wait for older ones.
         
         * may be fewer rollbacks than wait-die scheme.
         
           即：young wait for old
+        
     * Both in wait-die and in wound-wait schemes, a rolled back transactions is restarted with its original timestamp（回滚后时间戳不变）. Older transactions thus have precedence over newer ones, and <u>starvation is hence avoided.</u>（直观理解：**<u>==aborted的总是“young”的txn==</u>**）
 * Timeout-Based Schemes: (这里还🈚️👀)
     * a transaction waits for a lock <u>only for a specified amount of time</u>. After that, the wait times out and the transaction is rolled back.（时间一到就回滚)
@@ -398,7 +403,7 @@ Def: **Cycle** of txns  waiting for locks to be released by each other.
 
 ```mermaid
 graph LR
-0["要等待的事务(申请)"] --> 1["被等待的事务(正在占用)"]
+0(("要等待的事务(申请)")) --> 1(("被等待的事务(正在占用)"))
 ```
 
 若wf图有环，则系统会进入死锁状态(充要条件)，所以必须要有一个deadlock-detection algorithm来**周期性检查**cycle
@@ -413,3 +418,7 @@ When deadlock is detected :
     * Total rollback: Abort the whole transaction and then restart it.
     * Partial rollback: More effective to roll back transaction only as far as necessary to break deadlock.
 * Starvation happens if same transaction is always chosen as victim. 解决办法：Include the number of rollbacks（考虑回滚的次数） in the cost factor to avoid starvation
+
+# Appendix
+
+**Lock Point**：一个事物得到所有锁的时间

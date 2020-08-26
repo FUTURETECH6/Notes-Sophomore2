@@ -112,16 +112,18 @@ Ex. 找09年秋开课，10年春没开课的学科
 
 
 
+找每个支行下存款最多的账户？
+
 ```sql
 Select account_number AN, balance from account A
 where balance >= (	-- 但是很慢
     select max(balance) from account B
     where A.branch_name = B.branch_name
     )
-order by balance ;
+order by balance;
 ```
 
-一个错误写法
+一个错误写法：👇
 
 ```sql
 -- 值和集合不能比较
@@ -151,16 +153,16 @@ where
                 course_id
             from course
             where
-                dept_name = ’ Biology ’
+                dept_name = 'Biology'
         )
         except
-            (	-- 找出 S.ID 选修的所有课程
-                select
-                    T.course_id
-                from takes as T
-                where
-                    S.ID = T.ID
-            )
+        (	-- 找出 S.ID 选修的所有课程
+            select
+                T.course_id
+            from takes as T
+            where
+                S.ID = T.ID
+        )
     );
 ```
 
@@ -168,10 +170,12 @@ where
 
 ## View
 
+视图总是显示最近的数据。每当用户查询视图时，数据库引擎通过使用 SQL 语句来重建数据。
+
 输出XXX最大的
 
 ```sql
-CREATE VIEW < v_name> AS
+CREATE VIEW <v_name> AS
 select c1,c2,… from… ;
 CREATE VIEW <v_name> (c1,c2,…) AS
 select e1,e2,… from… ;
@@ -297,11 +301,13 @@ WHERE loan.loan_number *= borrower.loan_number;
 ( 注: Left join: *=, Right join: =* )
 -- MySQL
 SELECT loan.loan_number, branch_name, amount, customer_name
-FROM loan , borrower
+FROM loan, borrower
 WHERE loan.loan_number=borrower.loan_number(+);
+/*
 【注: Right join: loan.loan_number(+) = borrower.loan_number
 [ 相当于在（入门级（入门级 + )侧附加一特殊空行与另一表中的连接属性匹配 ]
 【Left join: loan.loan_number = borrower.loan_number (+)
+*/
 ```
 
 

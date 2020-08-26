@@ -217,7 +217,7 @@ Ex. Megatron 747 (vintage 2008)
     * 慢
 * 方法2：move record n  to i
     * 顺序错了
-* 方法3：do not move records, but link all free records on afree list.  (See next page)
+* 方法3：do not move records, but link all free records on a free list.  (See next page)
 
 ### Free Lists
 
@@ -259,6 +259,11 @@ Slotted page header contains:
 * **end** of free space in the block
 * location and size of each record
 
+特点：
+
+* 业内无碎块，有效数据都是连续的，因此删除时要移动存储块
+* index的指针指向Block Header
+
 删除过程
 
 <img src="assets/image-20200423112123145.png" style="zoom: 50%;" />
@@ -291,6 +296,8 @@ Slotted page header contains:
 例如，把dept和对应所有老师放一起
 
 <img src="assets/image-20200423113701646.png" style="zoom:50%;" />
+
+那Taylor和Waston的ID岂不是缺失了
 
 # Data Dict Storage
 

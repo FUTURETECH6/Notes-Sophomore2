@@ -15,13 +15,13 @@ create table department
 ```sql
 create domain Dollars as numeric(12, 2) not null;
 create domain Pounds as numeric(12,2);
-Create table instructor
-				(  ID char(5) primary key,
-				   name varchar(20),  
-		  		   dept_name varchar(20),                                   
-	   		   salary Dollars,                                   
-	   		   comm Pounds 
-				);
+Create table instructor(
+    ID char(5) primary key,
+    name varchar(20),  
+    dept_name varchar(20),                                   
+    salary Dollars,                                   
+    comm Pounds 
+    );
 ```
 
 区别：Type即使底层类型相同也不能互相复制，domain可以

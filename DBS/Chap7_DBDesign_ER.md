@@ -83,7 +83,7 @@ Note: Some elements in entity set A and B may not be mapped to any elements in t
 
 •Diamonds represent relationship sets.
 
-•Undivided rectangles represent the attributes of a relationship set.Attributes that are part of the primary key are underlined.
+•Undivided rectangles represent the attributes of a relationship set. Attributes that are part of the primary key are underlined.
 
 •Lines link entity sets to relationship sets.
 
@@ -103,7 +103,7 @@ Note: Some elements in entity set A and B may not be mapped to any elements in t
 
 ## Roles
 
-参加联系的实体集不必是互不相同的，如Recursive relationship set 自环联系集：一个ES通过一个RsS连到自己
+参加联系的实体集不必是互不相同的，如Recursive relationship set自环联系集：一个ES通过一个RsS连到自己
 
 角色:实体在联系集中的作用
 
@@ -155,7 +155,7 @@ Participation of an Entity Set in a Relationship Set
 
 <img src="assets/image-20200406110842506.png" style="zoom: 50%;" />
 
-## 弱实体集
+## 弱实体集与标识性联系
 
 不具有主键的实体集称为弱实体集
 
@@ -163,11 +163,11 @@ Participation of an Entity Set in a Relationship Set
 
 标识性联系:将弱实体集与其标识实体集相联的联系
 
-分辨符：弱实体集的分辨符(或称部分码)是指在一个弱实体集内区分所有实体 的属性集合
+分辨符：弱实体集的分辨符(或称部分码)是指在一个弱实体集内区分所有实体的属性集合
 
 主码：弱实体集的主码由它所依赖的强实体集的主码加上它的分辨符组成(注意：强实体集的主码并不显式地存于弱实体集中，而是隐含地通过标识性联系起作用)
 
-为什么需要弱实体集？<u>如果course\_id显式存在，section就成了强实体，则section与course之 间的联系变得冗余。因为section与course共有的属性course\_id 已定义 了一个隐含的联系</u>
+为什么需要弱实体集？<u>如果course\_id显式存在，section就成了强实体，则section与course之间的联系变得冗余。因为section与course共有的属性course\_id 已定义 了一个隐含的联系</u>
 
 例如，对于弱实体集section(sec_id,semester,year)；分辨符(**discriminator**)由属性sec_id，year以及semester组成；依赖于标识实体集course(course_id,title,credits)；标示性联系为sec_course；主码为{course_id, sec_id,semester,year}；
 
@@ -183,7 +183,7 @@ Participation of an Entity Set in a Relationship Set
 
 属性继承：低层实体集继承它连接的高层实体集的所有属性及参加的联系
 
-特化用从特化实体指向另一方实体的空心箭头来表示。这种关系为ISA关 系，代表“is a”(“是一个”)。例如，一个教师“是一个”雇员
+特化用从特化实体指向另一方实体的空心箭头来表示。这种关系为ISA关系，代表“is a”(“是一个”)。例如，一个教师“是一个”雇员
 
 <img src="assets/image-20200406113430044.png" style="zoom:33%;" />
 
@@ -354,7 +354,7 @@ stu-class(sid,classno);
 
 如果“多”端参加联系是部分的，上述方法可导致空值。例，如果inst_dept是部分参与的，那么没有相关联的系的教师的dept_name中存放空值
 
-特殊的没如果是一对一的，那可以任选一端当做上面的方法中的“多端”
+特殊的，如果是一对一的，那可以任选一端当做上面的方法中的“多端”
 
 **2)**联系弱实体集及其标识性实体集的<u>联系集</u>对应的表是冗余的，可以直接删掉，其他不变
 
@@ -377,7 +377,7 @@ stu-class(sid,classno);
 **方法2**:
 
 * 为每个实体集构造表，其属性包括所有局部属性和继承来的属性
-* 如果特化是全部特化(Total Specialization)，则没有必要为一般实体person创建表，因为两个加起来就狗了
+* 如果特化是全部特化(Total Specialization)，则没有必要为一般实体person创建表，因为两个加起来就够了
     * 可以被定义为包含特化联系的“视图”
     * 由于外键约束的需要，可能仍然需要定义关系模式person
 * 缺点:对于既是学生又是雇员的人，其name、street和city被冗余存储
@@ -394,7 +394,7 @@ stu-class(sid,classno);
 
 * 数据库设计主要涉及数据库模式的设计
 
-* E-R模型主要用于数据库设计过程，E-R图用于表示数据库模式的逻
+*  E-R模型主要用于数据库设计过程，E-R图用于表示数据库模式的逻
 
     辑结构，以及E-R图的其他表示方法
 
