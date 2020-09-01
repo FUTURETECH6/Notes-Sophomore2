@@ -37,7 +37,7 @@
 
 ### list
 
-除了基础的还支持的函数有：push_front, pop_front, sort, remove(删除和指定值相等的所有元素), unique[删除所有和前一个元素相同的元素(要做到元素不重复，则unique之前还需要 sort)], merge, reverse, splice(在指定位置前面插入另一链表中的一个或多个元素，并在另 一链表中删除被插入的元素)
+除了基础的还支持的函数有：push_front, pop_front, sort, remove(删除和指定值相等的所有元素), unique[删除所有和前一个元素相同的元素(要做到元素不重复，则unique之前还需要 sort)], merge, reverse, splice(在指定位置前面插入另一链表中的一个或多个元素，并在另一链表中删除被插入的元素)
 
 ## 函数对象
 
@@ -139,7 +139,7 @@ class priority_queue {
 };
 ```
 
-执行top 操作时，返回的是最大元素的**常**引用(因为不允许修改，否则位置就乱了)
+执行top操作时，返回的是最大元素的**常**引用(因为不允许修改，否则位置就乱了)
 
 ## Algorithm
 
@@ -166,7 +166,7 @@ size_t count(InIt first, InIt last, const T& val);
 ```cpp
 template<class InIt, class Pred>
 size_t count_if(InIt first, InIt last, Pred pr);
-// 计算[first,last) 中符合pr(e) == true 的元素 e的个数
+// 计算[first,last) 中符合pr(e) == true 的元素e的个数
 ```
 
 **min_element/max_element**

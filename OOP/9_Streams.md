@@ -150,7 +150,7 @@ cout.flush();
 **endl的作用**
 
 * 加个回车
-* 执行`cout.flush()`
+* 执行`os.flush()`
 
 
 
@@ -163,6 +163,8 @@ cin >> hex >> n;
 
 
 **场宽位宽**
+
+c++中的setprecision()与python中的相反，这里正数是整数，负数是小数
 
 ```cpp
 cout << setprecision(2) << 1230.243 << endl;

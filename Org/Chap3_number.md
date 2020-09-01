@@ -294,6 +294,21 @@ int main(int argc, char const *argv[]) {
 
 
 
+```c++
+int main() {
+    using namespace std;
+    float f      = -23.3125;
+    uint32_t *pi = reinterpret_cast<uint32_t *>(&f);
+    cout << hex << *pi;
+}
+```
+
+
+
+
+
+
+
 **单精度**
 
 | 31符号位 | 30    ……     23 exp | 22        ……          0      |

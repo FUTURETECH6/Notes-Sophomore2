@@ -24,7 +24,7 @@
 
 ```cpp
 {
-    if(){
+    if() {
         throw VectorIndexError(idx);
     }
     return m_elems[idx];
@@ -149,7 +149,7 @@ classDiagram
 
 ## 其他
 
-**noexcept**关键字
+**[noexcept](https://en.cppreference.com/w/cpp/language/noexcept)**关键字
 
 让编译器检查是否调用链上没有异常处理
 
@@ -216,7 +216,7 @@ class A {
         }
     }
     ~A() {
-        delete[] a;
+        delete[] data;
         cout << "A:~A()" << endl;
     }
 }

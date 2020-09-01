@@ -97,7 +97,6 @@ Diff
 ```cpp
 int &*p;		// Illegal
 void f(int *&p);	// Reference to a pointer
-
 ```
 
 No arrays of reference
@@ -129,7 +128,7 @@ int finalGrade[size];	// OK
 int x;
 cin >> x;
 const int size = x;
-double classAvg[size];	// ERROR
+double classAvg[size];	// ERROR???试了一下似乎没毛病？
 ```
 
 ## 指针与常量
@@ -174,28 +173,28 @@ c[0] = 'B';
 
 /* 地址 */
 const char *s1 = "Hello";
-const char *s1 = "Hello";
+const char *s2 = "Hello";
 std::cout << (void*)s1 << std::endl << (void*)s2;	// 两个地址一样
 
 /* 常量引用调用(参数表) */
 struct Student {
-	int id;
+    int id;
 };
 
-void fod(const Student *ps) {
-	cout << ps->id << end;
-	cout << (*ps).id << endl;
+void foo(const Student *ps) {
+    cout << ps->id << endl;
+    cout << (*ps).id << endl;
 }
 
 void bar(const Student &s) {
-	cout << s.id << endl;
+    cout << s.id << endl;
 }
-u
+
 int main() {
-	Student s
-	s.id = 2;
-	foo(&s);
-	bar(s)
+    Student s;
+    s.id = 2;
+    foo(&s);
+    bar(s);
 }
 ```
 

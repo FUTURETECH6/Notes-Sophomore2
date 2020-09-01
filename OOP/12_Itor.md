@@ -62,7 +62,7 @@ struct myIter {
 
 
 template <class I>
-typename I::value_type func(I iter) {
+typename I::value_type func(I iter) {  // 这里说明一下是typename否则会被当成member因此报错？
     return *iter;
 }
 
@@ -95,6 +95,73 @@ myIter<int> iter(new int(8));
 cout << func(*iter);
 ```
 
+func调用iter不能加`*`。。
+
+```c++
+#include <cstring>
+#include <iomanip>
+#include <iostream>
+#include <list>
+#include <map>
+#include <unordered_map>
+#include <vector>
+
+using namespace std;
+
+template <class T>
+struct myIter {
+    typedef T value_type;
+    T *ptr;
+    myIter(T *p = 0) : ptr(p) {}
+    T &operator*() { return *ptr; }
+};
+
+template <class I>
+struct Iterator_Traits {
+    typedef typename I::value_type value_type;
+};
+
+template <class I>
+typename Iterator_Traits<I>::value_type func(I iter) {
+    return *iter;
+}
+
+// code
+int main(int argc, char const *argv[]) {
+    myIter<int> iter(new int(8));
+    cout << func(iter);
+    return 0;
+}
+```
+
+可是爷不萃取也没报错啊，因为myIter里面已经定义过value_type了
+
+```c++
+using namespace std;
+
+template <class T>
+struct myIter {
+    typedef T value_type;
+    T *ptr;
+    myIter(T *p = 0) : ptr(p) {}
+    T &operator*() { return *ptr; }
+};
+
+template <class I>
+typename I::value_type func(I iter) {
+    return *iter;
+}
+
+// code
+int main(int argc, char const *argv[]) {
+    myIter<int> iter(new int(8));
+    cout << func(iter);
+    return 0;
+}
+```
+
+
+
 ## Template specialization
 
 模板特化
@@ -119,7 +186,7 @@ class A<int, T2, 3> { ... };	// 也可是T2*, T2&, const T2等等
 template<class I>
 class iterator_traits {
   public:
-    typedef typename I::value_type value_type;
+    typedef typename I::value_type value_type;	// 这里的typename应该是修饰I而不是I::value_type
     typedef typename I::pointer_type pointer_type;
     ......
 };
@@ -163,8 +230,7 @@ typedef typename I::reference reference;
 
 template <class Iterator, class Distance>
 inline void advance(Iterator &i, Distance n) {
-    __advance(i, n,
-              iterator_traits<Iterator>::iterator_category());	// iterator_category()是Temporary object
+    __advance(i, n, iterator_traits<Iterator>::iterator_category());  // iterator_category()是Temporary object
 }
 ```
 
@@ -172,8 +238,7 @@ tag的隐式转换
 
 ```cpp
 template <class ForwardIterator, class Distance>
-inline void __advance(ForwardIterator &i, Distance n, forward_iterator_tag)
-{
+inline void __advance(ForwardIterator &i, Distance n, forward_iterator_tag) {
     __advance(i, n, input_iterator_tag());	// Implicit conversion from forward_iterator_tag to input_iterator_tag()
 }
 ```

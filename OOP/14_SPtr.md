@@ -13,7 +13,7 @@ unique_ptr<int> pa{new int()};	// std=c++14
 unique_ptr<A> pa = make_unique<A>();	// 可以auto
 
 auto pa2(pa);	// Error，unique_ptr<>类型的coptCtor被delete了
-auto pa2 = move(pa);
+auto pa2 = move(pa);  // 之后pa就不再管理这个int了，管理权交给了pa2
 ```
 
 数组
@@ -85,7 +85,7 @@ p/q->increment(); // p/q's count will increase
 
 两个模板类：
 
-**USObject**
+**UCObject**
 
 封装了计数的功能
 
@@ -125,9 +125,9 @@ class UCPointer {
     }
     UCPointer &operator=(const UCPointer<T> &p) {
         if (m_pObj != p.m_pObj) {  // could be ignored
-            decrement();
+            decrement();  // 旧的减一
             m_pObj = p.m_pObj;
-            increment();
+            increment();  // 新的加一
         }
         return *this;
     }
@@ -164,24 +164,6 @@ classDiagram
 ```
 
 ```cpp
-class String {
-  public:
-    String(const char *s) : m_rep(new StringRep(s)) {}
-    ~String() {}
-    String(const String &) : m_rep(s.m_rep) {}
-    String &operator=(const String &s) {
-        m_rep = s.m_rep;  // let smart pointer do work!
-        return *this;
-    }
-    int operator==(const String &) const { return m_rep->equal(*s.m_rep); }
-    String operator+(const String &) const;
-    int length() const { return m_rep->length(); }
-    operator const char *() const;
-
-  private:
-    UCPointer<StringRep> m_rep;
-};
-
 class StringRep : public UCObject {
   public:
     StringRep(const char *s) {
@@ -205,6 +187,24 @@ class StringRep : public UCObject {
 
   private:
     char *m_pChars;
+};
+
+class String {
+  public:
+    String(const char *s) : m_rep(new StringRep(s)) {}
+    ~String() {}
+    String(const String &s) : m_rep(s.m_rep) {}
+    String &operator=(const String &s) {
+        m_rep = s.m_rep;  // let smart pointer do work!
+        return *this;
+    }
+    int operator==(const String &s) const { return m_rep->equal(*s.m_rep); }
+    String operator+(const String &) const;
+    int length() const { return m_rep->length(); }
+    operator const char *() const;
+
+  private:
+    UCPointer<StringRep> m_rep;
 };
 ```
 

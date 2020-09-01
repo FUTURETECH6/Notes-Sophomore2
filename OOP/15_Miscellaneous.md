@@ -91,6 +91,35 @@ int main() {
 }
 ```
 
+被dynamic_cast的一定要是多态的基类
+
+```c++
+#include <cstring>
+#include <iostream>
+
+using namespace std;
+
+class Base {
+  public:
+    virtual void any_virfun() { std::cout << "Base::any_virfun()" << std::endl; }
+};
+
+class Derived : public Base {
+  public:
+    void special() { std::cout << "Derived::special()" << std::endl; }
+};
+
+int main(int argc, char const *argv[]) {
+    Base *p = new Base;
+    // or
+    Base *p = new Derived;
+    dynamic_cast<Derived *>(p)->special();
+    return 0;
+}
+```
+
+
+
 # Multiple inheritance
 
 ```mermaid
@@ -222,7 +251,7 @@ namespace second {
 namespace mine {
     using namespace first;
     using namespace second;
-    using first::y;  // resolve clashes void mystuff();
+    using first::y;  // resolve clashes void y(); 如果first和second只有一个y()那不用写这行也行
     ...
 }  // namespace mine
 int main() {

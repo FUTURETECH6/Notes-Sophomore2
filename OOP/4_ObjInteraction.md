@@ -8,10 +8,6 @@ void *pv = pd;	// Both ok
 pi = pv;		// C ok, C++ not ok
 ```
 
-
-
-
-
 # Class
 
 **Objects = Attributes(Data) + Services(Operations)**
@@ -41,7 +37,7 @@ Tips for header
 
 3. The contents of a header file is surrounded with
 
-    \#ifndef #define... #endif
+    `#ifndef #define... #endif`
 
 ## C'tor and D'tor
 
@@ -69,6 +65,7 @@ struct Y {
 };
 Y y1[] = { Y(1), Y(2), Y(3) };
 Y y2[2] = { Y(1) };	// error: no instance of constructor "Y::Y" matches the argument list
+// 因为数组长度为2而只给了一个Y(1)，剩下的都需要用Y()来填充
 
 // 加入Default Constructor 后就可以了
 struct Y {
@@ -109,7 +106,7 @@ int main() {
 
 |        | 高位 |      |      |      | (this是成员函数的第一个指针，但是被==隐藏==了) |      |
 | ------ | ---- | ---- | ---- | ---- | ---------------------------------------------- | ---- |
-| 第一次 | y1.i | y2.d | y2.i | y2.d | this = &y1                                     | p=1  |
+| 第一次 | y1.i | y1.d | y2.i | y2.d | this = &y1                                     | p=1  |
 | 第二次 |      |      |      |      | this = &y2                                     | p=2  |
 
 隐藏this
@@ -163,6 +160,8 @@ int main(int argc, char const *argv[]) {
 // 可见初始化列表是先于函数体执行的
 ```
 
+
+
 ```cpp
 struct Y {
     int i;
@@ -193,21 +192,30 @@ int main(int argc, char const *argv[]) {
 // Y::Y()	// 说明先用相当于`X() : y()`
 // Y::Y(int)
 // X::X()
+
+// 若将X改为：
+struct X {
+    Y y;
+    // X() {
+    X() : y(10) {
+        // y = Y(10);
+        cout << "X::X()" << endl;
+    }
+};
+// 则输出为
+// Y::Y(int)
+// X::X()
 ```
 
 **Initialization vs. assignment**
 
 `Student::Student(string s) : name(s) {}`
 
-initialization
-
-before constructor body
+initialization before constructor body
 
 `Student::Student(string s) { name=s; }`
 
-assignment
-
-inside constructor body
+assignment inside constructor body
 
 string must have a default constructor
 
@@ -222,10 +230,10 @@ string must have a default constructor
 同类型的也要消歧义
 
 ```cpp
-void f(int n){}
-void f(short n){}
-void f(double){}
-void f(float){}
+void f(int n) {}
+void f(short n) {}
+void f(double) {}
+void f(float) {}
 
 f(1); // 错
 f((short)1);
@@ -237,11 +245,13 @@ char*和string也要消歧义吗？会报错`warning: conversion from string lit
 
 ```cpp
 void f(char* s) {}
+// void f(const char* s) {}
 // void f(string s) {}
 
 int main(int argc, char const *argv[])
 {
 	f("12");	// 还是报错warning: conversion from string literal to 'char *' is deprecated，看来c++默认字符串都是string类型的
+    // const char * 也可以
 	return 0;
 }
 ```

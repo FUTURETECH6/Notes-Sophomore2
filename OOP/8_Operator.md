@@ -1,5 +1,7 @@
 # Overloaded operators
 
+这章建议看Fraction的作业
+
 **可以的**
 
 ```
@@ -130,16 +132,16 @@ bool operator X(const T& l, const T& r);
 E& T::operator [](int index);	// 例如VectorSTL中
 ```
 
-### 艹
+### 艹i与i艹
 
 ```cpp
 class Integer {
 public:
     ...
-    Integer& operator++();		// x++
-    Integer operator++(int);	// ++x
-    Integer& operator--();		// x--
-    Integer operator--(int);	// --x
+    Integer& operator++();		// ++x
+    Integer operator++(int);	// x++
+    Integer& operator--();		// --x
+    Integer operator--(int);	// x--
     ...
 };
 
@@ -197,21 +199,21 @@ bool Integer::operator>=( const Integer& rhs ) const {
 • memberwise assignment (和copy ctor的方式处理指针)
 
 ```cpp
-class Cargo{
-public:
-    Cargo& operator=(const Cargo&){
+class Cargo {
+  public:
+    Cargo &operator=(const Cargo &) {
         cout << "Cargo& operator=(const Cargo&)" << endl;
         return *this;
     }
-}
-class Truck{
-public:
+};
+class Truck {
+  public:
     Cargo mc;
-}
+};
 
-int main(){
+int main() {
     Truck a, b;
-    a = b;	// Truck的=是compiler生成的，调用了a.mc = b.mc
+    a = b;  // Truck的=是compiler生成的，调用了a.mc = b.mc
 }
 ```
 
@@ -221,7 +223,7 @@ int main(){
 class A{
 public:
     A& operator=(const A& rhs){
-        // delete[] p;	// 若是同一块内存就完蛋
+        // delete[] p;	// 若是同一块内存就完蛋  // 但是不这样不就内存泄漏了吗
         p = new char(strlen(p) + 1);
         p = strcpy(p, rhs.p);
         return p;
@@ -239,6 +241,8 @@ private:
 * Compilers perform implicit conversions using
     * Single-argument constructors
     * implicit type conversion operators
+
+即`=`会自动调用对应的拷贝构造函数
 
 ```cpp
 class PathName {

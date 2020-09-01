@@ -41,18 +41,14 @@ Protected：派生类可以访问
 Base class Employee
 
 ```cpp
-inline const std::string& Employee::get_name() const
-{
+inline const std::string& Employee::get_name() const {
       return m_name;
 }
-inline void Employee::print(std::ostream& out) const
-{
+inline void Employee::print(std::ostream& out) const {
       out << m_name << endl;
       out << m_ssn << endl;
 }
-inline void Employee::print(std::ostream& out,
-      const std::string& msg) const
-{
+inline void Employee::print(std::ostream& out, const std::string& msg) const {
       out << msg << endl;
       print(out);	// 利用重载函数实现多个代码
 }
@@ -74,8 +70,8 @@ private:
 };
 
 // 初始化列表调用基类的初始化函数进行初始化
-Manager::Manager( const string& name, const string& ssn, const string& title = "" )
-                : Employee(name, ssn), m_title( title ) {}
+Manager::Manager( const string& name, const string& ssn, const string& title = "" )  // 这个默认参数可以写在def也可以写在decl，但是只能写一个地方
+                : Employee(name, s sn), m_title( title ) {}
 
 inline void Manager::print( std::ostream& out ) const {
     Employee::print( out ); //call the base class print，需要特别说是Employee里的
@@ -137,7 +133,6 @@ int main(int argc, char const *argv[])
 // Output:
 // Base::Base()
 // Child::Child()
-// [Finished in 0.4s]
 ```
 
 ## Name Hiding

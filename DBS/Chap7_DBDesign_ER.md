@@ -36,7 +36,7 @@ Attribute types:
 
 A relationship set is a set of relationship of the same type. example:`advisor( s_ID,  i_ID)`
 
-Formally, a relationship set is a mathematical relation among n >= 2 entities, each taken from entity sets `{(e1, e2, … en) | e1 \in E1, e2 \in E2, …, en \in En}` where (e1, e2, …, en) is a relationship，Ei  is entity set. Example: 	(98988, 76766) \in advisor, where  98988 \in student,  76766 \in instructor, where 98988 \in student, 76766 \in instructor
+Formally, a relationship set is a mathematical relation among n >= 2 entities, each taken from entity sets `{(e1, e2, … en) | e1 \in E1, e2 \in E2, …, en \in En}` where (e1, e2, …, en) is a relationship，Ei  is entity set. Example: 	(98988, 76766) \in advisor, where  98988 \in student,  76766 \in instructor
 
 ## Degree
 
@@ -125,7 +125,7 @@ $\rightarrow$表示“一”，$-$表示“多”
 
 ## 参与约束
 
-Participation of an Entity Set in a Relationship Set
+==Participation of an Entity Set in a Relationship Set==
 
 * Total participation (全参与) (indicated by double line双线)：实体集中的每个实体都至少参加联系集中的一个联系
 * Partial participation (部分参与)：某些实体可能未参加联系集中的任何联系

@@ -22,7 +22,7 @@
 **• Simple methods**
 V.size( ) // num items
 V.empty() //empty?
-==, !=, <, >, <=, >=
+==, !=, <, >, <=, >= // 大小于的比较方式同字符串，即从前往后依次比较
 V.swap(v2) // swap only pointer
 **• Element access**
 V.at(index)	// 带范围检查(是否越界)
@@ -30,12 +30,12 @@ V[index]
 V.front( )
 V.back( )
 **• Iterators**
-`I.begin( ) I.end( )`
+`I.begin() I.end()`
 **• Add/Remove/Find**
 V.push_back(e)
 V.pop_back( )
-V.insert(pos, e)	// O(N)
-V.erase(pos)	// O(N)
+V.insert(itor, e)	// O(N)
+V.erase(itor)	// O(N)
 V.clear( )
 V.find(first, last, item)
 
@@ -59,7 +59,7 @@ V.find(first, last, item)
 
 二叉搜索树的平衡树版本 (如AVL，RB
 
-有序的键值对 (python里的dict是无序的，用的是散列)，用RB🌲实现
+有序的键值对(?) (python里的dict是无序的，用的是散列)，用RB🌲实现
 
 `map<string, string> telephone_book`
 
@@ -95,6 +95,38 @@ struct full_name {
 };
 map<full_name,int> phonebook;
 ```
+
+
+
+有序个🔨？
+
+```cpp
+map<int, int> a = {make_pair(1, 2), make_pair(5, 6), make_pair(3, 4)};
+for (auto &i : a)
+    cout << i.first << i.second << endl;
+return 0;
+/*
+12
+34
+56
+*/
+```
+
+有序是相对数据而不是插入顺序而言的，像用unordered_map就变成毫无顺序可言
+
+```c++
+unordered_map<int, int> a = {make_pair(1, 2), make_pair(5, 6), make_pair(3, 4)};
+for (auto &i : a)
+    cout << i.first << i.second << endl;
+return 0;
+/*
+34
+56
+12
+*/
+```
+
+
 
 ### unordered_map
 
@@ -149,7 +181,7 @@ copy (L.begin(), L.end(), back_inserter(V));
 ```
 
 ```cpp
-list<int> L = {1, 2, 3, 4}
+list<int> L = {1, 2, 3, 4};
 
 copy(L.begin(), L.end(), ostream_iterator<int>(cout, ", "));
 cout.flush();

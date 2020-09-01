@@ -9,22 +9,31 @@
 
 
 ```cpp
-#include <cstring> // #include <string.h> using namespace std;
-Person::Person( const char *s ) {
-    name = new char[::strlen(s) + 1];
-    ::strcpy(name, s);
-}
+#include <cstring>
+#include <iostream>
 
-Person::~Person() {
-    delete [] name; // array delete
-}
-int main(){
+using namespace std;
+
+class Person {
+  public:
+    char *name;
+
+    Person(const char *s) {
+        name = new char[::strlen(s) + 1];
+        strcpy(name, s);
+    }
+    ~Person() {
+        delete[] name;  // array delete
+    }
+};
+
+int main() {
     Person p1("CXY");
     Person p2 = p1;
-    cout << (void*)p1.name << endl;	// 两个是一样的
-    cout << (void*)p2.name << endl;
-    
-    return 0;	// 报错：to be freed is not allocated(p1已经吧"CXY"删掉了，p2再删一次必出错)
+    cout << (void *)p1.name << endl;  // 两个是一样的
+    cout << (void *)p2.name << endl;
+
+    return 0;  // 报错：to be freed is not allocated(p1已经吧"CXY"删掉了，p2再删一次必出错)
 }
 ```
 
@@ -101,10 +110,10 @@ Person(const Person &)	// Person("Hello1")拷贝构造给foo中的p
 foo()
 Person(const Person &)	// 本地p拷贝给返回值
 Person(const Person &)	// 返回值拷贝给p1
-bar()
+bar()                   // 传给bar()的参数是const char*所以在输出之前没有涉及到Person
 Person(const char*)		// 字符串拷贝构造
 Person(const Person &)	// 本地p拷贝给返回值
-Person(const Person &)	// 返回值拷贝给p1
+Person(const Person &)	// 返回值拷贝给p2
 Hello1
 Hello2
 ```

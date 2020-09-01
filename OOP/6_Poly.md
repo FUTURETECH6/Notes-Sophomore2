@@ -38,8 +38,8 @@ void move_and_redraw_all(const std::vector<Shape *> &shapes) {
 
 int main() {
     Ellipse ell;
-    // ell.render();
     Circle circ;
+    // ell.render();
     // circ.render();
     // render(&ell);
     // render(&circ);
@@ -110,6 +110,8 @@ class Circle : public Ellipse {
 
 ## 多态的底层实现
 
+http://c.biancheng.net/view/267.html
+
 ```cpp
 #include <iostream>
 
@@ -121,7 +123,7 @@ class Base {
     void foo() { cout << "Base::foo(): data = " << data << endl; }
     virtual void bar() {
         cout << "Base::bar()\n";
-    }  // 没加这个函数b的size是4(int的大小)，加上之后变成16了
+    }  // 没加这个函数Base b的size是4(int的大小)，加上之后变成16了
 
   private:
     int data;
@@ -134,15 +136,17 @@ int main(int argc, char const *argv[]) {
     int *p     = (int *)&b;
     void **pp  = (void **)p;
     void *vptr = *pp;
-    cout << *(p++) << endl;       // 178024504
-    cout << *(int *)&b2 << endl;  // 178024504 // 说明一个类共用一个vtable
-    cout << vptr << endl;         // 0x10077d038: 说明了是指向代码段的
+    cout << *(p++) << endl;        // 178024504
+    cout << *(int *)&b2 << endl;   // 178024504 // 说明一个类共用一个vtable
+    cout << vptr << endl;          // 0x10077d038: 说明了是指向代码段的
     cout << (void *)main << endl;  // 0x10077bf50
     cout << *(p++) << endl;        // 1
     cout << *(p++) << endl;        // 10	==>data
     cout << *(p++) << endl;        // 0
     return 0;
 }
+// (int(*)[4])((int *) &b): {8248, 1, 10, 0}
+// 小端规则：8248+1*2^32，0是对齐的占位
 ```
 
 实际上`pwhatever`是指向vtable(虚函数指针表)的 **PPT6.13**
@@ -217,7 +221,7 @@ class Base {
     Base() : data(10) {}
     void foo() { cout << "Base::foo(): data = " << data << endl; }
     virtual void bar0() { cout << "Base::bar0()\n"; }
-    virtual void bar1() { cout << "Base::bar1()\n"; }
+    virtual void bar1(int a) { cout << "Base::bar1()\n"; }
 
   private:
     int data;
@@ -228,9 +232,7 @@ class Derived : public Base {
     Derived() : datad(100) {}
     virtual void bar0() { cout << "Derived::bar0()\n"; }
     // 如果用virtual，这边的参数和基类不一样，但是不会报错，用override就会报错
-    virtual void bar1(int a) {
-        cout << "Derived::bar1(): datad+a\n" << datad + a << endl;
-    }
+    virtual void bar1(int a) { cout << "Derived::bar1(): datad+a\n" << datad + a << endl; }
 
   private:
     int datad;
@@ -240,31 +242,14 @@ int main(int argc, char const *argv[]) {
     Base b;
     Derived d;
     Base *p = &d;
-    p->bar0();	// Derived::bar0()
-    b = d;
-    b.bar0();	// Base::bar0()
+    p->bar0();  // Derived::bar0()
+    b = d;      // 观察发现这句话没有任何作用
+    b.bar0();   // Base::bar0()
     p = &b;
-    p->bar0();	// Base::bar0()
+    p->bar0();  // Base::bar0()
     return 0;
 }
 
-// 强行转换vtable
-int main(int argc, char const *argv[]) {
-    Base b;
-    Derived d;
-    Base *p = &d;
-    p->bar0();  // Derived::bar0()
-    b = d;
-
-    void **pb = (void **)&b;
-    void **pd = (void **)&d;
-    *pb       = *pd;
-
-    b.bar0();  // Base::bar0()
-    p = &b;
-    p->bar0();  // Derived::bar0()
-    return 0;
-}
 ```
 
 
@@ -291,21 +276,25 @@ class Derived : public Base {
 
 ### Relaxation
 
-返回值不一定要相同，如果是类的<u>指针或引用</u>，也可以是继承关系的，例如
+返回值类型不一定要相同，如果是类的**<u>指针或引用</u>**，也可以是继承关系的，例如
 
 ```cpp
-class Expr{
-public:
-    virtual Expr* newExpr();
-    virtual Expr& clone();
+class Expr {
+  public:
+    virtual Expr *newExpr();
+    virtual Expr &clone();
     virtual Expr self();
 };
-class BinaryExpr: public Expr{
-public:
-    virtual BinaryExpr* newExpr();// ok
-    virtual BinaryExpr& clone(); // ok
-    virtual BinaryExpr self(); // Error!
+
+class BinaryExpr : public Expr {
+  public:
+    virtual BinaryExpr *newExpr();  // ok
+    virtual BinaryExpr &clone();    // ok
+    virtual BinaryExpr self();      // Error!
 };
+
+// error: virtual function 'self' has a different return type ('BinaryExpr')
+//      than the function it overrides (which has return type 'Expr')
 ```
 
 ### Overload

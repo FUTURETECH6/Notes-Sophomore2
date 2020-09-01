@@ -17,19 +17,24 @@ void swap(T &x, T &y) {
 
 模板的实例化：编译器将模板用重载的方式实现
 
-如果有个函数模板但是没有调用，编译器不会实例化 (如果是具体的函数即使没有调用也会被编译) ==是否意味着模板和内联一样不能跨文件使用？ 没有啊Fraction里用得好好的==
+如果有个函数模板但是没有调用，编译器不会实例化 (如果是具体的函数即使没有调用也会被编译) ==是否意味着模板和内联一样不能跨文件使用？确实==
 
 
 
 ### 强制
 
+用`<>`强制指定模板类型
+
 ```cpp
 template <typename T>
-void print(T &a, T &b) {
-    cout << a << " " <<< b;
+void print(T a, T b) {
+    std::cout << a << " " << b << std::endl;
 }
-print<int>(2, 3.2);	// 2 3	// 发生截断
-print<int>(2, 3.2);	// 2 3.2
+
+int main() {
+    print<int>(2, 3.2);    // 2 3  // 发生截断
+    print<float>(2, 3.2);  // 2 3.2
+}
 ```
 
 
@@ -128,24 +133,27 @@ class Derived : public Base<Derived> {
 template <class T>
 struct Base {
     void interface() {
-        static_cast<T*> (this)->implementation();	// 将基类指针转化为派生类指针，然后用这个指针调用派生类的implementation
+        // 将基类指针转化为派生类指针，然后用这个指针调用派生类的implementation
+        static_cast<T *>(this)->implementation();
+        // (T *)this->implementation();
+        // this->implementation();
     }
 };
 
 struct Derived1 : Base<Derived1> {
     void implementation() { cout << "D1:im()" << endl; }
-}
+};
 
-struct Derived2 : Base<Derived1> {
+struct Derived2 : Base<Derived2> {
     void implementation() { cout << "D2:im()" << endl; }
-}
+};
 
-template <calss T>
-void foo(Base<T> &b){
+template <typename T>
+void foo(Base<T> &b) {
     b.interface();
 }
 
-int main(){
+int main() {
     Derived1 d1;
     foo(d1);
     Derived2 d2;

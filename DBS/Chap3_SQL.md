@@ -138,7 +138,7 @@ order by balance
 
 
 
-**except差运算**
+**except差运算**(这里not exists+except相当于equal)
 
 ```sql
 -- 找到所有上了生物学院的每门课的学生
@@ -203,7 +203,9 @@ where salary < (select avg(salary)
 
 ## Insert
 
-
+```sql
+insert into book value('10', '心理学', '新的世界', '浙江大学', 2002, '高云鹏', 48.00, 20, 4);
+```
 
 ## Update of view
 
@@ -223,17 +225,13 @@ select ... from... ;
 -- 系统不允许对复杂视图的更新(无法反应到底层表)
 ```
 
-
-
-
-
 ## Transactions
 
 事务
 
 commit work: makes all updates of the transaction permanent in the database
 
-rollback work: undoes all updates performed  rollback work: undoes all updates performed by the transaction.
+rollback work: undoes all updates performed rollback work: undoes all updates performed by the transaction.
 
 非显式
 

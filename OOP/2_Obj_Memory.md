@@ -84,8 +84,7 @@ typedef struct Student {
 	// ~Student() {}
 } Student;
 
-int main(int argc, char const *argv[])
-{
+int main(int argc, char const *argv[]) {
 	int size;
 	if (argc > 1)
 		size = atoi(argv[1]);

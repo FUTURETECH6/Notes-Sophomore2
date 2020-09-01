@@ -4,7 +4,7 @@
 
 # Structure
 
-**Extensible**：tag可自定义，想html就不行
+**Extensible**：tag可自定义，像html就不行
 
 **Element **：由tag包起来的，可以嵌套其他Element
 
@@ -71,7 +71,7 @@ Use keyword `xmlns`
 因为在元素中"<"(新元素的开始)和"&"(字符实体的开始)是非法的
 
 ```xml
-<!--使用`![CDATA[]]`(char data)-->
+<!--使用`<![CDATA[]]>`(char data)-->
 <script>
 <![CDATA[
 function matchwo(a,b) {
@@ -91,12 +91,12 @@ function matchwo(a,b) {
 
 **转义**
 
-| `&lt;` | <    | 小于   |
-| ------ | ---- | ------ |
-| `&gt;`   | >    | 大于   |
-| `&amp;`  | &    | 和号   |
-| `&apos;` | '    | 省略号 |
-| `&quot;` | "    | 引号   |
+| `&lt;`   | &lt;   | 小于   |
+| -------- | ------ | ------ |
+| `&gt;`   | &gt;   | 大于   |
+| `&amp;`  | &amp;  | 和号   |
+| `&apos;` | &apos; | 省略号 |
+| `&quot;` | &quot; | 引号   |
 
 
 
@@ -199,7 +199,7 @@ Ex.
 >
 ```
 
-Ex.2
+Ex2.
 
 ```dtd
 <!DOCTYPE university-3 [
@@ -220,7 +220,7 @@ Ex.2
 ]>
 ```
 
-Ex.3
+Ex3. XML data with ID and IDREF attributes
 
 ```xml
 <university-3>
@@ -272,36 +272,48 @@ Ex.3
 
 ```xml
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
-<xs:element name="university" type="universityType" />	<!--universityType在之后定义-->
-<xs:element name="department">
-     <xs:complexType>
-          <xs:sequence>
-              <xs:element name="dept name" type="xs:string"/>
-              <xs:element name="building" type="xs:string"/>
-              <xs:element name="budget" type="xs:decimal"/>
-          </xs:sequence>
-     </xs:complexType>
-</xs:element>
-....
-<xs:element name="instructor">
-    <xs:complexType>
+    <xs:element name="university" type="universityType" />
+    <xs:element name="department">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="dept name" type="xs:string" />
+                <xs:element name="building" type="xs:string" />
+                <xs:element name="budget" type="xs:decimal" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="course">
+        <xs:element name="course id" type="xs:string" />
+        <xs:element name="title" type="xs:string" />
+        <xs:element name="dept name" type="xs:string" />
+        <xs:element name="credits" type="xs:decimal" />
+    </xs:element>
+    <xs:element name="instructor">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="IID" type="xs:string" />
+                <xs:element name="name" type="xs:string" />
+                <xs:element name="dept name" type="xs:string" />
+                <xs:element name="salary" type="xs:decimal" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="teaches">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="IID" type="xs:string" />
+                <xs:element name="course id" type="xs:string" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="UniversityType">
         <xs:sequence>
-            <xs:element name="IID" type="xs:string"/>
-            <xs:element name="name" type="xs:string"/>
-            <xs:element name="dept name" type="xs:string"/>
-            <xs:element name="salary" type="xs:decimal"/>
+            <xs:element ref="department" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element ref="course" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element ref="instructor" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element ref="teaches" minOccurs="0" maxOccurs="unbounded" />
         </xs:sequence>
     </xs:complexType>
-</xs:element>
-....
-<xs:complexType name="UniversityType">	<!--复合类型的定义-->
-    <xs:sequence>
-        <xs:element ref="department" minOccurs="0" maxOccurs="unbounded"/>
-        <xs:element ref="course" minOccurs="0" maxOccurs="unbounded"/>
-        <xs:element ref="instructor" minOccurs="0" maxOccurs="unbounded"/>
-        <xs:element ref="teaches" minOccurs="0" maxOccurs="unbounded"/>
-    </xs:sequence>
-</xs:complexType>
 </xs:schema>
 ```
 
@@ -321,21 +333,23 @@ Ex.3
 
 主键：`:key`，外键：`:keyref`
 
-* Attr：`name`
+* Attr
+    * `name`
+    * (`refer`)
 * Subelement
-    * `selector`、`field`
-        * 属性：`xpath`
+    * `selector`：定义约束范围
+    * `field`：声明指定形成键的元素或属性
 
 Ex.
 
 ```xml
 <xs:key name = "deptKey">	<!--Key-->
-        <xs:selector xpath = "/university/department"/>
-        <xs:field xpath = "dept_name"/>
+    <xs:selector xpath = "/university/department"/>
+    <xs:field xpath = "dept_name"/>
 <\xs:key>
-<xs:keyref name = "courseDeptFKey" refer="deptKey">		<!--Foreign Key-->
-        <xs:selector xpath = "/university/course"/>
-        <xs:field xpath = "dept_name"/>
+<xs:keyref name = "courseDeptFKey" refer="deptKey">  <!--Foreign Key-->
+    <xs:selector xpath = "/university/course"/>
+    <xs:field xpath = "dept_name"/>
 <\xs:keyref>
 ```
 
@@ -354,6 +368,41 @@ Ex.
     * The root node has a single child, which is the root element of the document
 
 ## querying/translation lang
+
+以下部分使用的例子来自这个xml
+
+```xml
+<university-3>
+    <department dept_name="Comp. Sci.">
+        <building> Taylor </building>
+        <budget> 100000 </budget>
+    </department>
+    <department dept_name="Biology">
+        <building> Watson </building>
+        <budget> 90000 </budget>
+    </department>
+    <course course_id="CS-101" dept_name="Comp. Sci" instructors="10101 83821">
+        <title> Intro. to Computer Science </title>
+        <credits> 4 </credits>
+    </course>
+    <course course_id="BIO-301" dept_name="Biology" instructors="76766">
+        <title> Genetics </title>
+        <credits> 4 </credits>
+    </course>
+    <instructor IID="10101" dept_name="Comp. Sci.">
+        <name> Srinivasan </name>
+        <salary> 65000 </salary>
+    </instructor>
+    <instructor IID="83821" dept_name="Comp. Sci.">
+        <name> Brandt </name>
+        <salary> 72000 </salary>
+    </instructor>
+    <instructor IID="76766" dept_name="Biology">
+        <name> Crick </name>
+        <salary> 72000 </salary>
+    </instructor>
+</university-3>
+```
 
 ### XPath
 
@@ -386,7 +435,7 @@ Ex.
         * `/university-2/instructor[count(./teaches/course)> 2]` returns instructors teaching more than 2 courses (on university-2 schema)
     * `id()`
         * id() can also be applied to sets of references such as IDREFS and even to strings containing multiple references separated by blanks，解引用，拿属性值取回对应的元组
-        * `/university-3/course/id(@dept_name)` returns <u>all department elements</u> referred to from the dept_name attribute of course elements.
+        * `/university-3/course/id(@dept_name)` returns <u>all **department** elements</u> referred to from the dept_name attribute of course elements.
     * `doc(name)`
         * returns the root of a named document
 
@@ -396,24 +445,26 @@ Ex.
     * `//`：相当于跳级
         * `/university-3//name` finds any name element anywhere  under the /university-3 element, regardless of the element in which it is contained.
     * `*`：所有子节点
-    * `..`：父节点
+    * `..`：父节点   
 
 ### XQuery
 
 Based on W3C 2005 Draft
 
-格式更像shell和cmake这种上古描述性的而不是高级语言
+格式更像shell和make这种上古描述性的而不是高级语言
 
 **FLOWR**
 
 * for
     * SQL from
+    * 多于一个时是笛卡尔积
 * let
+    * 赋值(应该是引用而不是真赋值)，简化表达
 * where
     * SQL where
 * order by
     * SQL order by
-* result
+* return
     * SQL select
 
 ```xquery
@@ -441,7 +492,7 @@ for $c in /university/course,
     $t in /university/teaches
 where $c/course_id= $t/course id and $t/IID = $i/IID
 return <course_instructor> { $c $i } </course_instructor>
-<!--The same query can be expressed with the selections specified as XPath selections:-->
+<!--The same query can be expressed with the selections specified as XPath 9selections:-->
 for $c in /university/course,
     $i in /university/instructor,
     $t in /university/teaches[ $c/course_id= $t/course_id and $t/IID = $i/IID]
@@ -457,7 +508,7 @@ return <course_instructor> { $c $i } </course_instructor>
 {for $d in /university/department
     return <department>
         { $d/* }
-        { for $c in /university/course[dept name = $d/dept name]
+        { for $c in /university/course[dept_name = $d/dept_name]
             return $c }
     </department>
 }
@@ -465,16 +516,16 @@ return <course_instructor> { $c $i } </course_instructor>
     return  <instructor>
         { $i/* }
         { for $c in /university/teaches[IID = $i/IID]	<!--instructor下面的子元素-->
-            return $c/course id }
+            return $c/course_id }
     </instructor>
 }
 </university-1>
 
 <!--总的返回值-->
-"<univrsity-1><department>X系 X系的课</department><instructor>X导师 X导师的课</instructor></university-1>"
+"<univrsity-1><department>d系的building和budget d系的所有课</department><instructor>i导师的name和salary i导师的所有课</instructor></university-1>"
 ```
 
-<u>怎么个嵌套法？是直接笛卡尔积？</u>
+<u>怎么个嵌套法？是直接笛卡尔积？是的</u>
 
 ##### Sort
 
@@ -550,11 +601,11 @@ template tag
         * 属性：`select`
 
 ```xaml
-<xsl:template match=“/bank-2/customer”>
-    <xsl:value-of select=“customer_name”/>
+<xsl:template match="/bank-2/customer">
+    <xsl:value-of select="customer_name" />
 </xsl:template>
 
-<xsl:template match=“*”/>	<!--matches all elements that **do not match** any other template-->
+<xsl:template match="*" /> <!--matches all elements that **do not match** any other template-->
 ```
 
 > 所有这个match*有什么用？？？？
@@ -564,13 +615,12 @@ template tag
 Ex. to wrap results in new XML elements？
 
 ```xml
-<xsl:template match=“/bank-2/customer”>
+<xsl:template match="/bank-2/customer">
     <customer>
-        <xsl:value-of select=“customer_name”/>
+        <xsl:value-of select="customer_name" />
     </customer>
 </xsl:template>
-<xsl:template match=“*”/>
-
+<xsl:template match="*" />
 <!--Output-->
 <customer> Joe  </customer>
 <customer> Mary </customer>
@@ -586,22 +636,23 @@ Ex. to wrap results in new XML elements？
 Template action can apply templates recursively to the contents of a matched element
 
 ```xml
-<xsl:template match=“/bank”>
-	     <customers>
-	           <xsl:template apply-templates/>
-	     </customers >
-    </xsl:template>
-	      <xsl:template match=“/customer”>
-         <customer>
-	    <xsl:value-of select=“customer_name”/>
-         </customer>
-	     </xsl:template>
-	     <xsl:template match=“*”/>
+<xsl:template match="/bank">
+    <customers>
+        <xsl:template apply-templates />
+    </customers>
+</xsl:template>
+<xsl:template match="/customer">
+    <customer>
+        <xsl:value-of select="customer_name" />
+    </customer>
+</xsl:template>
+<xsl:template match="*" />
+
 <!--Example output:-->
 <customers>
-        <customer> John </customer>
-        <customer> Mary </customer>
-     </customers>
+    <customer> John </customer>
+    <customer> Mary </customer>
+</customers>
 ```
 
 
@@ -615,22 +666,22 @@ Template action can apply templates recursively to the contents of a matched ele
     * Keys must be declared (with a name) and, the key() function can then be used for lookup.  E.g. 
 
         ```xml
-        <xsl:key name=“acctno” match=“account” use=“account_number”/>
-        <xsl:value-of select=key(“acctno”, “A-101”)
+        <xsl:key name="acctno" match="account" use="account_number" />
+        <xsl:value-of select= key("acctno" ,"A-101" )
         ```
 
 * Keys permit (some) joins to be expressed in XSLT
 
     ```xml
-    <xsl:key name=“acctno” match=“account” use=“account_number”/>
-    	<xsl:key name=“custno” match=“customer” use=“customer_name”/>
-    	<xsl:template match=“depositor”>
-    			<cust_acct>
-    			<xsl:value-of select=key(“custno”, “customer_name”)/>
-    			<xsl:value-of select=key(“acctno”, “account_number”)/>
-    			</cust_acct>
-    	</xsl:template>
-    	<xsl:template match=“*”/>
+    <xsl:key name="acctno" match="account" use="account_number" />
+    <xsl:key name="custno" match="customer" use="customer_name" />
+    <xsl:template match="depositor">
+        <cust_acct>
+            <xsl:value-of select= key("custno" ,"customer_name" ) />
+            <xsl:value-of select= key("acctno" ,"account_number" ) />
+        </cust_acct>
+    </xsl:template>
+    <xsl:template match="*" />
     ```
 
 ##### Sort
@@ -648,7 +699,7 @@ Template action can apply templates recursively to the contents of a matched ele
 * DOM (Document Object Model)
     * XML data is parsed into a tree representation 
     * Variety of functions provided for traversing the DOM tree
-    * E.g.:  Java DOM API provides Node class with methods
+    * E.g.: Java DOM API provides Node class with methods
 
         ```java
         getParentNode(), getFirstChild(), getNextSibling()
@@ -801,5 +852,7 @@ Alternatives:
 
 </HTML>
 ```
+
+<HEAD><TITLE>HTML 示例之一 </TITLE><body<TBODY bgcolor="white" text="blue"><DIV align= center><FONT style="FONT-SIZE: 32px"><B>数据库系统原理课程简介</B></FONT><FONT color= #999999><BR></FONT></DIV></TBODY><P>Database is a large collection of data related to enterprises </P><FONT color= black><P><BR>数据库应用系统设计是根据应用需求建立数据库，并开发应用软件系统，是信息系统开发和建设中的重要内容.</P></FONT><P><BR>按照规范设计的方法，考虑数据库及其应用系统开发全过程，将数据库设计分为以下六个阶段：<BR>· 需求分析<BR>· 概念结构设计<BR>· 逻辑结构设计<BR>· 物理结构设计<BR>· 数据库实施<BR>· 数据库运行和维护</P><P><FONT color= green><B>在学习《数据库系统设计》时，需要进行做MINISQL实验，</B>这个实验的目的是使读者对数据库管理系统的工作过程有一个全面地、细致的了解。</FONT></P><P><FONT color= red>附件：MINISQL实验指导书.doc </FONT></P></FONT><TD width= 8></TD></TR></TBODY></TABLE></BODY>
 
 ## JSON

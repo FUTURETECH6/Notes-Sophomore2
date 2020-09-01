@@ -267,7 +267,7 @@ Streamline recovery procedure by **periodically** performing checkpointing, <u>A
 
 **Example1**
 
-<img src="assets/image-20200525213342103.png" style="zoom: 50%;" />
+<img src="./assets/image-20200525213342103.png" style="zoom: 50%;" />
 
 *说明：这里由于有多个事务因此检查点要用`<checkpoint {T0, T1}>`这样的来表示；*
 
@@ -336,7 +336,7 @@ Streamline recovery procedure by **periodically** performing checkpointing, <u>A
     * Read in new block into buffer.
     
 * **Requirement**: <u>No updates should be in progress on a block Bi when it is output to disk.</u>
-    
+  
     * This can be ensured as follows:
         * Before writing a data item, transaction requests X-lock on block Bi containing the data items.
         * The lock can be released once the write is completed. 
@@ -444,7 +444,7 @@ To avoid NVS's loss
 
 ## Logical Undo
 
-逻辑和物理有何区别？逻辑是因为需要提前释放锁而被需要的操作
+逻辑和物理有何区别？以B+🌲的插入为例，物理undo是直接把这个值删掉，但是这样可能会破坏B+🌲的结构，因为可能有之后的操作修改了B+🌲的结构；而逻辑undo只是执行了一个B+🌲上的删除操作将其删除
 
 Idempoent：逻辑撤销不是幂等的，不能做多次
 
@@ -492,6 +492,7 @@ Ex. insert of (key, record-id) pair (K5, RID7) into index I9
 * 看`operation-end`是否存在来判断crash/rollback发生在这个operation结束前还是之后
 * undo分情况
     * 如果是结束前，则the physical undo information is used to undo operation
+        * 没有`<Ti, Oj, operation-end, U>`的U给出逻辑undo信息没法逻辑undo
     * 如果是结束后，则logical undo is performed using U;  the physical undo information for the operation is ignored.
 * redo的话无论怎么样都要用phy的
 
@@ -528,9 +529,11 @@ Ex.2
 <T1, Z, 45, 70>
 // T1 Rollback begins here
 <T1, Z, 45>		// redo-only log record during physical undo (of incomplete O2)
-<T1, Y, .., ..>	// Normal redo records
+
+<T1, Y, .., ..>	// Normal redo records	// Why is redo ???
 <T1, X, .., ..>	// for logical undo of O1
 ...
+
 <T1, O1, operation-abort>	// What if crash occurred immediately after this?
 <T1, abort>
 ```
@@ -554,6 +557,9 @@ Ex.2
 Ex.
 
 ![](assets/image-20200531105652580.png)
+
+* `<T2, O5, operation-abort>`不用写吗？
+* 
 
 # ARIES
 
@@ -590,9 +596,9 @@ Three main principles lie behind ARIES
 
 ## DS
 
-| LSN                 | PageLSN              | RecLSN                 | RedoLSN |
-| ------------------- | -------------------- | ---------------------- | ------- |
-| Log sequence number | 最后update的log的LSN | 最后写到disk的log的LSN |         |
+| LSN                 | PageLSN                    | RecLSN                       | RedoLSN |
+| ------------------- | -------------------------- | ---------------------------- | ------- |
+| Log sequence number | 页上，最后update的log的LSN | 页上，最后写到disk的log的LSN |         |
 
 
 
@@ -601,22 +607,22 @@ Three main principles lie behind ARIES
     * Must be sequentially increasing 按照时间顺序递增
     * Typically an offset from beginning of log file to allow fast access
         * Easily extended to handle multiple log files
-* [PageLSN](PageLSN)
+* [PageLSN](# PageLSN)
     * 类似于checkpoint，实际存储的就是最后完成的update的log的LSN
-    * 某页上发生了更新（无论是physical 还是 physiological )操作，该操作会将其log的LSN存储在该页的PageLSN域
+    * 某页上发生了更新(无论是physical 还是 physiological)操作，该操作会将其log的LSN存储在该页的PageLSN域
     * Recovery的undo阶段，如果某个阶段的LSN≤其所在页的PageLSN(因为按时间递增的)，则将不在该页上执行（因为它的动作已经反映在该页上了）
     * 保证逻辑redo的幂等性，因为一次之后再逻辑redo的话做都没法做
 * [Log records of several different types](# Log Records)
 * [Dirty page table](# Dirty Page Table)
     * 包含一个在数据库<u>**缓冲区**(客体)</u>中已经更新的Page的列表，包括每一页的PageLSN和RecLSN
-        * RecLSN用于标识已经写到 该页磁盘上的版本 的log record。当一页插入到脏页表(首次在缓冲池中修改)，RecLSN的值被设置成日志的当前末尾(？？没问题了)。只要页被写入磁盘，就可以从脏页表中移除了
+        * RecLSN用于标识已经写到该页磁盘上的版本的log record。当一页插入到脏页表(首次在缓冲池中修改)，RecLSN的值被设置成日志的当前末尾(？？没问题了)。只要页被写入磁盘，就可以从脏页表中移除了
 
 ### PageLSN
 
 Each page contains a PageLSN which is the LSN of the last log record whose effects are reflected on the page
 
 * To update a page:
-    * X-latch the page, and write the log record  （在更新正在执行时，页不能往磁盘上写，因为在磁盘上的页部分更新的状态下物理逻辑操作不能redo）
+    * X-latch the page, and write the log record（在更新正在执行时，页不能往磁盘上写，因为在磁盘上的页部分更新的状态下物理逻辑操作不能redo）
     * Update the page
     * <u>Record the LSN of the log record in PageLSN</u>
     * Unlock page
@@ -626,9 +632,9 @@ Each page contains a PageLSN which is the LSN of the last log record whose effec
 * PageLSN is used during recovery to prevent repeated redo
     * Thus ensuring idempotence（􏲔任意多次执行与执行一次产生的影响相同）
 
-### Log records
+### Log Records
 
-* Each log record contains LSN of previous log record of **the same transaction**，存放在PrevLSN（使得一个事务􏰉􏰮志记录􏰏能够从后往前􏲘读取，􏰇􏲎不必扫􏲙􏲚描整个􏰮日志）
+* Each log record contains LSN of previous log record of **==the same transaction==**，存放在PrevLSN（使得一个事务􏰉􏰮志记录􏰏能够从后往前􏲘读取，􏰇􏲎不必扫􏲙􏲚描整个􏰮日志）
 
     * | LSN  | TransID | PrevLSN | RedoInfo | UndoInfo |
         | ---- | ------- | ------- | -------- | -------- |
@@ -653,12 +659,13 @@ graph LR
 bb>"begin"]
 ee>"end"]
 bb---1---2---3---4---4'---3'---2'---1'---ee
+4-.->3-.->2-.->1
 4'-->3
 3'-->2
 2'-->1
 ```
 
-*这是个什么鬼？？X'表示X的CLR；箭头表示UndoNextLSN指向*
+*这是个什么鬼？？X'表示X的CLR；实箭头表示UndoNextLSN指向，虚箭头表示PrevLSN指向*
 
 ### Dirty Page Table
 
@@ -675,7 +682,7 @@ Ex.
 
 *说明>：data中Page后面的是PageID，一般不能显式存储而是由位置推断，左上角的是PageLSN，二者没有必然联系；同样脏页表中PageID也是由位置推断的；log中XXXX.Y表示PageID.RecordOffsetInPage；对Log的显示是最新的记录在顶部，较老的log records在较低位置显示*
 
-*注意>：每个页面在buffer和disk中都有一个PageLSN字段，通过比较这两个字段可以验证脏页表包含的条目。脏页表中的RecLSN反映当前页面被加到脏页表中时Log末端的LSN，它应该大于或等于stable data中该页的PageLSN* ==*但是脏页表中（也就是Buffer中的）的PageLSN应该大于或等于RecLSN（吧？）*==
+*注意>：每个页面在buffer和disk中都有一个PageLSN字段，通过比较这两个字段可以验证脏页表包含的条目。脏页表中的RecLSN反映当前页面被加到脏页表中时Log末端的LSN，它应该≥stable data中该页的PageLSN* ==*但是脏页表中（也就是Buffer中的）的PageLSN应该≥RecLSN（吧？）*==
 
 ### Checkpoint log record
 
@@ -684,7 +691,7 @@ Ex.
     * For each active transaction, LastLSN, <u>the LSN of the last log record</u> written by the transaction
 * <u>Fixed position</u> on disk notes LSN of last completed checkpoint log record
 
-Dirty pages are not written out at checkpoint time. Instead, they are flushed out continuously, in the background. Checkpoint is thus very low overhead, and can be done frequently
+*Dirty pages are not written out at checkpoint time. Instead, they are flushed out continuously, in the background. Checkpoint is thus very low overhead, and can be done frequently*
 
 ## Recovery Algorithm
 
@@ -695,9 +702,10 @@ sequenceDiagram
     participant 0 as RedoLSN
     participant 1 as Somewhere undo ends
     participant 2 as Last checkpoint
-    participant 3 as End of Log
-    2->>3: Analysis pass
-    0->>3: Redo pass
+    participant 3 as Every LastLSN in undo-list
+    participant 4 as End of Log
+    2->>4: Analysis pass
+    0->>4: Redo pass
     3->>1: Undo pass
 ```
 
@@ -719,10 +727,10 @@ sequenceDiagram
     *RecLSN and PageLSNs are used to avoid redoing actions already reflected on page*
     
     1. 从RedoLSN开始往后扫描，每当发现一个update log
-        * 若Page不在脏页表 || log的LSN<Page的RecLSN，则跳过
+        * 若Page不在脏页表 || log的LSN<所在Page的RecLSN，则跳过
         * 否则(在脏页表且LSN≥RecLSN)从disk中fetch这个Page
-            * 如果LSN>拿出来的PageLSN(说明是在写入磁盘后的新的log)，则redo这个log
-            * 否则不管
+            * 如果LSN≤拿出来的PageLSN(说明是在写入磁盘后的新的log)，则不管
+            * 否则redo这个log
         * 说明：如果其中一个不满足，说明这个**<u>log已经反映到磁盘了</u>**；否则(两个都满足)就还没，才要redo
 3. Undo pass：Rolls back all incomplete transactions
     * Transactions whose abort was complete earlier are not undone
@@ -793,8 +801,8 @@ LSN
 * PageLSN：（每个page中的一项，其中buffer中和脏页表中的相同比disk中的大或相同）最后update这个page的log的LSN
 * RecLSN：（脏页表中每个page对应一项）每一页写到脏页表时Log中最后一条log record的LSN，表明在此之前的log record已经反映到了磁盘上
 * RedoLSN：（ 在analysis pass中生成，是redo pass的起点）`有脏页 ? 脏页表中RecLSN最小值 : checkpoint的LSN`
-* PrevLSN：（log record中一项，可以认为是指针）undo时的下一项
-* UndoNextLSN：（CLR中一项，可以认为是指针）undo时的下一项
+* PrevLSN：（log record中一项，可以认为是指针）undo时的下一项(同一事务)
+* UndoNextLSN：（CLR中一项，可以认为是指针）undo时的下一项(同一事务)
 
 
 

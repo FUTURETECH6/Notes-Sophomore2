@@ -6,7 +6,7 @@ string str;
 string str = "Hello";
 string str("ssss");
 string str1(str);
-string str2(str, 2, 3);	// str[2]开始持续3个
+string str2(str, 2, 3);	// str[2]开始持续3个字符，2+3溢出了没关系，但是2溢出了会异常
 
 
 cin >> str;
