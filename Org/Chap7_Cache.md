@@ -161,15 +161,15 @@ Ex. 2-Way Set-Associative Cache(1 word/block; 2 blocks/set; 4 blocks/cache; henc
 | 第几个set/block | (Index of Set) | 块内的byte index |
 |                 | Index of Block |                  |
 
-* The Index field selects
+* The **Index** field selects
     * The set, in case of a set-associative cache
     * The block, in case of a direct-mapped cache
     * Has as many bits as `log2(#sets)` for set-associative caches, or `log2(#blocks)` for direct-mapped caches
     * ==Index位数全部是根据Set(显式或隐式)而不是Block来算的==
-* The Byte Offset field selects
+* The **Byte Offset** field selects
     * The byte within the block
     * Has as many bits as `log2(size of block)`
-* The Tag is used to find the matching block within a set or in the cache
+* The **Tag** is used to find the matching block within a set or in the cache
     * Has as many bits as `Address_size – Index_size – Byte_Offset_Size`
 
 

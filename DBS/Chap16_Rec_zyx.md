@@ -559,7 +559,6 @@ Ex.
 ![](assets/image-20200531105652580.png)
 
 * `<T2, O5, operation-abort>`不用写吗？
-* 
 
 # ARIES
 
@@ -588,7 +587,7 @@ Three main principles lie behind ARIES
         * e.g. when a record is deleted and all other records have to be moved to fill hole
             * Physiological redo can log just the record deletion
             * Physical redo would require logging of old and new values for much of the page
-    * Requires page to be output to disk atomically
+    * Requires page to  be output to disk atomically
         * Easy to achieve with hardware RAID, also supported by some disk systems
         * Incomplete page output can be detected by checksum techniques,
             * But extra actions are required for recovery

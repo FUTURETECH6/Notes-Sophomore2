@@ -275,7 +275,7 @@ end
 
 **Cost**
 
-* Worst Case: $b_r(t_t+t_s) + n_r\times c$, c denotes [对s进行一次选择的花费](# Select)，例如对于用B+主索引的、且存储在不同磁道的s，$c = (H_{t_i} + 1)(t_t+t_s)$
+* Worst Case: $b_r(t_t+t_s) + n_r\times c$，c denotes [对s进行一次选择的花费](# Select)，例如对于用B+主索引的、且存储在不同磁道的s，$c = (H_{t_i} + 1)(t_t+t_s)$
     * 如果两个关系都有连接属性上的索引，则用元组少的作为外层
 * Best Case: Transfer：一次传输；Seek：读两个Block+索引加载？
 
