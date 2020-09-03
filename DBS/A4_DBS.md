@@ -1,5 +1,6 @@
 $\large company\_name \mathcal{G}_{avg(salary)as\ avg\_salary}(\sigma_{company\_name = "FBC"}(works))$(group by company_name)
 
+$\large \Pi_{person\_name,street,city}(\sigma_{company\_name = "FBC"\wedge salary > 10,000}(works)\Join employee)$
 
 ---
 
