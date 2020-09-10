@@ -249,7 +249,6 @@ int main(int argc, char const *argv[]) {
     p->bar0();  // Base::bar0()
     return 0;
 }
-
 ```
 
 

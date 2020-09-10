@@ -27,7 +27,22 @@ note: `sltu, sltiu` for unsigned comparisons
 
 
 
-## ALU
+互补的二补码作为无符号数相加=模，如3+-3 = 0011 + 1101 = 10000(此即为补码运算的正常溢出)
+
+补码的补码是自己(1101 -> 1011 -> 1101)
+
+## Biased Notation
+
+```
+8-bit biased-127 notation:
+11111111 = 255 - 127 = +128
+00000000 =   0 - 127 = -127
+01111111 = 127 - 127 = 0
+```
+
+
+
+# ALU
 
 | ALU Control Lines        | Function         |
 | ------------------------ | ---------------- |
@@ -46,13 +61,15 @@ note: `sltu, sltiu` for unsigned comparisons
 
 **Carry look-ahead adder (CLA)**
 
-C~i+1~	 =bi ci+ai ci +ai bi 
+C~i+1~	 =bi ci + ai ci + ai bi 
 
 ​           =ai bi +(ai $\oplus$ bi )ci
 
 Generate gi = ai bi
 
-Propagate pi = ai $\oplus$ bi
+Propagate pi = ai $\oplus$ bi / ai + bi (都可以)
+
+c~i+1~ = gi + pi ci
 
 c1 = g0 + (p0 * c0)
 c2 = g1 + p1*c1 = g1 + (p1 * g0) + (p1 * p0 * c0)
@@ -62,22 +79,24 @@ c4 = g3 + p3*c3 = g3 + (p3 * g2) + (p3 * p2 * g1) + (p3 * p2 * p1 * g0) + (p3 * 
 一般不会look ahead太多位，四位挺好的：
 
 ```pseudocode
-c4 =  g3  + p3*g2 	+ p3*p2*g1    + p3*p2*p1*g0     + p3*p2*p1*p0*c0
+c4 =  g3  + p3*g2   + p3*p2*g1    + p3*p2*p1*g0     + p3*p2*p1*p0*c0
 c8 =  g7  + p7*g6 	+ p7*p6*g5    + p7*p6*p5*g4     + p7*p6*5*p4*c4
 c12 = g11 + p11*g10	+ p11*p10*g9  + p11*p10*p9*g8   + p11*p10*p9*p8*c8
 c16 = g15 + p15*g14	+ p15*p14*g13 + p15*p14*p13*g12 + p15*p14*p13*p12*c12
 ```
 
-也可以先做个四位的ALU再把他们串联
+也可以先做个四位的ALU再把他们串联(均为1位
 
 ```pseudocode
+G0= g3  + p3*g2   + p3*p2*g1    + p3*p2*p1*g0
 G1= g7  + p7*g6   + p7*p6*g5    + p7*p6*p5*g4
 G2= g11 + p11*g10 + p11*p10*g9  + p11*p10*p9*g8
 G3= g15 + p15*g14 + p15*p14*g13 + p15*p14*p13*g12
 
 P0= p3*p2*p1*p0
 P1= p7*p6*p5*p4
-P2= p11*p10*p9*p8 P3= p15*p14*p13*p12
+P2= p11*p10*p9*p8
+P3= p15*p14*p13*p12
 
 C1 = c4  = G0+P0*c0
 C2 = c8  = G1+P1*c4
@@ -90,19 +109,27 @@ C3=G2+P2*C2 = G2+P2*G1 + P2*P1*G0+ P2*P1*P0*c0
 C4=G3+P3*C3 = G3+P3*G2 + P3*P2*G1+P3*P2*P1*G0 + P3*P2*P1*P0*c0
 ```
 
+# 运算
+
 ## 乘法
 
 第一个操作数是被乘数(multiplicand)，第二个是乘数(multiplier)
 
+<img src="assets/image-20200908163312048.png" style="zoom:33%;" /><img src="assets/image-20200908163427099.png" style="zoom:33%;" />
+
 ### Ver2
 
 不移动multiplicand，右移动product，multiplier上从低到高遍历，若为1则product+=multiplicand<<i
+
+<img src="assets/image-20200908163621411.png" style="zoom: 9%;" /><img src="assets/image-20200908163644722.png" style="zoom:33%;" />
 
 ### Ver3
 
 处理方式同上，但是一开始时把product的低32位用来存multiplier，每次右移product取出一个溢出位，等32次完正好product是pure的了
 
 习题3.13
+
+<img src="assets/image-20200908164011142.png" style="zoom:9%;" /><img src="assets/image-20200908164027776.png" style="zoom:36%;" />
 
 ### signed乘
 
@@ -133,19 +160,19 @@ Arithmetic shift right:
 
 一样快：0110
 
-| iteration | step                    | Multiplicand | product           |
-| --------- | ----------------------- | ------------ | ----------------- |
-| 0         | Initial Values          | 0010(2)      | 0000_\|1101_0(-3) |
-| 1         | 1.c: 10→Prod=Prod-Mcand | 0010         | 1110_\|1101_0     |
-|           | 2: shift right Product  | 0010         | 1111_0\|110_1     |
-| 2         | 1.b:01→Prod=Prod+Mcand  | 0010         | 0001_0\|110_1     |
-|           | 2: shift right Product  | 0010         | 0000_10/11_0      |
-| 3         | 1.c: 10→Prod=Prod-Mcand | 0010         | 1110_10/11_0      |
-|           | 2: shift right Product  | 0010         | 1111_010/1_1      |
-| 4         | 1.d: 11 → no operation  | 0010         | 1111_010/1_1      |
-|           | 2: shift right Product  | 0010         | 1111_1010/_1      |
+| iteration | step           | Multiplicand | product          |
+| --------- | -------------- | ------------ | ---------------- |
+| 0         | Initial Values | 0010(2)      | 0000_/1101_0(-3) |
+| 1         | 10: sub        | 0010         | 1110_/1101_0     |
+|           | sra            | 0010         | 1111_0/110_1     |
+| 2         | 01: add        | 0010         | 0001_0/110_1     |
+|           | sra            | 0010         | 0000_10/11_0     |
+| 3         | 10: sub        | 0010         | 1110_10/11_0     |
+|           | sra            | 0010         | 1111_010/1_1     |
+| 4         | 11: nop        | 0010         | 1111_010/1_1     |
+|           | sra            | 0010         | 1111_1010/_1     |
 
-==**好像有符号数不能用负数当Mcand**==
+==**好像有符号数乘法不能用负数当Mcand**==
 
 13 = 0b001101, -21 = 0b101011
 
@@ -193,15 +220,19 @@ Use 13 as Mcand
 
 ### Ver1
 
-32商左移，64余数不动，64除数(32位除数存在高32位)右移，64位ALU
+32商左移，64余数不动，64除数(初值为`{32位除数, 32'b0}`)右移，64位ALU
 
-做减法，余数-除数比大小，若大于0则ok，商该位置1；小于0则rollback(余数+除数)
+做减法，余数-=除数比大小，若大于0则ok，商该位置1；小于0则rollback(余数+=除数)
+
+<img src="assets/image-20200908172402957.png" style="zoom: 33%;" /><img src="assets/image-20200908172412772.png" style="zoom:33%;" />
 
 ### Ver2
 
 32商左移，64余数左移，32除数不动，32位ALU
 
-做减法，余数高32-除数比大小，若大于0则ok，商该位置1；小于0则rollback(余数高32+除数)
+做减法，余数高32-=除数比大小，若大于0则ok，商该位置1；小于0则rollback(余数高32+除数)
+
+<img src="assets/image-20200908172436437.png" style="zoom:33%;" />
 
 ### Ver3
 
@@ -209,9 +240,31 @@ Use 13 as Mcand
 
 64余数左右移，32除数不动，32位ALU
 
-做减法，余数高32-除数比大小，若大于0则将左移，低位平行置位1；小于0则rollback并左移，低位平行置位0
+做减法，余数高32-=除数比大小，若大于0则将左移，低位平行置位1；小于0则rollback并左移，低位平行置位0
+
+开始全部左移一位，结束高位右移一位
 
 商在余数的低32位
+
+<img src="assets/image-20200908172450076.png" style="zoom:33%;" /><img src="assets/image-20200908172458278.png" style="zoom:39%;" />
+
+```
+39/8 = 0010 0111 / 1000 = 0111|0100
+```
+
+| Round                 | Divisor | Remainder |
+| --------------------- | ------- | --------- |
+| 0                     | 1000    | 0010 0111 |
+| <<+0                  |         | 0100 1110 |
+| 1: <0                 |         | ...       |
+| <<+0                  |         | 1001 1100 |
+| 2: >0                 |         | 0001 1100 |
+| <<+1                  |         | 0011 1001 |
+| 3: <0                 |         | ...       |
+| <<+0                  |         | 0111 0010 |
+| 4: <0                 |         | ...       |
+| <<+0                  |         | 1110 0100 |
+| Done: shift high left |         | 0111 0100 |
 
 
 
@@ -226,7 +279,7 @@ exp和significand两个是符号数，但不是补码，是偏码
 
 Bias127(127偏码)：0表示-127，127表示0，254表示+127，255是特殊位
 
-32位计算偏码是 `-0x80000000`
+32位计算偏码是~~`-0x80000000`~~ -0x7FFFFFFF
 
 $\Large \rm (-1)^{sign}\times(1+significand)\times 2 ^{exp - bias}$
 
@@ -239,6 +292,8 @@ exp和significand都为0：0(那1怎么办？1是2^0^，指数是01111111(偏码
 exp全为1，significand全为0：$\pm\infin$
 
 exp全为1，significand不为0：其他(Not a Number)
+
+最小的inf：2^128^；最小的非0：2^-149^；最小的指数位非0：2^-126^
 
 
 
@@ -277,11 +332,19 @@ int main(int argc, char const *argv[]) {
     printLine(pow(-0xFFFFFFFFFFFFF, 21));
     printLine(1.0 / 0.0);
     printLine(0.0 / 0.0);
-    printLine(nanf(0));
+    printLine(nanf(nullptr));
+
+    printLine(pow(2, 126));
+    printLine(pow(2, 127));
+    printLine(pow(2, 128));
+    printLine(pow(2, -126));
+    printLine(pow(2, -127));
+    printLine(pow(2, -149));
+    printLine(pow(2, -150));
     return 0;
 }
 
-/* Output */
+/* Output
            0: 0 00000000 00000000000000000000000
  5.87747e-39: 0 00000000 10000000000000000000000
            1: 0 01111111 00000000000000000000000
@@ -290,6 +353,15 @@ int main(int argc, char const *argv[]) {
          inf: 0 11111111 00000000000000000000000
          nan: 0 11111111 10000000000000000000000
          nan: 0 11111111 10000000000000000000000
+
+ 8.50706e+37: 0 11111101 00000000000000000000000
+ 1.70141e+38: 0 11111110 00000000000000000000000
+         inf: 0 11111111 00000000000000000000000
+ 1.17549e-38: 0 00000001 00000000000000000000000
+ 5.87747e-39: 0 00000000 10000000000000000000000
+  1.4013e-45: 0 00000000 00000000000000000000001
+           0: 0 00000000 00000000000000000000000
+*/
 ```
 
 
@@ -297,9 +369,8 @@ int main(int argc, char const *argv[]) {
 ```c++
 int main() {
     using namespace std;
-    float f      = -23.3125;
-    uint32_t *pi = reinterpret_cast<uint32_t *>(&f);
-    cout << hex << *pi;
+    float f = -23.3125;
+    std::cout << std::hex << *reinterpret_cast<uint32_t *>(&f);
 }
 ```
 
@@ -419,3 +490,99 @@ C+B:   0.1100100011 10 (Guard=1, round=0, Sticky=0)
        1.0100100111        ROUND UP
 ```
 
+
+
+**nearest**
+
+[Lecture notes - Floating Point Arithmetic](https://lost-contact.mit.edu/afs/cs.wisc.edu/sunx86_57/test_image/u/a/n/andrew/public/cs354/beyond354/arith.flpt.html)
+
+总结：
+
+```
+00 下
+01 下
+10 下
+11 上
+```
+
+
+
+```
+Method 4.  round to nearest
+use representation NEAREST to the desired value.
+This works fine in all but 1 case:  where the desired value
+is exactly half way between the two possible representations.
+
+The half way case:
+1000...   to the right of the number of digits to be kept,
+then round toward nearest uses the representation that has
+zero as its least significant bit.
+
+Examples:
+
+        1.1111   (1/4 of the way between, one is nearest)上
+          |
+  1.11    |    10.00
+               ------
+
+
+        1.1101   (1/4 of the way between, one is nearest)下
+          |
+  1.11    |    10.00
+ ------
+
+
+        1.0010  (the case of exactly halfway between)下
+          |
+  1.00    |    1.01
+ -----
+
+
+       -1.1101  (1/4 of the way between, one is nearest)下(负上)
+          |
+ -10.00   |    -1.11
+               ------
+
+
+       -1.0010  (the case of exactly halfway between)下(负上)
+          |
+ -1.01    |   -1.00
+              -----
+
+NOTE: this is a bit different than the "round to nearest" algorithm
+(for the "tie" case, .5) learned in elementary school for decimal numbers.
+```
+
+
+
+**nearest even**
+
+```
+0|00 0
+0|01 0
+0|10 0
+0|11 0
+1|00 0
+1|01 2
+1|10 2
+1|11 2
+```
+
+
+
+[ieee 754 - Rounding Floating Point Numbers after addition (guard, sticky, and round bits) - Stack Overflow](https://stackoverflow.com/questions/19146131/rounding-floating-point-numbers-after-addition-guard-sticky-and-round-bits)
+
+[rounding - Guard, round, sticky bits (floating point) - Stack Overflow](https://stackoverflow.com/questions/45662113/guard-round-sticky-bits-floating-point)
+
+```
+  1.001 * 2^2
++
+  1.0100,0000,0000,0000,0000,011 * 2^1
+(=0.1010,0000,0000,0000,0000,0011 * 2^2)
+=
+  1.1100,0000,0000,0000,0000,0011 * 2^2(GRS=100, nearest even)
+=
+  1.1100,0000,0000,0000,0000,010 * 2^2
+```
+
+所以nearest even就是要让最后一位为0？

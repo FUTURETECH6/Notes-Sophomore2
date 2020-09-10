@@ -257,6 +257,8 @@ Inner, left outer, right outer, full outer
 
 PPT 3.100
 
+![](assets/image-20200905164808144.png)
+
 **Join Condition**
 
 ```sql

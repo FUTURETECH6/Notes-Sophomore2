@@ -80,7 +80,7 @@ When a page fault occurs, the OS will be given control through exception mechani
 
 <img src="assets/image-20200513103712271.png" style="zoom: 10%;" />
 
-虚地址(要求是32/64位的，)可以大于物理地址(视内存条大小而定)，所以可以放进虚拟内存的映射
+虚地址(要求是32/64位的)可以大于物理地址(视内存条大小而定)，所以可以放进虚拟内存的映射
 
 **页表**
 
@@ -149,9 +149,13 @@ Ex2. Page大小为1KB，最大物理空间64KB(这是啥？是否意味着PPN应
 
 | 虚拟页号VPN(Virtual Page Num) | 页内偏移VPO                 |
 | ----------------------------- | --------------------------- |
-| TLB_Tag \| TLB_Index          | TLB_Index_Low \| TLB_Offset |
+| TLB_Tag \| TLB_Index_High     | TLB_Index_Low \| TLB_Offset |
 
+Use this VA(considered as address) to find PPN(considered as data)
 
+### 通过TLB的转换
+
+<img src="assets/image-20200910093554020.png" style="zoom: 25%;" />
 
 ### 带TLB的转换
 
@@ -164,6 +168,8 @@ Ex2. Page大小为1KB，最大物理空间64KB(这是啥？是否意味着PPN应
 <img src="assets/image-20200506172856375.png" style="zoom: 25%;" />
 
 主存只要访问一次了
+
+---
 
 ![](assets/image-20200513112829902.png)
 

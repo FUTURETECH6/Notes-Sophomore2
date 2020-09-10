@@ -1,6 +1,8 @@
-$\large company\_name \mathcal{G}_{avg(salary)as\ avg\_salary}(\sigma_{company\_name = "FBC"}(works))$(group by company_name)
+**Algebra**
 
-$\large \Pi_{person\_name,street,city}(\sigma_{company\_name = "FBC"\wedge salary > 10,000}(works)\Join employee)$
+$\large company\_name \mathcal{G}_{avg(salary)as\ avg\_salary}(works)$(group by company_name)
+
+$\large \Pi_{person\_name,city}(\sigma_{company\_name = "FBC"\wedge salary > 10,000}(works)\Join employee)$
 
 ---
 
@@ -12,7 +14,13 @@ $\large \Pi_{person\_name,street,city}(\sigma_{company\_name = "FBC"\wedge salar
 * join on跟的是predicate不是attr
 * view：`create view vName (attrlist, 可忽略) as select ... from ... where ...;`
 * having：`group by dept_name having avg(salary) > 100000;`
-* distinct：`select distinct expression[,expression...] from tables [where conditions];`
+* distinct：`select distinct expression[,expression...] from tables [where conditions];`  `count(distinct campus)`
+
+思路
+
+* exists+except可解决任意性问题：`select ... from ... except select ... from ... where exists ...;`
+* 用笛卡尔积(逗号)将两个表串联可以将subquery消除：`select ... from A join B where a in (select ... from B where ...);` $\Longrightarrow$ `select ... from A join B as B1, B as B2 where ...;`
+* 更新表的题目注意是否要多表更新，如插入消费记录的同时要更新卡片余额
 
 ---
 
@@ -56,6 +64,8 @@ $\large \Pi_{person\_name,street,city}(\sigma_{company\_name = "FBC"\wedge salar
 * **α是R的超码**(α->R, R⊆α^+^)
 * β-α(若不相交则为β)的每个属性都是Prime Attribute(From Candidate Key)
 
+无损且依赖保持
+
 ```python
 令Fc 是F 的正则覆盖;
 i = 0;
@@ -75,16 +85,15 @@ return (R0, R1, R2, ..., Ri)
 
 **BCNF**
 
-(不一定依赖保持)
-
 对F^+^中所有的函数依赖α->β，以下**至少有一项成立**
 
 * α->β是平凡的(β⊆α)[若α不是超码，不平凡的α->β就是Partial Dependency]
 * **α是R的超码**(α->R, R⊆α^+^)
 
+无损但不一定依赖保持
+
 ```c++
 result = {R}
-done = false
 compute Fplus;
 
 while result 中有Ri不为BCNF:
@@ -96,6 +105,8 @@ while result 中有Ri不为BCNF:
 
 **4NF**
 
+无损但不一定依赖保持
+
 ```cpp
 result = {BCNF of R};
 done = false;
@@ -104,7 +115,6 @@ D+ 为类似F+的东西，但是里面全部是MVD
 while (在result 中有不属于4NF的模式Ri):
     令α->->β是在Ri上成立的一个非平凡多值依赖，它使得α->Ri不属于Di，并且α∩β=∅;
     result := (result - Ri)/*原结果去掉Ri*/ ∪ (Ri - β)/*去掉多值依赖于别人的*/ ∪ (α, β)
-// 注:每个Ri 属于4NF，且分解是无损连接的
 ```
 
 ---
@@ -176,19 +186,15 @@ while(result 有变化)
 ```xml
 <campus_cards>
     <pos pno="p003">	<!--ID和IDREF(S)作为属性-->
-        <campus> 玉泉 </campus>
         <location> 四食堂 </location>
     </pos>
     <card cno="c0003">
         <name> 王浩 </name>
-        <depart> CS </depart>
         <balance> 300 </balance>
-        <detail pno="p003">
-            <cdate> 2018-07-03 </cdate>
-            <ctime> 08:10:10 </ctime>
+        <detail pno="p003" ctime="...">
             <amount> 25 </amount>
-            <remark> 餐饮 </remark>
         </detail>
+        <detail pno="..." ctime = "...">...</detail>
     </card>
 </campus_cards>
 ```
@@ -197,17 +203,14 @@ while(result 有变化)
 
 **XPath**
 
-* 例如：`/movie_comment/movie[type=”action” and ./comment/user_name=”Alice” and ./comment/grade=5]/@title`
-* and or not
-* ==`@`取属性==
-* `name/text()`
-* `instructor[count(./teaches/course) > 2]`
-* `/university-3/course/id(@dept_name)` returns <u>all **department** elements</u> referred to from the dept_name attribute of course elements.
-* `id("YimouZhang")`返回类型为ID且值为ZYM的节点；`/university-3/course/id(@dept_name)` 返回被course表的dept_name属性引用的所有department元组(前提是course.dept_name是department.name的IDREF(S))
-* `/campus_cards/card[name="张帅"]/detail[amount=50]/id(pno)/location/text()`
+* `and` `or` `not()`，==`@`取属性==，`count()`
 * 特殊字符
-    * `/university-3/course[@dept_name=“Comp.Sci”] | /university-3/course[@dept_name=“Biology”]`
+    * `/u3/course[@dept_name="CS"] | /university-3/course[building="曹主"]` 并集
     * `/university-3//name`
+
+Ex. `/campus_cards/card[name="张帅"]/detail[amount=50]/id(pno)/location/text()` id(pno)获得是detail[amount=50]对应的pos元组
+
+Ex2. `/movie_comment/movie[type=”action” and ./comment/user_name=”Alice” and ./comment/grade=5]/@title`
 
 ---
 
@@ -221,22 +224,18 @@ while(result 有变化)
 Nested Query
 
 ```xquery
-<university-1> 
-{for $d in /university/department
-    return <department>
-        { $d/* }
-        { for $c in /university/course[dept_name = $d/dept_name]
-            return $c }
-    </department>
-}
-</university-1>
+... return <university-1> {for $d in /university/department
+        return <department> { $d/* }
+            { for $c in /university/course[dept_name = $d/dept_name] return {$c} }
+        </department>
+    } </university-1>
 ```
 
 ##### Sort
 
 ```xquery
 for $i in /university/instructor
-order by $i/name
+order by $i/name [ascending/descending]
 return <instructor> { $i/* } </instructor>
 ```
 
@@ -251,6 +250,12 @@ return {$p/@title}
 ```xquery
 for $x in /campus_cards/card/detail, $y in /campus_cards/card[name="张帅"]/detail
 where $x/@pno=$y/@pno and $x/cdate=$y/cdate and $x/@cno != $y/@cno
+return <cno> {$x/@cno} </cno>
+
+<!--不能写下面这样，因为一人不止一张卡-->
+
+for $x in /campus_cards/card/detail[not name="张帅"], $y in /campus_cards/card[name="张帅"]/detail
+where $x/@pno=$y/@pno and $x/cdate=$y/cdate
 return <cno> {$x/cno} </cno>
 ```
 
@@ -260,12 +265,14 @@ return <cno> {$x/cno} </cno>
 
 MaxFanout：最大子节点数
 
-* 根节点：$2$\~$n$个孩子，$1$~$n-1$个keys
+* 根节点：$2$\~$n$个child，$1$~$n-1$个keys
     * `keyNum = childNum - 1`
-* 非叶：$\lceil n/2 \rceil$~$n$个孩子($\lceil n/2 \rceil-1$~$n-1$个keys)
+* 非叶：$\lceil n/2 \rceil$~$n$个child($\lceil n/2 \rceil-1$~$n-1$个keys)
     * `keyNum = childNum - 1`
-* 叶：$\lceil (n-1)/2 \rceil$~$n-1$个keys？？？这和ADS的应该是不一样的规则，为什么不一样？因为这里叶节点的指针也是要存指向data的ptr的
+* 叶：$\lceil (n-1)/2 \rceil$~$n-1$个keys
     * `keyNum = ptrNum`
+
+计算Fanout：IndexSize \* (N-1) + PtrSize \* N ≤ BlockSize
 
 ---
 
@@ -297,10 +304,10 @@ MaxFanout：最大子节点数
 | A1   | Linear Search                               | tS + br ∗ tT                   |
 | A1   | Linear Search, Equality on Key              | Average cost: tS + (br/2) ∗ tT |
 | A2   | Primary B+-tree Index, Equality on Key      | (hi +1) ∗ (tT +tS)             |
-| A3   | Primary B+-tree Index, Equality on Nonkey   | (hi+b)tT + (hi+1)tS            |
+| A3   | Primary B+-tree Index, Equality on Nonkey   | (hi+1)tS + (hi+b)tT            |
 | A4   | Secondary B+-tree Index, Equality on Key    | (hi +1) ∗ (tT +tS)             |
 | A4   | Secondary B+-tree Index, Equality on Nonkey | (hi +n) ∗ (tT +tS)             |
-| A5   | Primary B+-tree Index, Comparison           | (hi+b)tT + (hi+1)tS            |
+| A5   | Primary B+-tree Index, Comparison           | (hi+1)tS + (hi+b)tT            |
 | A6   | Secondary B+-tree Index, Comparison         | (hi +n) ∗ (tT +tS)             |
 
 **Join**
@@ -312,6 +319,28 @@ Block Nested Loop：$(b_r + b_r \times b_s)t_t + 2b_rt_s$；$(b_r + b_s)t_t + 2 
 Block Nested Loop with given buffer size：$(\lceil b_r/(M-2) \rceil \times b_s + b_r)t_t + 2 \lceil b_r/(M-2) \rceil t_s$
 
 Indexed Nested Loop：$b_r(t_t+t_s) + n_r\times c$，$c = (H_{t_i} + 1)(t_t+t_s)$ for B+，inner table has B+ index on the join attribute(s)
+
+Merge Join
+
+* Sort Cost: $[(2\lceil \log_{M-1}(b_r/M) \rceil +2)b_r + (2\lceil \log_{M-1}(b_s/M) \rceil +2)b_s]t_t \\+ [2 \lceil b_r/M \rceil + 2 \lceil b_r / b_b \rceil \times \lceil \log_{M-1}(b_r/M) \rceil + 2 \lceil b_s / b_b \rceil \times \lceil \log_{M-1}(b_s/M) \rceil]t_s$
+    * 这里要把final write也算上了
+* Join cost: $(b_r+b_s)t_t + (\lceil b_r / b_b \rceil + \lceil b_s / b_b \rceil)t_s$
+
+**Merge**
+
+<u>For final pass, we don’t count write cost，因为最后不一定要写回磁盘</u>
+
+<u>Merge</u>PassNum = $\lceil \log_{M-1}(N_0) \rceil$ = $\lceil \log_{M-1}(b_r/M) \rceil$
+
+BlockTransNum = $(2\lceil \log_{M-1}(b_r/M) \rceil +1)b_r$
+
+SeekNum = $2 \lceil b_r/M \rceil + (2 \lceil b_r / b_b \rceil \times \lceil \log_{M-1}(b_r/M) \rceil - \lceil b_r / b_b \rceil)$
+
+Where b~b~ denotes 每个run文件(每次寻道？)读写的块数，通常为1 (1表示所有block分散在不同的磁道，如果放得紧一点就能是M了？
+
+**补充**
+
+N-way的利弊：N大的话可以少IO几次，加快时间；但是如果数据量远远远大于内存容量，就必须多归并几次了
 
 ---
 
@@ -348,19 +377,28 @@ Indexed Nested Loop：$b_r(t_t+t_s) + n_r\times c$，$c = (H_{t_i} + 1)(t_t+t_s)
 
 ---
 
-前驱图T1$\Rightarrow$T2, T2$\Rightarrow$T3, T1$\Rightarrow$T3时即使是在同一个relation的，也不能省略T1$\Rightarrow$T3
+LockPoint：一个事务得到所有锁的时间
+
+2PL为冲突可串的充分不必要条件，2PL无法防止死锁，Strict2PL可以避免级联回滚
+
+树形锁：只有X锁；只能锁子节点，不能越级到孙节点，且父子锁来自同事务；任何事务上锁得从上往下遍历
+
+前驱图：T1$\Rightarrow$T2, T2$\Rightarrow$T3, T1$\Rightarrow$T3时，即使是在同一个table上的，也不能省略T1$\Rightarrow$T3
 
 前驱图acyclic(无环)的就是conflict serializable(冲突可串)的，拓扑排序
 
 无级联调度：事务T2要读先前被T1写过的数据，则**T1的commit必须在<u>T2的read</u>**之前，其也是**<u>可恢复的</u>**
 
-2PL为冲突可串的充分不必要条件
-
-**Deadlock**
-
 **Intention lock**
 
+**Deadlock Prevention**
 
+* Non-preemptive（非抢占式）: **Wait-die** scheme，早等后滚
+* Preemptive（抢占式）: **Wound-wait** scheme，早抢后等
+
+<img src="assets/截屏2020-05-25 下午3.07.33.png" style="zoom: 50%;" />
+
+**Detection**：**Wait-for graph**，有向图，点是事务，有向边表示"要等待的事务(申请)-->被等待的事务(正在占用)"，若wf图有环，则系统会进入死锁状态(充要条件)，
 
 ---
 
@@ -390,7 +428,7 @@ sequenceDiagram
     participant 0 as RedoLSN
     participant 1 as Somewhere undo ends
     participant 2 as Last checkpoint
-    participant 3 as Every LastLSN in undo-list
+    participant 3 as Last LastLSN in undo-list
     participant 4 as End of Log
     2->>4: Analysis pass
     0->>4: Redo pass
@@ -400,25 +438,21 @@ sequenceDiagram
 1. Analysis pass：决定哪些事务要undo，哪些页是脏的(disk版本不是最新的)，确定RedoLSN(LSN from which redo should start，该点之前的log records已经反映到database disk上了)
 
     1. 从最后一个checkpoint开始
-        2. RedoLSN := `有脏页 ? 脏页表中RecLSN最小值 : checkpoint的LSN`
-        3. undo-list(初值) := checkpoint的log中的事务集(比如是concurrent的就有多个)
-        4. 为undo-list中每一个事务从checkpoint log record中读取其最后一个log record的LSN（LastLSN）
+        * RedoLSN := `有脏页 ? 脏页表中RecLSN最小值 : checkpoint的LSN`
+        * undo-list(初值) := checkpoint的log中的事务集(比如是concurrent的就有多个)，记录LastLSN
     2. 开始向后扫描
-        * 更新undo-list
+        * 更新undo-list和LastLSN
         * 如果发现update的log且Page不在脏页表上则添加（此时的RecLSN设置为LSN of the update log record）
-        * 跟踪LastLSN
     
 2. Redo
    
-    1. 从redo LSN开始
-    
-    2. 如下
+    1. 从redo LSN开始：
     
         ```python
-        if(Page不在脏页表 || log的LSN<所在Page的RecLSN):
+        if Page不在脏页表 or log的LSN<所在Page的RecLSN:
             pass
         else:
-            if(LSN≤拿出来的PageLSN(说明是在写入磁盘后的新的log)):
+            if LSN≤拿出来的PageLSN(说明是在写入磁盘后的新的log):
                 pass
             else:
                 redo()
@@ -426,7 +460,7 @@ sequenceDiagram
     
 3. Undo
     1. 从LastLSN开始
-    2. 边undo undo-list里的边写log
-    3. 遇到Tx begin就写个`<Tx, abort>`，并移除
+    2. 边undo undo-list里的，边写log
+    3. 遇到Tx begin就写个`<Tx, abort>`，并移除出undo-list
 
     * 要优化可以写CLR

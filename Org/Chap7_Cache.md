@@ -43,7 +43,7 @@ Reg
 
 # Cache
 
-## 映射方式
+## Mapping Method
 
 首先两个问题
 
@@ -54,7 +54,7 @@ Reg
 
 ### Direct Mapped(2L)
 
-**分块**：例如1024Word(4Byte/Word)的内存，分为256块，则第61个Word的主存地址为000011(块号)\[11(块内字号)01(字内地址)\](偏移地址)
+**分块**：例如1024Word(4Byte/Word)的内存，分为256块，则第40个Byte的主存地址为000010(块号)\[10(块内字号)00(字内地址)\](偏移地址)
 
 Memory中的整个Block的内容被全部存在Cache中
 
@@ -109,7 +109,7 @@ Ex. 1-word Block
 
 ### Fully-Associative(1L)
 
-**分块**：例如1024Word(4Byte/Word)的内存，分为256块，则第61个Word的主存地址为00001111(块号)01(块内地址)
+**分块**：例如1024Word(4Byte/Word)的内存，分为256块，则第61个Byte的主存地址为0011(块号)1101(偏移地址)
 
 Tag直接存储`BlockAddr_in_Memory`，🈚️Index (因此扫描巨慢
 
@@ -236,12 +236,13 @@ CacheSize = 64KB; 4 words/block; 4 bytes/word; physical address: 32bits
 #### 脏位
 
 * The bit indicates that its associated block of cache has been modified and has not been saved to memory yet. [What does 'dirty' mean in the context of caching? - Quora](https://www.quora.com/What-does-dirty-mean-in-the-context-of-caching)
+* 为什么需要dirty？因为cache上同一个index位置存储的块的tag一定(对于miss的情况，hit则没有脏位之说了)是不同的
 * CPU向Cache上的某Block写过东西之后Block的dirtyBit被置位。之后要更新Cache的时候，如果dirty是1就必须先把当前的写到Memory(此时复位？)再更新，如果是0就直接更新。
 * 此处的脏位(Cache->Mem)和虚拟内存中的(Mem->Disk)差不多，就是位置不一样而已
 
 
 
-## 替换方案
+## Replacement
 
 * Random：简单
 
@@ -351,6 +352,8 @@ Block👆，Index👇
 
 <u>中文P271例题加深理解</u>
 
+<img src="assets/image-20200909150135343.png" style="zoom:50%;" />
+
 #### ※映射方式对性能的影响
 
 先看[这里](# 映射方式)
@@ -390,26 +393,26 @@ Ex. Given the following sequence of block addresses: 0,8,0,6,8, find the number 
 | 6            | Miss        | M[0]     | M[6]    |         |           |
 | 8            | Miss        | M[8]     | M[6]    |         |           |
 
-### 计算
+### <!--计算-->
 
-> Assume:
+> <!--Assume:-->
 >
-> * instruction cache miss rate = 2%
-> * data cache miss rate = 4%
-> * CPI without any memory stalls = 2
-> * miss penalty = 100 cycles
-> * The frequency of all loads and stores in gcc is 36%,as we see in Figure 3.26, on page 288.
+> * <!--instruction cache miss rate = 2%-->
+> * <!--data cache miss rate = 4%-->
+> * <!--CPI without any memory stalls = 2-->
+> * <!--miss penalty = 100 cycles-->
+> * <!--The frequency of all loads and stores in gcc is 36%,as we see in Figure 3.26, on page 288.-->
 >
-> Question: How faster a processor would run with a perfect cache?
+> <!--Question: How faster a processor would run with a perfect cache?-->
 >
-> Answer:
+> <!--Answer:-->
 >
-> * Instruction miss cycles = I×2%×100 =2.00I
-> * Data miss cycles = I×<u>36%</u>×4%×100 =1.44I
-> * Total memory-stall cycles = 2.00I+ 1.44I =3.44I
-> * CPI with stall = CPI with perfect cache + total memory-stalls
->     \\                      = (2 + 3.44 )I = 5.44I
-> * CPU_time_with_stall/CPU_time_with_perfect_cache(perfect is ) = (I×CPI_stall×Clock_cycle)/(I×CPI_perfect×Clock_cycle) = CPI_stall/CPI_perfect = 5.44/2 = 2.72
+> 1. <!--Instruction miss cycles = I×2%×100 =2.00I-->
+> 2. <!--Data miss cycles = I×<u>36%</u>×4%×100 =1.44I-->
+> 3. <!--Total memory-stall cycles = 2.00I+ 1.44I =3.44I-->
+> 4. <!--CPI with stall = CPI with perfect cache + total memory-stalls-->
+>     <!--\\                      = (2 + 3.44 )I = 5.44I-->
+> 5. <!--CPU_time_with_stall/CPU_time_with_perfect_cache(perfect is ) = (I×CPI_stall×Clock_cycle)/(I×CPI_perfect×Clock_cycle) = CPI_stall/CPI_perfect = 5.44/2 = 2.72-->
 
 ## 优化性能
 
@@ -419,7 +422,7 @@ Ex. Given the following sequence of block addresses: 0,8,0,6,8, find the number 
 
 #### 多级缓存
 
-Ex. 假设原来CPI of 1.0 on a 5GHz machine with a 2% miss rate, 100ns DRAM access；现在Adding 2nd level cache with 5ns access time decreases miss rate to 0.5%(2%中有99.5%可以在二级缓存找到)
+Ex. CPI = 1.0(无miss), f = 5GHz, 整体缺失率(此时仅有L1)为2%, 100ns DRAM access; Adding L2 cache, 5ns access time, 整体缺失率(此时变为L1+L2)降为0.5%(是全部的missrante不是L2的)
 
 Miss penalty to main memory is `(100ns)/(0.2ns/clk) = 500clk`
 

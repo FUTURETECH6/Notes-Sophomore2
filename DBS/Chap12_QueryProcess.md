@@ -1,3 +1,5 @@
+[TOC]
+
 <img src="assets/image-20200430112803063.png" style="zoom:50%;" />
 
 # Measures

@@ -373,9 +373,9 @@ Def: **Cycle** of txns  waiting for locks to be released by each other.
     * Impose partial ordering of all data items and require that a transaction can lock data items only in the order (**graph-based protocol**). --- therefore never form a cycle.
 * transaction timestamps for the sake of deadlock prevention alone, and use rollback mecmechanism. (to decide which one to be rollback) 抢占式和非抢占式![](assets/截屏2020-05-25 下午3.07.33.png)
     * **早晚指的都是事务开始的时间**，（然后是相对后面要上锁的那个而言。
-        
+      
     * Non-preemptive（非抢占式）: **Wait-die** scheme，早等后滚
-        
+      
         * older transaction（older指的是txn发生得较早，时间戳的值更小） may wait for younger one to release data item. Younger transactions never wait for older ones, they are rolled back instead. E.g fig 15.7—T4 lock-x(B), T4 rollback (PPT15.58)
         
         * a transaction may die several times before acquiring needed data item

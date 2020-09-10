@@ -91,12 +91,9 @@ int main() {
 }
 ```
 
-被dynamic_cast的一定要是多态的基类
+被dynamic_cast的一定要是多态的基类，然后就可以使用子类的实函数了(虚函数不行的，会崩)
 
 ```c++
-#include <cstring>
-#include <iostream>
-
 using namespace std;
 
 class Base {
@@ -107,13 +104,14 @@ class Base {
 class Derived : public Base {
   public:
     void special() { std::cout << "Derived::special()" << std::endl; }
+    virtual void any_virfun() { std::cout << "Derived::any_virfun()" << std::endl; }
 };
 
 int main(int argc, char const *argv[]) {
     Base *p = new Base;
-    // or
-    Base *p = new Derived;
-    dynamic_cast<Derived *>(p)->special();
+    dynamic_cast<Derived *>(p)->special();	//Derived::special()
+    p->any_virfun();						// Base::any_virfun()
+    dynamic_cast<Derived *>(p)->any_virfun();	// Segmentation fault: 11	
     return 0;
 }
 ```
@@ -273,7 +271,7 @@ namespace X {
 
 // header2.h
 namespace X {
-    void g();  // X how has f() and g();
+    void g();  // X now has f() and g();
 }
 ```
 

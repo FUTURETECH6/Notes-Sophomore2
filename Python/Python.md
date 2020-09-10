@@ -1,4 +1,4 @@
-[TOC]
+ni[TOC]
 
 # Chapter 1
 
@@ -239,8 +239,6 @@ Ex.
 4417821600
 ```
 
-
-
 ### 序列赋值
 
 ，以下这种只能给单字符字符串
@@ -276,8 +274,6 @@ ValueError: too many values to unpack (expected 2)
 >>> b
 3
 ```
-
-
 
 **range**
 
@@ -386,10 +382,6 @@ print("count = %d" % len(ls))
 SyntaxError: invalid syntax
 ```
 
-
-
-
-
 ## 字符串
 
 `TypeError: 'str' object does not support item assignment`
@@ -423,8 +415,6 @@ SyntaxError: invalid syntax
 >>> print("%+d" % -9)	# +表示输出sign
 -9
 ```
-
-
 
 ### format
 
@@ -522,10 +512,6 @@ str = "-";
 seq = ("a", "b", "c"); # 字符串序列
 print str.join( seq );	# a-b-c
 ```
-
-
-
-
 
 ```python
 # *的使用
@@ -696,7 +682,9 @@ print(''.join(rd.sample(pool, pwLength)))
 
 ## 条件语句
 
-条件表达式：
+==条件表达式：==
+
+`y = x > 20 ? 10 : 30;`
 
 ```python
 y = 10 if x > 20 else 30
@@ -847,8 +835,6 @@ else:
 
 try-finally 语句无论是否发生异常都将执行最后的代码。
 
-
-
 # Chapter5 非序列容器
 
 ==不是有序容器不能随机访问==
@@ -997,10 +983,6 @@ print("cost = {} RMB".format(c))
 >>> sorted(student.items(), key=lambda age:age[1])	# 按值排序
 [('103', 19), ('102', 20), ('101', 21)]
 ```
-
-
-
-
 
 # Chapter6 函数
 
@@ -1290,6 +1272,9 @@ myCat = Cat("喵喵", "#FFFFFF")
 >>> b = Class()
 >>> b.classVar
 1
+>>> Class.classVar = 3
+>>> print(a.classVar, b.classVar)
+2 3
 ```
 
 ![](assets/image-20200602091204402.png)

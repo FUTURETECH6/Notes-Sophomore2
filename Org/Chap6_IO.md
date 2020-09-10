@@ -60,7 +60,7 @@ Ex.
 
 ==Access Time = Seek time + Rotational Latency + Transfer time + Controller Time==
 
-\\                       = 6ms + 0.5*60,000/10,000ms +0.5KB/(50MB/sec) + 0.2ms = 9.2ms
+\\                       = 6ms + 0.5*60,000(ms/min)/10,000(RPM) +0.5KB/(50MB/sec) + 0.2ms = 9.2ms
 
 ## D, R, A
 
@@ -284,7 +284,7 @@ Ex.
 
 弊端：得按慢的来(张明敏幼儿园吃饭的故事)
 
-优势：比较简单，不想Asyn那么折腾，简单的事务可以用同步的
+优势：比较简单，不像Asyn那么折腾，简单的事务可以用同步的
 
 ---
 
@@ -400,7 +400,7 @@ command port, data port
 
 **Direct Memory Access**
 
-DMA 传输将数据从一个地址空间复制到另外一个地址空间。当CPU 初始化这个传输动作，传输动作本身是由 DMA 控制器来实行和完成。典型的例子就是移动一个外部内存的区块到芯片内部更快的内存区。像是这样的操作并没有让处理器工作拖延，反而可以被重新排程去处理其他的工作。DMA 传输对于高效能嵌入式系统算法和网络是很重要的。
+DMA 传输将数据从一个地址空间复制到另外一个地址空间。当CPU初始化这个传输动作，传输动作本身是由 DMA 控制器来实行和完成。典型的例子就是移动一个外部内存的区块到芯片内部更快的内存区。像是这样的操作并没有让处理器工作拖延，反而可以被重新排程去处理其他的工作。DMA 传输对于高效能嵌入式系统算法和网络是很重要的。
 
 在实现DMA传输时，是<u>由DMA控制器直接掌管总线</u>，因此，存在着一个总线控制权转移问题。即DMA传输前，CPU要把总线控制权交给DMA控制器，而在结束DMA传输后，DMA控制器应立即把总线控制权再交回给CPU。一个完整的DMA传输过程必须经过<u>DMA请求、DMA响应、DMA传输、DMA结束</u>4个步骤。
 
@@ -424,7 +424,7 @@ classDiagram
 
 **Write Before**
 
-1. 通产单位：时钟GHz，传输速率GB/s
+1. 一般单位：时钟GHz，传输速率GB/s
 2. 在IO系统中，==计量单位的底数是10而不是2==，例如1GB是1,000,000,000B而主存中1GB是1,073,741,824B
 3. IO速率与数据传输速率不同
 
@@ -432,7 +432,7 @@ classDiagram
 
 > The synchronous bus has a clock cycle time of 50 ns, and <u>each bus transmission takes 1 clock cycle</u>. The asynchronous bus requires 40 ns per handshake. The data portion of both buses is <u>32 bits</u> wide.
 >
-> Question: Find the bandwidth for each bus when reading <u>one word</u> from a 200-ns memory.
+> Question: Find the bandwidth for each bus when reading <u>one word</u> from a 200ns memory.
 
 **Sync**
 
@@ -450,7 +450,7 @@ the bandwidth = 4bytes/300ns = 13.3MBps
 
 Step1: 40ns
 
-Step234: max(2×40ns+40ns, 200ns)=200ns
+Step234: max(2×40ns+40ns, 200ns)=200ns(S1获得地址到S5放出数据之间至少200ns)
 
 Step567: 3×40ns=120ns
 
@@ -469,7 +469,7 @@ the maximum bandwidth = 4bytes/360ns = 11.1MB/second
 > 1. A memory and bus system supporting block access of 4 to 16(blocksize) 32-bit words
 > 2. A 64-bit synchronous bus clocked at 200 MHz(5ns/clk), with each 64-bit transfer taking 1 clock cycle, and 1 clock cycle required to send an address to memory.
 > 3. Two clock cycles needed between each bus operation.
-> 4. A memory access time for the <u>first four words of 200ns</u>; each <u>additional set of four words can be read in 20 ns</u>. Assume that a bus transfer of the most recently read data and a read of the next four words  can be overlapped.
+> 4. A memory access time for the <u>first four words of 200ns</u>; each <u>additional set of four words can be read in 20 ns</u>. ==Assume that a bus transfer of the most recently read data and a read of the next four words  can be overlapped.==
 >
 > Find the sustained bandwidth(这是什么>？) and the latency for a read of 256 words for transfers that use 4-word blocks and for transfers that use 16-word blocks. Also compute effective number of bus transactions per second for each case.
 
@@ -494,7 +494,7 @@ For single block(我觉得这样算不容易出错，没必要按课件上那样
 
 1. Send addr: 1clk = 5ns
 2. Read mem: 200ns + 20ns \* 3 = 260ns
-3. Transfer: 2clk = 10ns
+3. Transfer: 2clk = 10ns (只考虑最后一次传输)
 4. break: 2clk = 10ns
 
 Total_latency = 16 \* (285ns) = 4560ns
@@ -551,7 +551,7 @@ Fraction_of_CPU_clk_consumed = 20%
 
 > Suppose we have the same hard disk and processor we used in the former example, but we used interrupt-driven I/O. The overhead for each transfer, including the interrupt, is 500 clock cycles. Find the fraction of the processor consumed if the <u>hard disk</u> is only transferring data 5%(200KBps) of the **time**.
 
-先算所有时间都在传输传输的，
+先算所有时间都在传输的，
 
 clk_per_sec_for_polling = 250K \* 500 = 125M
 
@@ -614,13 +614,11 @@ max_bus_IO_rate = 1000MB / 64KB = 15625 IOps (这个为什么是用1000MB啊？�
 
 time_disk_per_IO = 6ns + 64KB / 75MBps = 6.9ms
 
-max_bus_IO_rate = 1s / 6.9ms = 145 IOps
-
-disk_needed = ceil(10000 / 145) = 69
+disk_needed = ceil(max_CPU_IO_rate / max_bus_IO_rate) = ceil(10000 / (1s/6.9ms)IOps) = 69
 
 再看这么多磁盘需要多少SCSI总线
 
-首先看SCSI带宽够不够用，发现7 \* 64KB/6.9ms = 64.93MBps < 320MBps，因此是够用的(如果不够用就得用 总带宽/SCSI带宽 了)
+首先看每条SCSI的带宽够不够用，发现7 \* 64KB/6.9ms = 64.93MBps < 320MBps，因此是够用的(如果不够用就得用 总带宽/SCSI带宽 了)
 
 这样条数显然就是ceil(69 / 7) = 10了
 

@@ -89,10 +89,10 @@ CPU(执行)时间(CPU exe time)：执行某一任务在CPU上所花费的时间
 
 
 1. program的CPU执行时间=CPU clock cycles(周期数) for a program * clock cycle time
-2. 一个程序需要的CPU clock cycles(周期数) = Instructions for a program(指令数) * average clock cycles per instruction (CPI)
+2. CPU clock cycles(周期数) for a program = Instructions for a program(指令数) * average clock cycles per instruction (CPI)
 3. CPU time = Instruction count(指令数) * CPI * Clock cycle time
 
-$\Large \rm \frac{秒数}{程序}=\frac{指令数}{程序} \times \frac{时钟周期数}{指令数} \times \frac{秒数}{时钟周期数}{}$
+$\Large \rm \frac{秒数}{程序}=\frac{指令数}{程序} \times \frac{时钟周期数}{指令数}(CPI) \times \frac{秒数}{时钟周期数}(clk\_time))$
 
 
 
@@ -112,7 +112,7 @@ Dynamic Energy(能耗，非功耗) ∝ Capacitive load(负载电容，The capaci
 
 > $\rm E = qU/2 = \frac{CU^2}{2d}{}$
 
-0 → 1 → 0 or 1 → 0 → 1 的Energy ∝ 1/2 􏰁 Capacitive load ×􏰁 Voltage^2^
+0 → 1 → 0 or 1 → 0 → 1 的Energy(方波) ∝ 1/2 􏰁 Capacitive load ×􏰁 Voltage^2^
 
 single transistor(单个晶体管)的Power(功耗) ∝ 1/2 ×􏰁 Capacitive load 􏰁× Voltage^2^ ×􏰁 **Frequency switched**(开关频率，is a function of the clock rate)
 

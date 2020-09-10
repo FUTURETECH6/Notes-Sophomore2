@@ -82,45 +82,31 @@ ALU操作表，观察会发现对应指令的func后两位确实与下面的op�
 | 1         | 10   | Sub      |
 | 1         | 11   | Slt      |
 
-<img src = "./assets/Implement_R.png">
-
----
-
-<img src = "./assets/Implement_I.png">
-
----
-
-<img src = "./assets/Implement_R+I.png">
-
----
-
-<img src = "./assets/beq.png">
-
 ## 单周期指令
 
-<u>单周期的部件一个周期只能用一个(因为单周期的是组合电路)</u>
+<u>单周期的部件一个周期只能用一次(因为单周期的是组合电路)</u>
 
-<img src = "./assets/Implement_R.png">
-
----
-
-<img src = "./assets/Implement_I.png">
+<img src = "./assets/Implement_R.png" style="zoom:33%;" >
 
 ---
 
-<img src = "./assets/Implement_R+I.png">
+<img src = "./assets/Implement_I.png" style="zoom:33%;" >
 
 ---
 
-<img src = "./assets/beq.png">
+<img src = "./assets/Implement_R+I.png" style="zoom:33%;" >
 
 ---
 
-![](assets/image-20200401101343205.png)
+<img src = "./assets/beq.png" style="zoom:33%;" >
 
 ---
 
-![](assets/image-20200401103127135.png)
+<img src="assets/image-20200401101343205.png" style="zoom:33%;" />
+
+---
+
+<img src="assets/image-20200401103127135.png" style="zoom:33%;" />
 
 ---
 
@@ -198,15 +184,11 @@ ALU操作表，观察会发现对应指令的func后两位确实与下面的op�
 
 ![](assets/SignleDP.png)
 
-![](assets/image-20200401105821189.png)
+<img src="assets/image-20200401105821189.png" style="zoom:25%;" /><img src="assets/image-20200401105839866.png" style="zoom:25%;" />
 
-![](assets/image-20200401105839866.png)
+<img src="assets/image-20200401105845580.png" style="zoom:25%;" /><img src="assets/image-20200401105851635.png" style="zoom:25%;" />
 
-![](assets/image-20200401105845580.png)
-
-![](assets/image-20200401105851635.png)
-
-![](assets/image-20200401105857412.png)
+<img src="assets/image-20200401105857412.png" style="zoom:25%;" />
 
 ### 时间
 
@@ -345,11 +327,12 @@ pc = pc[31-28] + IR[25-0] << 2	// 此时结束
 
 ```c
 //Loads and stores access memory
-    MDR = Memory[ALUOut];	// for lw
+MDR = Memory[ALUOut];	// for lw
 //or
-    Memory[ALUOut] = B;		// for sw
+Memory[ALUOut] = B;		// for sw
+
 //R-type instructions finish
-    Reg[rd] = Reg[ IR[15-11] ] = ALUOut;
+Reg[rd] = Reg[ IR[15-11] ] = ALUOut;
 ```
 
 #### Step5
@@ -415,6 +398,11 @@ ALU控制真值表还是这个：
 
 ## Exception
 
+两种记录具体错误的方法
+
+* CauseReg(MIPS)存储错误信息，然后用错误信息去找对应的错误处理程序
+* Vector()
+
 只考虑ALU的overflow，因此只看最高位就行了，具体的我在实验四里写过了
 
 加：`overflow = A[31] & ~res[31] | A[31] & B [31] | B[31] & ~res[31];`
@@ -423,7 +411,7 @@ ALU控制真值表还是这个：
 
 
 
-发生exception会跳转到向量表指定的位置
+发生exception会跳转到向量表指定的位置，此处仅考虑未定义指令和溢出两种异常
 
 | Exception type        | Vector address |
 | --------------------- | -------------- |
@@ -445,7 +433,7 @@ Cause寄存器
         * EPC = <u>PC - 4</u>  (completed by ALU)，其实不做也可以，自己知道然后看上一句就好了
 * process of control 
     * CauseReg = 0 or 1
-    * EPC = PC - 4
+    * EPC = PC - 4(PC是已经加过4的下一指令的PC，所以此时EPC存的就是出错的指令的PC)
     * PC <--- address of process routine ( ex. c0000000 )
 
 
@@ -454,7 +442,7 @@ Cause寄存器
 
 
 
-
+<img src="assets/image-20200909093710989.png" style="zoom:50%;" />
 
 
 
