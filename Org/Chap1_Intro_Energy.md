@@ -92,7 +92,7 @@ CPU(执行)时间(CPU exe time)：执行某一任务在CPU上所花费的时间
 2. CPU clock cycles(周期数) for a program = Instructions for a program(指令数) * average clock cycles per instruction (CPI)
 3. CPU time = Instruction count(指令数) * CPI * Clock cycle time
 
-$\Large \rm \frac{秒数}{程序}=\frac{指令数}{程序} \times \frac{时钟周期数}{指令数}(CPI) \times \frac{秒数}{时钟周期数}(clk\_time))$
+$\Large \rm \frac{秒数}{程序}=\frac{指令数}{程序} \times \frac{时钟周期数}{指令数}(CPI) \times \frac{秒数}{时钟周期数}(clk\_time)$
 
 
 

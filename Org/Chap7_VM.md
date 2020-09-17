@@ -147,9 +147,9 @@ Ex2. Page大小为1KB，最大物理空间64KB(这是啥？是否意味着PPN应
 
 **VA传给TLB的格式**
 
-| 虚拟页号VPN(Virtual Page Num) | 页内偏移VPO                 |
-| ----------------------------- | --------------------------- |
-| TLB_Tag \| TLB_Index_High     | TLB_Index_Low \| TLB_Offset |
+| 虚拟页号VPN(Virtual Page Num) | 页内偏移VPO   |
+| ----------------------------- | ------------- |
+| TLB_Tag \| TLB_Index          | No Use in TLB |
 
 Use this VA(considered as address) to find PPN(considered as data)
 

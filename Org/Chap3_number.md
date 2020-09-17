@@ -113,19 +113,23 @@ C4=G3+P3*C3 = G3+P3*G2 + P3*P2*G1+P3*P2*P1*G0 + P3*P2*P1*P0*c0
 
 ## 乘法
 
+### Ver1
+
 第一个操作数是被乘数(multiplicand)，第二个是乘数(multiplier)
+
+64ALU；64cand左移，32ier右移，64积不动；ier低位为0则Prod+=cand
 
 <img src="assets/image-20200908163312048.png" style="zoom:33%;" /><img src="assets/image-20200908163427099.png" style="zoom:33%;" />
 
 ### Ver2
 
-不移动multiplicand，右移动product，multiplier上从低到高遍历，若为1则product+=multiplicand<<i
+32ALU；32cand不动，32ier右移，64积右移；ier低位为1则Prod[high half]+=cand
 
 <img src="assets/image-20200908163621411.png" style="zoom: 9%;" /><img src="assets/image-20200908163644722.png" style="zoom:33%;" />
 
 ### Ver3
 
-处理方式同上，但是一开始时把product的低32位用来存multiplier，每次右移product取出一个溢出位，等32次完正好product是pure的了
+32ALU；32cand不动，64积(初值为{32'b0, ier})右移；ier低位为1则Prod[high half]+=cand
 
 习题3.13
 
@@ -133,7 +137,9 @@ C4=G3+P3*C3 = G3+P3*G2 + P3*P2*G1+P3*P2*P1*G0 + P3*P2*P1*P0*c0
 
 ### signed乘
 
-存住积的符号，将符号数转成非符号数进行运算
+将符号数转化为非符号数，若两数异号再把结果变为其补码
+
+
 
 ### Booth算法
 
@@ -222,7 +228,7 @@ Use 13 as Mcand
 
 32商左移，64余数不动，64除数(初值为`{32位除数, 32'b0}`)右移，64位ALU
 
-做减法，余数-=除数比大小，若大于0则ok，商该位置1；小于0则rollback(余数+=除数)
+做减法，余数-=除数比大小，若大于0则ok，商左移置1；小于0则rollback，商左移置0
 
 <img src="assets/image-20200908172402957.png" style="zoom: 33%;" /><img src="assets/image-20200908172412772.png" style="zoom:33%;" />
 
@@ -238,13 +244,13 @@ Use 13 as Mcand
 
 省掉商寄存器
 
-64余数左右移，32除数不动，32位ALU
+64余数左移，32除数不动，32位ALU
 
 做减法，余数高32-=除数比大小，若大于0则将左移，低位平行置位1；小于0则rollback并左移，低位平行置位0
 
-开始全部左移一位，结束高位右移一位
+开始全部左移一位；
 
-商在余数的低32位
+结束时高位右移一位，商在余数的低32位
 
 <img src="assets/image-20200908172450076.png" style="zoom:33%;" /><img src="assets/image-20200908172458278.png" style="zoom:39%;" />
 
