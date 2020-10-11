@@ -108,13 +108,13 @@ Dynamic能耗来源：energy that is consumed when transistors switch states fro
 
 Frequency ∝ Clock_Rate
 
-Dynamic Energy(能耗，非功耗) ∝ Capacitive load(负载电容，The capacitive load per transistor is a function of both <u>the number of transistors connected to an output</u> (called the <u>fanout</u>) and <u>the technology</u>, which determines the capacitance <u>of both wires and transistors</u>.) ×􏰁 Voltage^2^
+Dynamic Energy(能耗，非功耗) ∝ Capacitive load(负载电容，The capacitive load per transistor is a function of both <u>the number of transistors connected to an output</u> (called the <u>fanout</u>) and <u>the technology</u>, which determines the capacitance <u>of both wires and transistors</u>.) × Voltage^2^
 
 > $\rm E = qU/2 = \frac{CU^2}{2d}{}$
 
-0 → 1 → 0 or 1 → 0 → 1 的Energy(方波) ∝ 1/2 􏰁 Capacitive load ×􏰁 Voltage^2^
+0 → 1 → 0 or 1 → 0 → 1 的Energy(方波) ∝ 1/2 Capacitive load × Voltage^2^
 
-single transistor(单个晶体管)的Power(功耗) ∝ 1/2 ×􏰁 Capacitive load 􏰁× Voltage^2^ ×􏰁 **Frequency switched**(开关频率，is a function of the clock rate)
+single transistor(单个晶体管)的Power(功耗) ∝ 1/2 × Capacitive load × Voltage^2^ × **Frequency switched**(开关频率，is a function of the clock rate)
 
 
 
