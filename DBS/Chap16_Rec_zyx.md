@@ -387,7 +387,7 @@ Fuzzy checkpointing is done as follows:
 5. Output to disk all modified buffer blocks in list M (根据暂存的列表把待输出块输出到硬盘)
     * blocks should not be updated while being output
     * **<u>Follow WAL</u>**: all log records pertaining to a block must be output before the block is output
-6. Store a pointer to the checkpoint record in a fixed position `last_checkpoint` on disk (由于只有在写入`<checkpoint L>`􏰹记录之后􏱨􏱩页面才输􏱪出到磁盘，因此􏱫􏱬有可􏱭在所有页面􏱨􏱩写完之前崩溃。􏱮这样，磁盘上的检查点可能􏱭是不完全的。故􏱯设置last_checkpoint帮忙！正常􏰨􏰡操􏰿作情况下last_checkpoint成为当前􏰉checkpoint, 以供后面的􏰧􏰉recover使􏰤用)
+6. Store a pointer to the checkpoint record in a fixed position `last_checkpoint` on disk (由于只有在写入`<checkpoint L>`记录之后页面才输􏱪出到磁盘，因此有可在所有页面写完之前崩溃。􏱮这样，磁盘上的检查点可能是不完全的。故􏱯设置last_checkpoint帮忙！正常操作情况下last_checkpoint成为当前􏰉checkpoint, 以供后面的recover使用)
 
 
 
@@ -464,7 +464,7 @@ Idempoent：逻辑撤销不是幂等的，不能做多次
 
 物理redo+逻辑undo：因为逻辑操作不是幂等的
 
-* Redo information is logged physically (that is, new value for each write) even for operations with logical undo（redo操作全􏰅部使用物理日志􏰹录来执􏱻行）
+* Redo information is logged physically (that is, new value for each write) even for operations with logical undo（redo操作全􏰅部使用物理日志录来执􏱻行）
     * 系统故障后数据库状态可能只反映一个操作的部分更新，而这依赖于故障前有哪些缓冲块已经写到磁盘了，
     * Logical redo is very complicated since database state on disk may not be “operation consistent” when recovery starts
     * Physical redo logging does not conflict with early lock release
@@ -510,7 +510,7 @@ Case
 3. 遇到`<Ti, Oj, operation-abort>`，跳过所有Ti相关日志，包括end的，直到遇到operation-begin，这对于防止多次rollback有重要作用**，<u>（与前面的算法不同，之前重新做了一遍）</u>**
 4. 遇到`<Ti, start>`就停止并加一条`<Ti, abort>` (和普通的一样)
 
-Ex.**Transaction rollback during** **normal operation**􏰃􏰡 
+Ex.**Transaction rollback during** **normal operation**
 
 ![](assets/image-20200531102915278.png)
 

@@ -334,7 +334,7 @@ Block👆，Index👇
 * 冷启动慢，但是开机之后都很流畅
 * 冷启动快，但是开机之后得不断加载所以会卡[](# 映射方式)
 
-`CPU time = (CPU execution clock cycles 􏰃+ Memory-stall clock cycles) × Clock cycle time`
+`CPU time = (CPU execution clock cycles + Memory-stall clock cycles) × Clock cycle time`
 
 读操作阻塞的周期：`Read_stall_cycles = (Reads/Program) × Read_miss_rate × Read_miss_penalty`
 
@@ -344,7 +344,7 @@ Block👆，Index👇
 
 存储器阻塞时钟周期数：`Memory-stall clock cycles `
 
-\\            `􏰀= (Read-stall cycles 􏰃+ Write-stall cycles)`
+\\            `= (Read-stall cycles + Write-stall cycles)`
 
 \\            `= (Memory_accesses/Program) × Miss_rate × Miss_penalty`(忽略写缓冲区阻塞，共用读写的MissRate和MissPenalty)
 
