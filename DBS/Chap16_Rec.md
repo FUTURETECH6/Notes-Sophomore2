@@ -541,9 +541,9 @@ Each page contains a PageLSN which is the LSN of the last log record whose effec
     * | LSN  | TransID | UndoNextLSN | RedoInfo |
     | ---- | ------- | ----------- | -------- |
       |      |         |             |          |
-      
+
     * Serves the role of operation-abort log records used in earlier recovery algorithm
-    
+
     * Has a field UndoNextLSN to note next (earlier) record to be undone
         * Records in between would have already been undone
         * Required to avoid repeated undo of already undone actions
@@ -629,7 +629,7 @@ sequenceDiagram
             * 在一个update的log上undo
                 * 生成一个[CLR](# Log records)
                 * 设置CLR的UndoNextLSN为这个log的PrevLSN
-                
+
             * 说明：ARIES支持partial rollback
 
                 * 如下例，先回滚3,4，然后执行完5,6再回滚6,5，最后全部回滚

@@ -150,12 +150,12 @@ end
     ### 例子
 
     * Example:Suppose that we already know that the Hamiltonian cycle problem is NP-complete.  Prove that the traveling salesman problem is NP-complete as well. (in polynomial time)
-    
+
         \	Traveling salesman problem(判定问题版本，优化问题版本是求最小值): Given a complete graph G=(V, E), with edge costs, and an integer K, <u>is there</u> a simple cycle that visits all vertices and has total cost <= K?(本质上就是**完全图(两两连线)中最小代价的汉密尔顿问题**
-        
+
         * 证明NP：显然，可在多项式时间内验证答案正确性
     * ​	<img src="assets/image-20200622103142827.png" alt="image-20200622103142827" style="zoom:50%;" />
-      
+
         * **<u>G 有 HC 等价于 G‘有weight|V|（顶点数）的TST</u>**
 
 
@@ -188,7 +188,7 @@ end
 ### Formal-language Theory 
 
 * <u>An alphabet Σ is a finite set of symbols</u> (For dicision problem, **∑ = { 0, 1 }**)
-  
+
 * <u>A language L over Σ is any set of strings made up of symbols from Σ</u> (For dicision problem, **L = { x ∈ Σ\*: Q(x) = 1 }**) (对应就是问题，例如TSP问题、HCP问题等等都是一种language
 
 * Denote empty string by ε
@@ -217,28 +217,28 @@ end
 * 用验证算法定义NP
 
   * A verification algorithm is a two-argument algorithm A, where one argument is an ordinary *input* string *x*(Language) and the other is a binary string  *y* called a *certificate*. (x是个Instance，y是x的一个可能解)
-  
+
       * certificate实际也是给Nondeterministic图灵机的一个额外输入，以帮助其"always choose the correct one"
-  
+
       <img src="../assets/image-20200426215826451.png" style="zoom:50%;" />
-  
+
   * A two-argument algorithm A verifies an input string x if there exists a certificate y such that A(x, y) = 1.
-  
+
   * The language verified by a verification algorithm A is 
       \\	L = { x ∈ {0, 1}\* : there exists y ∈ {0, 1}* such that A(x, y) = 1}.
-  
+
   * A language L belongs to NP iff there exist a two-input <u>polynomial-time</u> algorithm A and a constant c such that <u>L = { x ∈ {0, 1}\* : there exists a certificate y with |y| = O(|x|^c^) such that A(x, y) = 1 }</u>.  We say that **<u>algorithm A verifies language L in polynomial time.</u>** 
-  
+
   ---
-  
+
   NP对取补操作是否封闭
-  
+
   $(L \in NP \Longrightarrow \overline{L} \in NP) ?$
-  
+
   co-NP = the set of languages L such that $\overline{L} \in NP$
-  
+
   Possibilities:
-  
+
   <img src="assets/image-20200622105803509.png" alt="image-20200622105803509" style="zoom:50%;" />
 
 ### Karp Reductions
@@ -321,7 +321,7 @@ Proof2：用补图(点不变，边集的补)，f(G)=$\rm \overline G$
 
 * ![Screen Shot 2020-06-23 at 8.37.30 PM](assets/Screen Shot 2020-06-23 at 8.37.30 PM.png)
     * 贪心近似<img src="assets/Screen Shot 2020-06-23 at 8.39.09 PM.png" alt="Screen Shot 2020-06-23 at 8.39.09 PM" style="zoom:50%;" />
-    
+
     * H表示调和级数		<img src="assets/Screen Shot 2020-06-23 at 8.41.10 PM.png" alt="Screen Shot 2020-06-23 at 8.41.10 PM" style="zoom:50%;" />
 
 
@@ -577,7 +577,7 @@ Overflow之后扩展表的操作：
 
 如果n个操作被执行了，那么一个操作的最坏情况下的成本将为O(n). 这样的话，对于总的n个操作的总运行时间为O(n^2)，并不如我们需要的紧凑。
 
- 
+
 
 * 对于以上情况，我们如果使用聚类分析：
 
@@ -597,7 +597,7 @@ Overflow之后扩展表的操作：
 
 因此，每一个操作的均摊成本为3，换句话说，每一个TABLEINSERT操作的平均成本为O(n)/n=O(1)
 
- 
+
 
 * 如果我们使用记账方法：
 
@@ -641,7 +641,7 @@ b.在一次扩展之前，![img](https://img-blog.csdn.net/20160517095806020) �
 
 这样的话， ![img](https://img-blog.csdn.net/20160517100058974)就是实际操作的一个上界了。
 
- 
+
 
 下面分![img](https://img-blog.csdn.net/20160517100005306)的两种情况来计算![img](https://img-blog.csdn.net/20160517100018349)：
 
@@ -659,7 +659,7 @@ Case-2：第i次操作触发了一个表的扩展
 
 因此，从一个空表开始，一个n个TABLEINSERT操作的序列在最坏情况下花费O(n).
 
- 
+
 
 删除操作是类似的分析。
 
@@ -707,7 +707,7 @@ Case-2：第i次操作触发了一个表的扩展
 
         总代价为: $\Sigma_{i=1}^n cˆ_i ≤ 3（R_1(T)-R_1(X))+1$
 
-        
+
 
 * 结论: 很明显，**<u>均摊成本是 O(log n) 级别的</u>**。
 

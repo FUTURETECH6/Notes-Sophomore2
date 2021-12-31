@@ -183,12 +183,12 @@ size_t count_if(InIt first, InIt last, Pred pr);
     复制一个区间到别处，但目标区前是从后往前被修改的
 * transform
     将一个区间的元素变形后拷贝到另一个区间
-    
+
     ```cpp
     template<class InIt, class OutIt, class Unop>
     OutIt transform(InIt first, InIt last, OutIt x, Unop uop);
     ```
-    
+
 * swap_ranges
     交换两个区间内容
 * fill
@@ -213,27 +213,27 @@ size_t count_if(InIt first, InIt last, Pred pr);
 
 * remove
     删除区间中等于某个值的元素
-    
+
 * remove_if
     删除区间中满足某种条件的元素
-    
+
 * remove_copy
     拷贝区间到另一个区间。等于某个值的元素不拷贝 
-    
+
 * remove_copy_if 拷贝区间到另一个区间。符合某种条件的元素不拷贝
 
 * unique
     删除区间中**连续相等**的元素，只留下一个(可自定义比较器)
-    
+
     ```cpp
     template<class FwdIt>
     FwdIt unique(FwdIt first, FwdIt last);	// 用 == 比较是否等
     template<class FwdIt, class Pred>
     FwdIt unique(FwdIt first, FwdIt last, Pred pr);	// 用 pr 比较是否等
     ```
-    
+
     自己写个程序就会发现实际上就是把重复的移到后边了，并且返回值就是指向第一个被移到后面的树的迭代器
-    
+
     ```cpp
     vector<int> vi{1, 2, 3, 4, 4, 5, 3, 45, 4, 5, 23, 5, 23, 5, 13, 5, 23, 525, 35, 25, 23, 523, 5};
     sort(vi.begin(), vi.end());
@@ -248,7 +248,7 @@ size_t count_if(InIt first, InIt last, Pred pr);
     1 2 3 4 5 13 23 25 35 45 523 525 5 13 23 23 23 23 25 35 45 523 525 
     */
     ```
-    
+
 * unique_copy
     拷贝区间到另一个区间。连续相等的元素，只拷贝第一个到目标区 间 (可自定义比较器)
 

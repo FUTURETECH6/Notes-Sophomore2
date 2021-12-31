@@ -160,11 +160,11 @@ Def：*conflict*：二个事务对<u>同一数据项</u>进行读写操作，当
 * Classic anomalies with interleaved execution
 
   <img src="./assets/截屏2020-05-18 下午4.44.20.png" style="zoom: 33%;" />
-  
+
   <img src="./assets/截屏2020-05-18 下午4.44.26.png" style="zoom:33%;" />
-  
+
   <img src="./assets/截屏2020-05-18 下午4.44.33.png" style="zoom:33%;" />
-  
+
   <img src="./assets/截屏2020-05-18 下午4.44.38.png" style="zoom:33%;" />
 
 Def：*conflict equivalence*(冲突等价)：可以通过a series of swaps of non-conflict instructions转化的schedule S和S'称为冲突等价的

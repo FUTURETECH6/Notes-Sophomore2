@@ -71,7 +71,7 @@ class Vector {
   public:
     Vector(int);
     T& operator[];
-    
+
   private:
     T *m_array;
     int m_size;

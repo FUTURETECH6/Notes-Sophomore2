@@ -171,11 +171,11 @@ Ex.
     * redo(Ti) sets the value of all data items updated by Ti to the **<u>new values</u>**, going **<u>forward</u>** from the first log record for Ti
         * No logging is done in this case 不写入log
         * 是不是适用于只写了log没写data的情况？
-    
+
 * Both operations must be idempotent (幂等)
     * That is, even if the operation is executed multiple times the effect is the same as if it is executed once，做几次都一样
         * Needed since operations may get re-executed during recovery
-    
+
 * The **undo** and **redo** operations are used in several different circumstances(不同):
 
     * The **undo** is used for **<u>transaction rollback during normal operation</u>**(in case a transaction cannot
@@ -187,7 +187,7 @@ Ex.
 * When recovering after failure:
     * Transaction Ti needs to be **undone** if the log contains the record `<Ti start>`,   but does not contain either the record `<Ti commit>` or the record `<Ti abort>`.
     * Transaction Ti needs to be **redone** if the log contains both the record `<Ti start>` and the record `<Ti commit>` or `<Ti abort>`==(说明事务正常回滚过）==.
-    
+
 * <u>Undo operations are performed first, then redo operations.</u>(执行顺序对正确性没影响(？)，但是能提高效率)
 
 Ex.
@@ -329,20 +329,20 @@ Streamline recovery procedure by **periodically** performing checkpointing, <u>A
 * Database maintains an in-memory buffer of data blocks
     * When a new block is needed, if buffer is full, an existing block Bi needs to be removed from buffer
     * If the block Bi <u>chosen for removal</u> has been updated, it must be output to disk (？所以如果没更新的话即使被选中了也不会写到disk吗)
-    
+
 * According to the write-ahead logging rule(先写日志原则), if a block Bi with <u>uncommitted</u> updates is output to disk:
     * Log records with ==undo information==(???) for the updates are output to the log on stable storage first
     * Output block Bi to disk.
     * Read in new block into buffer.
-    
+
 * **Requirement**: <u>No updates should be in progress on a block Bi when it is output to disk.</u>
-  
+
     * This can be ensured as follows:
         * Before writing a data item, transaction requests X-lock on block Bi containing the data items.
         * The lock can be released once the write is completed. 
             * Such locks held for short duration are called latches (闩锁，较简单), which may be released without regard to any locking protocol.
         * Before a block is output to disk, the system acquires an exclusive latch on the block,  ensures no update can be in progress on the block.
-    
+
 * To output a block to disk
 
     * First acquire an **<u>exclusive latch</u>** on the block
@@ -646,9 +646,9 @@ Each page contains a PageLSN which is the LSN of the last log record whose effec
     * | LSN  | TransID | UndoNextLSN | RedoInfo |
     | ---- | ------- | ----------- | -------- |
       |      |         |             |          |
-      
+
     * Serves the role of <u>**operation-abort log records**</u> used in earlier recovery algorithm
-    
+
     * Has a field UndoNextLSN to note <u>next (earlier) record to be undone</u>（记录log中下一个需要undo的log record的LSN）
         * Records in between would have already been undone
         * Required to avoid repeated undo of already undone actions（跳过已经回滚的log records）
@@ -724,7 +724,7 @@ sequenceDiagram
         * All transactions in undo-list need to be rolled back
 2. Redo pass：从RedoLSN开始repeats history, redoing all actions，将数据库恢复到崩溃前状态
     *RecLSN and PageLSNs are used to avoid redoing actions already reflected on page*
-    
+
     1. 从RedoLSN开始往后扫描，每当发现一个update log
         * 若Page不在脏页表 || log的LSN<所在Page的RecLSN，则跳过
         * 否则(在脏页表且LSN≥RecLSN)从disk中fetch这个Page
@@ -740,7 +740,7 @@ sequenceDiagram
             * 在一个update的log上undo
                 * 生成一个[CLR](# Log records)
                 * **<u>设置CLR的UndoNextLSN为这个log的PrevLSN</u>**
-                
+
             * 说明：ARIES支持partial rollback
 
                 * 如下例，先回滚3,4，然后执行完5,6再回滚6,5，最后全部回滚

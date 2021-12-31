@@ -410,7 +410,7 @@ for name in favorite_languages.keys():			# 遍历键：使用`.key()`
 for language in favorite_languages.values():	# 遍历值：使用`.value()`
 
 for name in sorted(favorite_languages.keys()):	# 排序(使用`sorted()`，此处是按字母序)
-    
+
 for language in set(favorite_languages.values()):	# `set()`剔除重复项
 ```
 

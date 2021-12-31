@@ -443,11 +443,11 @@ sequenceDiagram
     2. 开始向后扫描
         * 更新undo-list和LastLSN
         * 如果发现update的log且Page不在脏页表上则添加（此时的RecLSN设置为LSN of the update log record）
-    
+
 2. Redo
-   
+
     1. 从redo LSN开始：
-    
+
         ```python
         if Page不在脏页表 or log的LSN<所在Page的RecLSN:
             pass
@@ -457,7 +457,7 @@ sequenceDiagram
             else:
                 redo()
         ```
-    
+
 3. Undo
     1. 从LastLSN开始
     2. 边undo undo-list里的，边写log

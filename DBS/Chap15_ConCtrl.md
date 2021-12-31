@@ -265,10 +265,10 @@ subgraph Tuples
     ra1((ra1))
     ra2((ra2))
     ran((ran))
-    
+
     rb1((rb1))
     rbn((rbn))
-    
+
     rc1((rc1))
     rcn((rcn))
 end

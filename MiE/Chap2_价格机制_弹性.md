@@ -131,7 +131,7 @@ graph LR
 
 * 市场需求函数：设Q1=a1-b1P， Q2=a2-b2P  则: Qd=a-bP ，
     其中， Qd=Q1+Q2 ，a=a1+a2 ，b= b1+b2
-    
+
 * 市场需求曲线:
 
     ![image-20200305152253914](assets/image-20200305152253914.png)

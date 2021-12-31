@@ -165,7 +165,7 @@ Let M denote memory size (内存中<u>用于排序</u>的块数), b is the total
     Note: When sorting a file, several subfiles are generated in the intermediate steps. <u>We refer to each subfile as a run(归并段).</u>
 
 2. Merge the runs (N-way merge). Assume that N = M-1( = 2).
-   
+
     1. Use N=M-1 blocks of memory to buffer input runs, and 1 block to buffer output. (实践中，将输入缓冲适当调小，而适当增大输出缓冲区能获得更好的效果) Read the first block of each run into its buffer page
     2. repeat
         1. Select the first record (in sort order) among all N=M-1 buffer pages

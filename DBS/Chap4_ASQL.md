@@ -355,7 +355,7 @@ Oracle: Pro*C程序→预编译pcc →compiler cc → linker →.exe
 EXEC SQL
     <Embedded SQL>
 END_EXEC
-    
+
 :variabl	// 表示c中的变量？
 ```
 
@@ -547,7 +547,7 @@ int ODBCexample()     //程序结构
 	SQLAllocConnect(env, &conn);   /*建立连接句柄 */
 	SQLConnect(conn, “MySQLServer”, SQL_NTS, “user”, SQL_NTS, “password”, SQL_NTS);
 	/* 建立用户user与数据源的连接，SQL_NTS表示前一参量以null结尾 */
-    
+
     //Main body of program
 	char deptname[80];
     float  salary;
@@ -570,7 +570,7 @@ int ODBCexample()     //程序结构
 		…
 	}
 	SQLFreeStmt (stmt, SQL_DROP);  /* 释放数据区*/
-    
+
 	SQLDisconnect(conn);
 	SQLFreeConnect(conn);
 	SQLFreeEnv(env);

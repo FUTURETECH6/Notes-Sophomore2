@@ -91,11 +91,11 @@ it is subject to cascading aborts, strict 2PL is the solution
     * a transaction must hold all its <u>X-locks</u> till it commits/aborts.
     * 保证未提交事务所写的任何数据在commit/abort之前均通过X锁，防止其他事务读这些数据
     * 作用：**避免**级联回滚
-    
+
 * Rigorous(强) 2PL
     * <u>all locks</u> are held till commit/abort.
     * 作用：使事务可以按其**提交的顺序**串行化
-    
+
 * 以降低并发度为代价
 
     ![截屏2020-05-25 下午2.31.58](assets/截屏2020-05-25 下午2.31.58.png)
@@ -285,10 +285,10 @@ subgraph Tuples
     ra1((ra1))
     ra2((ra2))
     ran((ran))
-    
+
     rb1((rb1))
     rbn((rbn))
-    
+
     rc1((rc1))
     rcn((rcn))
 end
@@ -373,22 +373,22 @@ Def: **Cycle** of txns  waiting for locks to be released by each other.
     * Impose partial ordering of all data items and require that a transaction can lock data items only in the order (**graph-based protocol**). --- therefore never form a cycle.
 * transaction timestamps for the sake of deadlock prevention alone, and use rollback mecmechanism. (to decide which one to be rollback) 抢占式和非抢占式![](assets/截屏2020-05-25 下午3.07.33.png)
     * **早晚指的都是事务开始的时间**，（然后是相对后面要上锁的那个而言。
-      
+
     * Non-preemptive（非抢占式）: **Wait-die** scheme，早等后滚
-      
+
         * older transaction（older指的是txn发生得较早，时间戳的值更小） may wait for younger one to release data item. Younger transactions never wait for older ones, they are rolled back instead. E.g fig 15.7—T4 lock-x(B), T4 rollback (PPT15.58)
-        
+
         * a transaction may die several times before acquiring needed data item
-        
+
           即：old wait for young
-        
+
     * Preemptive（抢占式）: **Wound-wait** scheme ，早抢后等
         * older transaction wounds (forces rollback) of younger transaction instead of waiting for it. Younger transactions may wait for older ones.
-        
+
         * may be fewer rollbacks than wait-die scheme.
-        
+
           即：young wait for old
-        
+
     * Both in wait-die and in wound-wait schemes, a rolled back transactions is restarted with its original timestamp（回滚后时间戳不变）. Older transactions thus have precedence over newer ones, and <u>starvation is hence avoided.</u>（直观理解：**<u>==aborted的总是“young”的txn==</u>**）
 * Timeout-Based Schemes: (这里还🈚️👀)
     * a transaction waits for a lock <u>only for a specified amount of time</u>. After that, the wait times out and the transaction is rolled back.（时间一到就回滚)

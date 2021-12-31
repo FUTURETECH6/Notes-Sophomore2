@@ -231,7 +231,7 @@ Ex2. Decision (基本上通过加个k都能转换)
 
 * The language verified by a verification algorithm A is 
     \\	L = { x ∈ {0, 1}\* : there exists y ∈ {0, 1}* such that A(x, y) = 1}.
-    
+
 * A language L belongs to NP iff there exist a two-input <u>polynomial-time</u> algorithm A and a constant c such that <u>L = { x ∈ {0, 1}\* : there exists a certificate y with |y| = O(|x|^c^) such that A(x, y) = 1 }</u>.  We say that algorithm A verifies language L in polynomial time.
 
 ---

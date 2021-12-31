@@ -423,7 +423,7 @@ Ex.
     * `/university-3/course[credits >= 4]` returns course elements with a credits value greater than 4
     * `/university-3/course[credits]` returns course elements containing a credits subelement(有credits 就返回)
     * 支持布尔运算：`and` `or` `not()`
-    
+
 * 取属性用`@`
 
     * `/university-3/course[credits >= 4]/@course_id` returns the course identifiers of courses with credits >= 4
@@ -706,7 +706,7 @@ Template action can apply templates recursively to the contents of a matched ele
         getAttribute(), getData() /*(for text node)*/
         getElementsByTagName(), ...
         ```
-    
+
     * Also provides functions for updating DOM tree
 
 # Storage of XML

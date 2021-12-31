@@ -13,7 +13,7 @@
 * Basic idea:  is that suppose we have a partial solution ( x1, ... , xi ) where each xk ∈ Sk for  1 ≤ k ≤ i < n.   First we <u>add  xi+1 ∈ Si+1 and check if ( x1, ... , xi, xi+1 ) satisfies</u> the constrains.  If the answer is “yes” we continue to add the next x, else we delete xi and backtrack to the **<u>previous partial solution ( x1, ... , xi-1 )</u>**.
 
     当xi往下走不通时，回溯到xi-1
-    
+
 * template
 
     ```pseudocode
@@ -49,16 +49,16 @@
     * **Conquer** **the sub-problems by solving them recursively**
     * **Combine** **the solutions to the sub-problems into the solution for the original problem**
     * **General recurrence:**  $T(N) = aT(N/b) + f(N)$
-    
+
 * classic cases
     * **The maximum subsequence sum – the O(** **N** **log** **N** **) solution**
     * **Tree traversals – O(** **N** **)**
     * **Mergesort** **and quicksort – O(** **N** **log** **N** **)** 
-    
+
 * 复杂度分析： $T(N) = aT(N/b) + f(N)$
     * **Substitution method** —— 猜，然后归纳证明
         * Example： $T( N ) = 2 T(\lfloor N / 2 \rfloor) + N$
-    
+
 * **Guess:** **T**( **N** **) = O(** **N** **log** **N** **)**
 
 * Proof: 
@@ -66,22 +66,22 @@
     <img src="assets/Screen Shot 2020-06-19 at 4.05.55 PM.png" alt="Screen Shot 2020-06-19 at 4.05.55 PM" style="zoom: 50%;" />
 
     * 注意在归纳中常数c不能根据递归改变
-      
+
     * 例如此处每次二分，c会变成c+1，+N应该为+logN个N<img src="assets/Screen Shot 2020-06-19 at 4.10.02 PM.png" alt="Screen Shot 2020-06-19 at 4.10.02 PM" style="zoom:50%;" />
-      
+
     * **Recursion-tree method**
         * Example
-        
+
             <img src="assets/Screen Shot 2020-06-19 at 4.16.55 PM.png" alt="Screen Shot 2020-06-19 at 4.16.55 PM" style="zoom:50%;" />
-        
+
         * 子树数目为a
-        
+
         * 树高：$log_bN$
-        
+
         * 叶子节点数：$a^{log_bN}$
-        
+
         * T(N) 需根据f(N)决定
-        
+
     * **Master method**
         * f(N)为多项式形式
             * 形式1：
@@ -118,18 +118,18 @@
 
 * Principle
     * 针对优化问题——找可行解中的最优解
-      
+
         * Given a set of **constraints** and an **optimization function**.  Solutions that satisfy the constraints are called **feasible solutions**.  A feasible solution for which the optimization function has the best possible value is called an **optimal solution**.
-        
+
     * Make the best decision at each stage, under some greedy criterion.  A decision made in one stage is ==not changed== in a later stage, so each decision should assure feasibility.
-    
+
         找每一步的最优解，并确保可行性
-    
+
 * 适用条件
 
     * **<u>局部最优等于全局最优</u>**
     * **<u>贪心算法不一定保证最优解，而逼近最优解（在最优解需要花大量时间时）</u>**
-    
+
 * Elements
 
     * 总会存在最优解包含**<u>贪心选择</u>**，贪心选择是安全的
@@ -152,25 +152,25 @@
     * **Approximation Ratio**：近似比率
 
         * An algorithm has an approximation ratio of  $\rho(n)$ if, for any input of size n, the cost C of the solution produced by the algorithm is within a factor of $\rho(n)$  of the cost C* of an optimal solution:
-        
+
             <img src="assets/image-20200619210215579.png" alt="image-20200619210215579" style="zoom: 50%;" />
-        
+
         * If an algorithm achieves an approximation ratio of $\rho(n)$, we call it a  $\rho(n)$-approximation algorithm
-        
+
     * **Approximation scheme**
-    
+
         * An approximation scheme for an optimization problem is an approximation algorithm that takes as input not only an instance of the problem, but also **a value** $\varepsilon$ > 0 such that for any fixed $\varepsilon$, the scheme is a (1+ $\varepsilon$)-approximation algorithm.
-        
+
         * We say that an approximation scheme is a polynomial-time approximation scheme **<u>(PTAS)</u>** if for any fixed  $\varepsilon$ > 0, the scheme runs in time **polynomial in the size n** **of its input instance.*
-        
+
             <img src="assets/image-20200619210712909.png" alt="image-20200619210712909" style="zoom:33%;" />
-        
+
         * 随着$\varepsilon$的减小，PTAS的运行时间可能会迅速增长
-        
+
         * **fully** **polynomial-time** **approximation scheme(FPTAS)** :   **其运行时间表达式既为$1/\varepsilon$的多项式，又为n的多项式**
-        
+
             <img src="assets/image-20200619210749842.png" alt="image-20200619210749842" style="zoom:33%;" />
-    
+
 * Aspects
 
     * **A :Optimality** —— 解的质量
@@ -188,11 +188,11 @@
     * Search
         * 从一个可行解开始，在邻域中搜索更优解
         * 当不能再提升时，得到邻域中的局部最优
-    
+
 * Neighbor Relation
     * S ~S' : S'是一个可以通过S微小改动得来的 *neighboring solution*
     * N(S) : ***neighborhood*** **of S –** **the set {** **S':** **S** **~** **S'** **}**.
-    
+
 * Implementation: 
 
     * 如何定义邻域 —— 邻域不能过大，否则在搜索时类似于暴搜；但邻域要足够丰富，让我们不易陷入局部最优但远离全局最优
@@ -234,14 +234,14 @@
         * **保证正确，在<u>期望</u>层面上高效的随机算法**
 * 数学基础——概率论
     * Pr[ A ] := the probability of the event A
-    
+
     * $\overline{A}$:= the complementary of the event A (A did not occur )
-    
+
          <img src="assets/image-20200620172615906.png" alt="image-20200620172615906" style="zoom: 33%;" />
-    
+
     * E[ X ] := the **<u>expectation</u>** (the “average value”) of the 
                 random variable X
-            
+
             <img src="assets/image-20200620172624367.png" alt="image-20200620172624367" style="zoom:33%;" />
 
 * Implementation
@@ -303,16 +303,16 @@
     * **Store data on tapes** **(can only be accessed sequentially)**
     * **Can use at least** **3** **tape drives**
     * **Computer can carry out I\O and CPU processing in** **parallel**  输入输出操作和CPU计算是并行的
-    
+
 * Concerns
-  
+
     * **Seek** **time** —— **O( number of passes )**  ==BOTTLE NECK== 
         * pass：访问磁带上所有数据
         * 访问磁带是开销的主要来源
     * **Time to** **read or write** **one** **block** **of records** 
     * **Time to** **internally sort** **M** **records**（小） <u>**T = O(M)或O(log M)**</u>
     * **Time to** **merge** **N** **records from input buffers to the output buffer**
-    
+
 * Target 
 
     * 减少pass数目—— 使用**<u>多路归并</u>**
@@ -328,51 +328,51 @@
         * 需要2k tapes —— 如何减少tapes数目？
 
             * Split unevenly
-    
+
                 * 2路归并只需3个tapes：if the number of runs is a Fibonacci number FN, then the best way to **<u>distribute them is to split them into FN–1 and FN–2</u>** .
-    
+
                 * k路归并只需k+1个tapes：<img src="assets/image-20200621163851947.png" alt="image-20200621163851947" style="zoom:33%;" />where <img src="assets/image-20200621163922622.png" alt="image-20200621163922622" style="zoom:33%;" />
-    
+
                     polyphase Merge—— 例子：4-斐波那契数<img src="assets/Screen Shot 2020-06-21 at 4.51.46 PM.png" alt="Screen Shot 2020-06-21 at 4.51.46 PM" style="zoom:50%;" />
-    
+
                 * Pass数目计算
-    
+
                     从1开始反向构建
-            
+
                     ==$_nL_1 = _{n-1}L_4$==
-            
+
                     ==$_{n-1}L_{i-1} = _{n}L_i - _nL_1$==
-            
-    
+
+
     * 在并行操作中对Buffer的控制 —— <u>使I/O操作跟上CPU的速度</u>
-    
+
         * Example:Sort a file containing 3250 records, using a computer with an internal memory capable of sorting at most 750 records（3块）. The input file has a block length of 250 records. 
-    
+
             2块作为输入缓存，1块作为输出缓存
-    
+
         * 对于k路归并，我们需要**<u>2k块作为输入缓存，2块作为输出缓存</u>**，才不会使CPU空等I/O
-    
+
         * 但是，当k增加时，input buffer数目增加，memory容量不变情况下，buffer size减小，disk上Block的大小也需要减小，block数目增加，seek time增加
-    
+
             ==因此K并不是越大越好的，当超过某一k值时，I/O时间因寻道时间增加而增加（尽管passes数目变少）==
-    
+
     * generate a longer run —— run的长度不一定等于内存大小
-    
+
         * Replacement selection( 相当于使内存扩充一倍)<img src="assets/image-20200621173157351.png" alt="image-20200621173157351" style="zoom:33%;" />
             * 使用堆结构出列一个读入一个
             * 如果读入的已经比已写元素小，则为死空间
             * 若全部节点都死掉，则开启新run，写下一段tape
         * run的平均长度：$L_{avg} = 2M$
         * 当输入接近有序的时候非常有效，能形成很长的run
-    
+
     * 针对run长度不一情况下，减少归并时间
-    
+
         * 利用Huffman Tree 
-        
+
         * **Total merge time = O (** **the weighted external path length** **)**
-    
+
         * Example: Suppose we have 4 runs of length 2, 4, 5, and 15, respectively.    How can we arrange the merging to obtain minimum merge times?
-        
+
             <img src="assets/image-20200621173740040.png" alt="image-20200621173740040" style="zoom:33%;" />
 
 
@@ -401,21 +401,21 @@
 * Problems
     * Given N points on the x-axis with coordinates x1<x2<..<xN. Assume that x1 = 0. There are  $N ( N – 1 ) / 2$  distances between every pair of points.
     * Given $ N ( N – 1 ) / 2$  distances.  Reconstruct a point set from the distances.
-    
+
 * Method
     * 通过 $ N ( N – 1 ) / 2$ 计算N的值
     * X1 = 0, xN = 给定集合中最大的值（最远的点）
     * 找下一大的值，新增节点，检查新增节点与已有节点间距是否在数据集中；若无则回溯
     * **<u>注意！回溯时要恢复数据集</u>**
-    
+
 * Example
     * **Given** **D** **= { 1, 2, 2, 2, 3, 3, 3, 4, 5, 5, 5, 6, 7, 8, 10 }**
     * **Step 1:** **N** **(** **N** **– 1 ) / 2 = 15 implies** **N** **= 6**
     * **Step 2:** **x1** **= 0 and ** **x6** **= 10**
     * ( 0, 3, 5, 6, 8, 10 )  **<u>对称情况不再计算</u>**
-    
+
         <img src="assets/Screen Shot 2020-06-19 at 3.02.22 PM.png" alt="Screen Shot 2020-06-19 at 3.02.22 PM" style="zoom:50%;" />
-    
+
 * Code
 
     ```c
@@ -454,10 +454,10 @@
             }
             /* finish checking option 2 */
         } /* finish checking all the options */
-        
+
         return Found;
     }
-    
+
     ```
 
 ### Tic-tac-toe & α-β pruning
@@ -481,7 +481,7 @@
         Here X is computer and O is the human
 
     * The human is trying to **minimize** the value of the position P, while the computer is trying to **maximize** it
-    
+
         <img src="assets/Screen Shot 2020-06-19 at 3.21.03 PM.png" alt="Screen Shot 2020-06-19 at 3.21.03 PM" style="zoom:50%;" />
 
 * α pruning —— 取max时，44>=40，再min只能比40小，取不到40
@@ -500,9 +500,9 @@
 ### Closest points problem
 
 * Problem
-  
+
     *    Given N points in a plane.  Find the closest pair of points.  (If two points have the same position, then that pair is the closest with distance 0.)
-    
+
 * Method
 
     * 暴搜：检查**N** **(** **N** **– 1 ) / 2** 对点，$T = O(N^2)$
@@ -527,7 +527,7 @@
                 for ( j=i+1; j<NumPointsInStrip; j++ ) 
                     if ( Dist( Pi , Pj ) < δ )
             	 δ = Dist( Pi , Pj );
-            
+
             ```
 
         * **The worst case:** **NumPointInStrip** **=** **N**（所有点都在strip里）——  **<u>利用y轴的δ - strip</u>** 
@@ -555,13 +555,13 @@
 * Problem
     * 在连续矩阵乘法中只满足结合律不满足交换律，因此结合形式不同计算次数也不同
     * **In which** **order** **can we compute the product of n matrices with** **minimal computing time**
-    
+
 * Symbol
     *  $b_n$ = number of different ways to compute  M1 * M2 *  .. * Mn
     * $Mij = Mi * ... * Mj$ , 则$ M_{1n} = M1 * ... * Mn = M_{1i} * M_{i+1n}$ 将矩阵相乘作为二元运算
     * $M_i$ 是一个 $r_{i-1} * r_i$矩阵，即用r数组来代表矩阵维度
     * Let $mij$ be the cost of the optimal way to compute $ Mi * ... * Mj$
-    
+
 * Method
 
     * 暴搜：<img src="assets/image-20200619171441787.png" alt="image-20200619171441787" style="zoom:33%;" />
@@ -597,7 +597,7 @@
     	}  /* end for-L */
             }  /* end for-Left */
     }
-    
+
     ```
 
 ### Optimal Binary Search Tree
@@ -608,29 +608,29 @@ total access time
     * $  d_i$—— 深度 
     * 这是静态搜索（没有插入删除）的最优结构
     * <img src="assets/image-20200619172723183.png" alt="image-20200619172723183" style="zoom: 50%;" />
-    
+
 * Symbol
   * $Ti j $::= OBST for  wi , ……, wj  ( i < j )
   * $cij$ ::= cost of Ti j  ( ci i = 0 )
   * $ri j$ ::= root of Ti j
   * $wij$ ::= weight of $Tij = \Sigma_{k=i}^j p_k$  ( wii = pi )
-  
+
 * Method
-  
+
   * ==$cij = p_k + cost(L) +cost(R)+ weight(L)+weight(R) $==
-  
+
       ==$= p_k + c_{i,k-1} + c_{k+1,j}+ w_{i,k-1}+w_{k+1,j}$==
-  
+
       ==$= w_{ij} + c_{i,k-1} + c_{k+1,k}$==
-  
+
       注意加weight是因为L、R作为子树是**<u>每个节点的深度都加1，相当于增加一遍所有的p</u>**
-  
+
       <img src="assets/image-20200619173507318.png" alt="image-20200619173507318" style="zoom: 50%;" />
-  
+
   * 复杂度分析
-  
+
       * $T(N) = O(N^3)$
-  
+
 * Example
 
     **<u>标红的key为root,取cij = min {wij + ci,l-1 + cl+1,j}</u>**
@@ -642,9 +642,9 @@ total access time
 ### All-Pairs Shortest Path
 
 * Problem
-  
+
     * For all pairs of vi and vj ( i ≠ j ), find the shortest path between
-    
+
 * Method
     * **Use** **single-source algorithm** **for |V| times.**
 
@@ -682,7 +682,7 @@ total access time
     ```
 
 * 复杂度分析
-  
+
     * $T(N) = O(N^3)$，但在稠密图效率很高
 
 ### Product Assembly
@@ -733,7 +733,7 @@ total access time
     * Given a set of activities S = { a1, a2, …, an } that wish to use a resource (e.g. a classroom).  Each ai takes place during a time interval [si, fi).
 Activities ai and aj are compatible if si ≥ fj or sj ≥ fi (i.e. <u>their time intervals do not overlap</u>).
     * **Select a maximum-size subset of mutually compatible activities.**
-    
+
 * Method
 
   * DP: $c_{ij} = c_{ik }+ c_{kj} + 1 (a_k ∈ S_{ij})$
@@ -763,11 +763,11 @@ Activities ai and aj are compatible if si ≥ fj or sj ≥ fi (i.e. <u>their tim
     * Suppose our text is a string of length 1000 that comprises the characters  a, u, x, and z.  Then it will take  8000  bits to store the string as 1000 one-byte characters.
     * We may encode the symbols as a = 00, u = 01, x = 10, z  = 11.   For example, aaaxuaxz is encoded as 0000001001001011.  Then the space taken by the string with length 1000 will be  2000 bits + space for code table.  /*$ \lceil log C \rceil$ bits are needed in a standard encoding where C is the size of the character set */
     * **<u>如果使用不定长编码，如何确保没有二义性</u>**==（如果每个字母出现频率相同，没有必要使用不定长编码）==
-    
+
 * Symbol
-  
+
   * **frequency ::=** **number of occurrences of a symbol**
-  
+
       In string  aaaxuaxz ,   f(a) = 4,  f(u) = 1,  f(x) = 2,  f(z) = 1
 
   * **Depth di ::= 深度**
@@ -812,7 +812,7 @@ Activities ai and aj are compatible if si ≥ fj or sj ≥ fi (i.e. <u>their tim
 * Problem
     *         Given N items of sizes  S1 , S2 , …, SN , such that 0 < Si ≤ 1 for all 
 1 ≤ i ≤ N .  Pack these items in the fewest number of bins, each of which has unit capacity
-    
+
 * Method
 
   * **On-line Algorithm**: 不能改变决定，**只要是在线算法就不可能得到最优解**
@@ -834,7 +834,7 @@ Activities ai and aj are compatible if si ≥ fj or sj ≥ fi (i.e. <u>their tim
     * 近似率分析
       * Let M be the optimal number of bins required to pack a list I of items.  Then next fit never uses more than 2M – 1 bins.  There exist sequences such that next fit uses 2M  – 1 bins
         * ==**<u>近似率为2</u>**==
-      
+
     * **First Fit**
 
     ```pseudocode
@@ -865,7 +865,7 @@ Activities ai and aj are compatible if si ≥ fj or sj ≥ fi (i.e. <u>their tim
     * 对其进行**降序**排列后使用**first fit/ best fit decreasing**
     * 近似率分析
         * Let M be the optimal number of bins required to pack a list I of items.  Then first fit decreasing never uses more than 11M / 9 + 6/9 bins.  There exist sequences such that first fit decreasing uses ==**11M / 9 + 6/9**== bins
-    
+
   * **简单的贪心算法即可得到较优解**  
 
 ### The Knapsack Problem
@@ -879,21 +879,21 @@ we are supposed to find the values of xi  such that $\Sigma_{i=1}^n p_ix_i$ obta
     * maximum profit density $p_i/w_i$
 
 * Problem 2 : 0-1  —— 整数
-  
+
     * $x_i$ 为0或1
 * Method
     * Greedy on taking the maximum profit or profir density
-      
+
         * ==**<u>approximation ratio is 2</u>**==
     * DP
     * $W_{i, p} $= the minimum weight of a collection from {1, …, i } with total profit being  exactly p
-    
+
         <img src="assets/image-20200620150348801.png" alt="image-20200620150348801" style="zoom:50%;" />
-      
+
         * 复杂度分析：注意Pmax的二进制编码长度为d，所以==$P_{max} = O(2^d)$，是指数级的复杂度==
-        
+
             * 这就要求当Pmax很大时，对Profit进行归约到更小的范围
-            
+
                 ==$(1+\varepsilon) P_{alg}\leq P $   for any feasible solution P==
 
 ### The K-center Problem
@@ -910,7 +910,7 @@ we are supposed to find the values of xi  such that $\Sigma_{i=1}^n p_ix_i$ obta
                  = distance from si to the closest center
     * 覆盖半径（覆盖所有si）$r(C) = max_i dist(s_i, C)$ = smallest covering radius
 * Target
-  
+
     * Find a set of centers C that **<u>minimizes r(C)</u>**, subject to **<u>|C| = K.</u>**
 * Method
 
@@ -945,18 +945,18 @@ we are supposed to find the values of xi  such that $\Sigma_{i=1}^n p_ix_i$ obta
 
             * 对于r有K个中心找到——向r更小二分
             * 对于r有超过K个 —— 向r更大二分
-            
+
         * 复杂度分析：若r是个整数，$T = O(\log r)$ —— 多项式级别
-        
+
         * 近似率分析：Solution radius = $2r_1$ —— ==**<u>2-approximation</u>**==
-        
+
             定理：**<u>除非P = NP，没有ρ-approximation可以让中心选择问题的ρ<2</u>**
-        
+
     * 进一步优化—— be far away
-    
+
         * 不再随机选择点s，而是选择离已有中心点最远的s
         * 不再需要逐步逼近r(C*)的过程
-    
+
         ```pseudocode
         Centers  Greedy-Kcenter ( Sites S[ ], int n, int K )
         {   Centers  C[ ] = ∅;
@@ -968,11 +968,11 @@ we are supposed to find the values of xi  such that $\Sigma_{i=1}^n p_ix_i$ obta
             return C;
         }
         ```
-    
+
         * 近似率分析：
-    
+
             定理：The algorithm returns a set C of K centers such that ==$r(C) \leq 2r(C^*)$== where C* is an optimal set of K centers
-            
+
             ==2-approximation==
 
 
@@ -981,9 +981,9 @@ we are supposed to find the values of xi  such that $\Sigma_{i=1}^n p_ix_i$ obta
 ### Vertex Cover Problem 
 
 * Problem
-  
+
     * Given an undirected graph G = (V, E).  Find a minimum subset S of  V such that **<u>for each edge (u, v) in E, either u or v  is in S.</u>**
-    
+
 * Symbol
 
     * **Feasible solution set** **FS** **: all the vertex covers.**
@@ -1034,16 +1034,16 @@ we are supposed to find the values of xi  such that $\Sigma_{i=1}^n p_ix_i$ obta
     * Output: A configuration S of the network – 
               **an assignment of the state $s_u$ to each node u**
     * 可能找不到满足所有边的安排，但是要找到一个**足够好**的
-    
+
 * Definition
     * 好边和坏边：In a configuration S, edge e = (u, v) is good if $w_e s_u s_v < 0$ ($w_e < 0$ iff $s_u = s_v$ ); otherwise, it is bad. <u>可能不能让所有边都是好边</u>
-    
+
     * 点是否被满足（satisfied）:**a node** **u** **is** **satisfied** **if the weight of incident good edges** **≥** **weight of incident bad edges.**
-    
+
         <img src="assets/image-20200620163210491.png" alt="image-20200620163210491" style="zoom:33%;" />
-    
+
     * 安排稳定（stable）：所有点都被满足
-    
+
 * Method: State-flipping Algorithm
 
     * Problem : 最大化好边权重$\Phi$
@@ -1083,13 +1083,13 @@ we are supposed to find the values of xi  such that $\Sigma_{i=1}^n p_ix_i$ obta
 ### Maximum Cut Problem
 
 * Problem
-  
+
     * Given an undirected graph G = (V, E) with positive integer edge weights $w_e$, find a node partition (A, B) such that the total weight of edges crossing the cut is maximized.
-    
+
         <img src="assets/image-20200620164733645.png" alt="image-20200620164733645" style="zoom:25%;" />
-    
+
     * **<u>相当于Hopfield的边为正边，点状态不同的情况</u>**
-    
+
 * Method
 
     * Problem: 最大化好边权重$\Phi(S) = \Sigma_{e is good} |w_e|$
@@ -1120,10 +1120,10 @@ we are supposed to find the values of xi  such that $\Sigma_{i=1}^n p_ix_i$ obta
     * 近似率分析：==Let (A, B) be a local optimal partition and let (A* , B* ) be a global optimal partition.  Then **w(A, B) ≥ ½ w(A* , B* ).**==
 
       * ==除非P=NP，否则近似比率不会达到17/16==
-      
+
       <img src="assets/image-20200620165318918.png" alt="image-20200620165318918" style="zoom: 33%;" />
-      
-        
+
+
 
 ## Randomized
 
@@ -1185,9 +1185,9 @@ we are supposed to find the values of xi  such that $\Sigma_{i=1}^n p_ix_i$ obta
         {   /* candidate 0 is a least-qualified dummy candidate */
             int Best = 0;
             int BestQ = the quality of candidate 0;
-        
+
             randomly permute the list of candidates;
-        
+
             for ( i=1; i<=N; i++ ) {
                 Qi = interview( i ); /* Ci */
                 if ( Qi > BestQ ) {
@@ -1200,7 +1200,7 @@ we are supposed to find the values of xi  such that $\Sigma_{i=1}^n p_ix_i$ obta
 
         * 缺：打乱消耗时间
         * 优：**<u>不需要假设</u>**受试者按照随机顺序前来
-        
+
     * 在线处理算法：只雇用一次
 
         * 面试前k天的所有人，找到前k天最优的质量
@@ -1252,10 +1252,10 @@ we are supposed to find the values of xi  such that $\Sigma_{i=1}^n p_ix_i$ obta
         * $\Theta(N^2)$ worst-case running time
 * $\Theta(N \log N)$ average case running time, assuming 
      every <u>input permutation is equally likely</u>
-     
-    
+
+
     * 通过随机的选择pivot，来达到随机算法的目的。但**如果划分不均匀**的话复杂度会退化到worst case
-    
+
 * Method
 
   * **Central splitter** **:= the pivot that divides the set so that each side contains** **at least** **n/4**
@@ -1279,7 +1279,7 @@ we are supposed to find the values of xi  such that $\Sigma_{i=1}^n p_ix_i$ obta
 * Problem
     *  Input:  A(1), A(2), …, A(n)
     *  Output: A(1) + A(2) + … +A(n)
-    
+
 * Method
 
      * B作为二维数组，h为高度，i代表水平序号
@@ -1322,12 +1322,12 @@ we are supposed to find the values of xi  such that $\Sigma_{i=1}^n p_ix_i$ obta
         for i = 1 pardo
            output  B(log n, 1)
         ```
-        
+
     * 性能分析
 
         * ==T(n) = log n +2==
         * ==W(n) = n + n/2 + ...+n/2^k +1 = 2n==
-        
+
     * 定理：==any P(n) 各CPU，可以用WD达到O(W(n)/p + T(n))的时间==
 
 ### Prefix-Sums
@@ -1335,7 +1335,7 @@ we are supposed to find the values of xi  such that $\Sigma_{i=1}^n p_ix_i$ obta
 * Problem：求前i元素的和
     * Input:  A(1), A(2), …, A(n)
     * Output:  $\Sigma_{i=1}^1A(i), \Sigma_{i=1}^2A(i),\Sigma_{i=1}^3A(i)...\Sigma_{i=1}^nA(i)$
-    
+
 * Technique : 平衡二叉树
 
   * 在summation的基础上增加$C(h,i) = \Sigma_{k=1}^\alpha A(k)$
@@ -1377,7 +1377,7 @@ we are supposed to find the values of xi  such that $\Sigma_{i=1}^n p_ix_i$ obta
 ### Merging
 
 * Problem
-  
+
     * Merging – merge two non-decreasing arrays A(1), A(2), …, A(n) and B(1), B(2), …, B(m) into another non-decreasing array C(1), C(2), …, C(n+m) 
 * Technique: Partitioning (分块)
     * To simplify, assume:
@@ -1434,34 +1434,34 @@ we are supposed to find the values of xi  such that $\Sigma_{i=1}^n p_ix_i$ obta
    * Parallel Ranking
 
        * **<u>注意：默认增加了A(n+1)、B(n+1)，比原始的最大元大</u>**
-       
+
        * **Partitioning**:  块数： $p = n/\log n$     每块大小：log n
-   
+
        <img src="assets/image-20200621105831817.png" alt="image-20200621105831817" style="zoom:50%;" />
-           
+
            *  找到每个块中的块头元素
-            
+
             A_Select( i ) = A( 1+(i-1)logn )   for 1 ≤ i ≤ p
             B_Select( i ) = B( 1+(i-1)logn )   for 1 ≤ i ≤ p
-            
+
             ==T = O(log n)==
-            
+
             ==W = O(p log n) = O(n)==
-            
+
            * 对选中元素进行排序
-       
+
        * **Actual Ranking**:
-       
+
            * 2p个箭头将问题划分成了2p个O(log n )大小子问题，每个块中元素比起左边块中大
-       
+
            * 用O(p)个CPU进行排序进行串行排序
-       
+
                ==T = O(log n)==
-       
+
                ==W = O(log n)==
-       
+
        * 总性能分析—— 在没有消耗更多的情况下跑得更快
-       
+
            * ==T = O(log n)==
            * ==W = O(n)==
 ### Maximum Finding
@@ -1511,13 +1511,13 @@ we are supposed to find the values of xi  such that $\Sigma_{i=1}^n p_ix_i$ obta
                 *  根据递归树
 
                     每层均为c, $n^{1/2^k} = const$, h = log log n
-                
+
                     T = h*c * 1 = log log n
-                
+
                     <img src="assets/image-20200621150202837.png" alt="image-20200621150202837" style="zoom:33%;" />
-    
+
         *  Partition by **h** **= log log** **n** —— 每块大小为h
-    
+
             *  块数为n/h, n/h个CPU
             *  分块，每一块用串行算法：M1-n/h ~ O(h)
         *  共有M1-n/h个最大值，对这n/h个最大值用上面的分法排序—— T = O(log log n/h), W = O(n/h log log n/h)
@@ -1540,9 +1540,9 @@ we are supposed to find the values of xi  such that $\Sigma_{i=1}^n p_ix_i$ obta
         *  将得到的$n^{3/4}$个最大值继续按照$n^{1/4}$大小分块……
 
         *  总性能==$M(n^{7/8}) : T(n) = O(1) , W(n) = O(n)$==
-    
+
         *  但此时，只有==1====/16（$n = 2^{32},n^{1/8}=16$)的概率找到正确的最大值==—— 改进
-    
+
             ```pseudocode
             while (there is an element larger than M) {
                  for (each element larger than M)
@@ -1550,6 +1550,6 @@ we are supposed to find the values of xi  such that $\Sigma_{i=1}^n p_ix_i$ obta
                  Compute a new M;
             }/* 当挑出n^7/8个数时停止*/ 
             ```
-    
+
             Claim : The algorithm finds the maximum among n elements.  With very high probability it runs in O(1) time and O(n) work.  The probability of not finishing within this time and work complexity is ==$O(1/n^c)$（找不到最大值的概率）== for some positive constant c.    **<u>c的大小与上述循环次数有关</u>**
 

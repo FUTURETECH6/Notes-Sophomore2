@@ -652,12 +652,12 @@ disk_needed = ceil(max_CPU_IO_rate / max_bus_IO_rate) = ceil(10000 / (1s/6.9ms)I
 考察DMA，cc就是clock cycle
 
 * 原题
-  
+
     * 这里说的大小寄存器就是DMA的内部寻址寄存器，能够求出DMA大小为64KB，因此才需要256M/64K个DMA进程
-      
+
     * 流程
         * 56步有什么区别>：因为要好多次DMA，DMA内部又有好多次传输
-          
+
             ```cpp
             for(auto i : data) {
                 auto tmpD = new DMA(i);
@@ -669,10 +669,10 @@ disk_needed = ceil(max_CPU_IO_rate / max_bus_IO_rate) = ceil(10000 / (1s/6.9ms)I
         * 注意DMA一次容量是有限的
         * 次数 = data_size / DMA_size
     * 3-5
-    
+
         * 次数 = DMA_size / mem_tran_size
     * `总时间 = DMA次数 • (CPU初始化DMA时间 + DMA发送读取地址给内存时间 + DMA内的循环次数 • (内存读取时间 + 数据(分次)发送时间))`
-    
+
 * 增加bllock的使用：不改变传输时间
 
 * 增加总线位宽(从32到128)：改变了数据(不是地址或者其他)传输时间(单次传输时间减少但是总的不变)，其他不变
@@ -681,7 +681,7 @@ disk_needed = ceil(max_CPU_IO_rate / max_bus_IO_rate) = ceil(10000 / (1s/6.9ms)I
     * 一般做法是在一个block操作内，内存读出(下一次要的)与数据发送到总线(本次的)这两个操作，可以重叠执行。
         要求block大于内存一次读出的数据，意味着一次block操作，会有多次内存读与内存发送到总线。
     * 也是只影响数据传输，总次数+1，第一次只读内存，最后一次只传数据，但是本来单独读内存的时间省下来了
-    
+
 * 目标设备
 
     * 例如：增加网卡的数据，网卡上有个缓冲区，大小为16bit，写入缓冲区就能马上发送到网络上(假设网络带宽足够)，刷新周期为1个clk

@@ -49,7 +49,7 @@ main(){
     goto jump;	// error: jump bypass variable initialize
     A a2;
 jump:
-    
+
 }
 ```
 

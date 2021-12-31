@@ -191,7 +191,7 @@ False
 >>> 3 > 5 or 'a' > 3
   File "<stdin>", line 1, in <module>
 TypeError: '>' not supported between instances of 'str' and 'int'
-    
+
 >>> ((2>=2) or (2<2)) and 2	# 为什么啊啊啊啊啊啊啊啊啊
 2
 >>> ((2>=2) or (2<2)) or 2
@@ -447,7 +447,7 @@ b、d、o、x 分别是二进制、十进制、八进制、十六进制。
 
 >>> print('value 为: {0.value}'.format(my_value))  # "0" 是可选的
 value 为: 6
-    
+
 >>> print("{:.2f}".format(3.1415926));
 3.14
 
@@ -611,7 +611,7 @@ In [7]: m = [[0 for i in range(3)] for j in range(4)]
 In [8]: m[1][2] = 1
 In [9]: m
 Out[9]: [[0, 0, 0], [0, 0, 1], [0, 0, 0], [0, 0, 0]]
-    
+
 # 为什么呢
 In [10]: In [1]: m = [[0] * 3] * 4
 In [11]: print(id(m[0]), id(m[1]), id(m[2]), id(m[3]))
@@ -1253,7 +1253,7 @@ class Cat:
         print(self.name + " is sitting")
     def jump(self):
         print(self.name + " is jumping")
-        
+
 myCat = Cat("喵喵", "#FFFFFF")
 ```
 
@@ -1337,7 +1337,7 @@ math.fabs(x)	# 浮点绝对值
 ```python
 print(...)
     print(value, ..., sep=' ', end='\n', file=sys.stdout, flush=False)
-    
+
     Prints the values to a stream, or to sys.stdout by default.
     Optional keyword arguments:
     file:  a file-like object (stream); defaults to the current sys.stdout.

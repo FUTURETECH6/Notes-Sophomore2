@@ -125,12 +125,12 @@ classDiagram
     streambuf <|-- IOS
     IOS <|-- istream
     IOS <|-- ostream
-    
+
     istream <|-- ifstream
     istream <|-- iostream
     ostream <|-- iostream
     ostream <|-- ofstream
-    
+
     fstreambase <|-- ifstream
     ifstream <|-- fstream
     ofstream <|-- fstream
